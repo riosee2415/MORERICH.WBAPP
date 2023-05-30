@@ -43,44 +43,44 @@ const GlobalStyles = createGlobalStyle`
 
   //ant select
   .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector{
-    border-color: ${(props) => props.theme.basicTheme_C};
+    border-color: ${(props) => props.theme.black_C};
     box-shadow: 0 0 0 2px ${(props) => props.theme.lightGrey2_C};
   }
 
   //ant radio
   .ant-radio-checked .ant-radio-inner, .ant-radio:hover .ant-radio-inner{
-    border-color: ${(props) => props.theme.basicTheme_C};
+    border-color: ${(props) => props.theme.black_C};
   }
 
   .ant-radio-inner::after{
-    background-color: ${(props) => props.theme.basicTheme_C};
+    background-color: ${(props) => props.theme.black_C};
   }
 
   .ant-radio-checked::after{
-    border: 1px solid ${(props) => props.theme.basicTheme_C};
+    border: 1px solid ${(props) => props.theme.black_C};
   }
 
   //ant checkbox
   .ant-checkbox-input:focus + .ant-checkbox-inner {
-    border-color: ${(props) => props.theme.basicTheme_C};
+    border-color: ${(props) => props.theme.black_C};
   }
   .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: ${(props) => props.theme.basicTheme_C};
-    border: 1px solid ${(props) => props.theme.basicTheme_C};
+    background-color: ${(props) => props.theme.black_C};
+    border: 1px solid ${(props) => props.theme.black_C};
   }
 
   .ant-checkbox-wrapper:hover {
     .ant-checkbox-inner,
     .ant-checkbox-checked::after {
-      border-color: ${(props) => props.theme.basicTheme_C} !important;
-      border: 1px solid ${(props) => props.theme.basicTheme_C};
+      border-color: ${(props) => props.theme.black_C} !important;
+      border: 1px solid ${(props) => props.theme.black_C};
     }
   }
 
   //ant picker
   .ant-picker:hover,
   .ant-picker-focused {
-    border-color: ${(props) => props.theme.basicTheme_C};
+    border-color: ${(props) => props.theme.black_C};
     box-shadow: 0 0 0 2px ${(props) => props.theme.lightGrey2_C};
   }
 
@@ -88,16 +88,16 @@ const GlobalStyles = createGlobalStyle`
   .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner, 
   .ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner, 
   .ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner{
-    background: ${(props) => props.theme.basicTheme_C};
+    background: ${(props) => props.theme.black_C};
   }
 
   .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before{
-    border: 1px solid ${(props) => props.theme.basicTheme_C};
+    border: 1px solid ${(props) => props.theme.black_C};
   }
 
   .ant-btn:focus{
     color: ${(props) => props.theme.black_C};
-    border-color: ${(props) => props.theme.basicTheme_C};
+    border-color: ${(props) => props.theme.black_C};
   }
   
   @media (max-width : 576px) {

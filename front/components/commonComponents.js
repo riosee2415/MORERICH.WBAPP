@@ -458,7 +458,7 @@ export const TextArea = styled.textarea`
 `;
 
 export const CustomPage = styled(Pagination)`
-  margin: 60px 0 100px;
+  margin: ${(props) => props.margin || `0 0 100px`};
 
   & .ant-pagination-next > button,
   .ant-pagination-item,
@@ -484,7 +484,7 @@ export const CustomPage = styled(Pagination)`
   }
 
   .ant-pagination-item:hover a {
-    color: ${(props) => props.theme.basicTheme_C};
+    color: ${(props) => props.theme.grey2_C};
   }
 
   & .ant-pagination-item a {
@@ -492,17 +492,17 @@ export const CustomPage = styled(Pagination)`
   }
 
   & .ant-pagination-item-active a {
-    color: ${(props) => props.theme.basicTheme_C};
+    color: ${(props) => props.theme.grey2_C};
   }
 
   & .ant-pagination-item-active {
     background-color: ${(props) => props.theme.lightGrey_C} !important;
-    color: ${(props) => props.theme.basicTheme_C} !important;
+    color: ${(props) => props.theme.grey2_C} !important;
     border: none;
   }
 
   & .ant-pagination-item:focus-visible a {
-    color: ${(props) => props.theme.basicTheme_C};
+    color: ${(props) => props.theme.grey2_C};
   }
 
   & .ant-pagination-item-link svg {
@@ -542,6 +542,62 @@ export const SquareBox = styled(Wrapper)`
 
   &:hover img {
     transform: scale(1.1);
+  }
+`;
+
+export const CustomSelect = styled(Wrapper)`
+  width: ${(props) => props.width || `120px`};
+  height: ${(props) => props.height || `50px`};
+
+  .ant-select {
+    width: 100%;
+  }
+
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector,
+  .ant-select-single:not(.ant-select-customize-input)
+    .ant-select-selector
+    .ant-select-selection-search-input {
+    width: 100%;
+    height: ${(props) => props.height || `50px`};
+    border-radius: ${(props) => props.radius || `0`};
+    border: 1px solid ${(props) => props.theme.lightGrey_C};
+  }
+
+  .ant-select-single .ant-select-selector .ant-select-selection-item,
+  .ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+    width: 100%;
+    line-height: ${(props) => props.height || `50px`};
+  }
+
+  .ant-select-selector {
+    align-items: center !important;
+  }
+`;
+
+export const ProductWrapper = styled(Wrapper)`
+  width: calc(100% / 4 - 30px);
+  margin: 0 40px 100px 0;
+  align-items: flex-start;
+
+  &:nth-child(4n) {
+    margin: 0 0 100px;
+  }
+
+  @media (max-width: 900px) {
+    width: calc(100% / 2);
+    margin: 0 0 50px;
+
+    &:nth-child(3n) {
+      margin: 0 0 50px;
+    }
+
+    &:nth-child(2n) {
+      margin: 0 0px 50px;
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 `;
 

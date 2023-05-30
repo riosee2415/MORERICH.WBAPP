@@ -12,13 +12,16 @@ export default {
   // white
   white_C: "#ffffff",
   // black
-  black_C: "#000000",
+  black_C: "#1A1A1A",
   // red
   red_C: "#e74c3c",
   // grey
   grey_C: "#7A7B7E",
-  lightGrey_C: "#E2E2E2",
-  darkGrey_C: "#2d3436",
+  grey2_C: "#B2B2B7",
+  grey3_C: "#DFDEE3",
+  lightGrey_C: "#EFEFF2",
+  lightGrey2_C: "#F9F9FB",
+  darkGrey_C: "#4E4E51",
   //admin
   adminTheme_1: "#1e272e",
   adminTheme_2: "#485460",

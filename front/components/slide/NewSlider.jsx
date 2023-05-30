@@ -63,6 +63,12 @@ const NewSliderWrapper = styled(Wrapper)`
       background-image: url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_next.svg");
     }
   }
+
+  @media (max-width: 900px) {
+    & .slick-list {
+      padding: 0 !important;
+    }
+  }
 `;
 
 const SliderWrapper = styled(Carousel)`
@@ -138,7 +144,9 @@ const NewSlider = () => {
         speed={1000}
         swipeToSlide={true}
         autoplaySpeed={6000}
-        slidesToShow={4}
+        slidesToShow={width < 1100 ? (width < 900 ? 1 : 3) : 4}
+        centerMode={width < 900 && true}
+        centerPadding={width < 900 && `50px`}
         dots={false}
         arrows={true}
       >
@@ -162,19 +170,21 @@ const NewSlider = () => {
                   </SquareBox>
 
                   <Text
-                    fontSize={`18px`}
+                    fontSize={width < 900 ? `16px` : `18px`}
                     fontWeight={`600`}
                     margin={`23px 0 12px`}
                   >
                     {data.title}
                   </Text>
 
-                  <Text fontSize={`17px`}>{data.name}</Text>
+                  <Text fontSize={width < 900 ? `15px` : `17px`}>
+                    {data.name}
+                  </Text>
                   <Wrapper
                     dr={`row`}
                     ju={`flex-start`}
                     margin={`16px 0 20px`}
-                    fontSize={`20px`}
+                    fontSize={width < 900 ? `15px` : `20px`}
                   >
                     <Text
                       color={Theme.grey_C}

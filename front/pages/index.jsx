@@ -53,6 +53,10 @@ const Box = styled(Wrapper)`
     opacity: 1;
     visibility: visible;
   }
+
+  @media (max-width: 800px) {
+    width: 50%;
+  }
 `;
 
 const Home = ({}) => {
@@ -77,7 +81,7 @@ const Home = ({}) => {
           <RsWrapper padding={`0 0 120px`}>
             <Mainslider />
             <Wrapper al={`flex-start`} margin={`103px 0 30px`}>
-              <Text isPoppins fontSize={`34px`}>
+              <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
                 Best Product
               </Text>
             </Wrapper>
@@ -92,7 +96,7 @@ const Home = ({}) => {
               }
             />
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>
-              <Text isPoppins fontSize={`34px`}>
+              <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
                 New Product
               </Text>
             </Wrapper>
@@ -227,7 +231,7 @@ const Home = ({}) => {
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>
-              <Text isPoppins fontSize={`34px`}>
+              <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
                 Steady Product
               </Text>
             </Wrapper>

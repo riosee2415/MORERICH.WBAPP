@@ -115,7 +115,7 @@ const MainSlider = () => {
                   height={`100%`}
                   al={`flex-start`}
                   ju={`flex-end`}
-                  padding={`0 70px`}
+                  padding={width < 900 ? `0 20px` : `0 70px`}
                 >
                   <Wrapper
                     al={`flex-start`}

@@ -210,15 +210,16 @@ export const CommonButton = styled(Button)`
   margin: ${(props) => props.margin};
   padding: ${(props) => props.padding};
   font-size: ${(props) => props.fontSize};
-  color: ${(props) => props.color || props.theme.basicTheme_C};
-  border-radius: ${(props) => props.radius || `7px`};
+  font-weight: ${(props) => props.fontWeight};
+  color: ${(props) => props.color || props.theme.white_C};
+  border-radius: ${(props) => props.radius};
 
-  ${(props) => !props.kindOf && `background : ${props.theme.white_C};`}
+  ${(props) => !props.kindOf && `background : ${props.theme.black_C};`}
   ${(props) =>
-    props.kindOf === `white` && `background : ${props.theme.basicTheme_C};`}
-  ${(props) => props.kindOf === `white` && `color : ${props.theme.subTheme_C};`}
+    props.kindOf === `white` && `background : ${props.theme.white_C};`}
+  ${(props) => props.kindOf === `white` && `color : ${props.theme.black_C};`}
   ${(props) =>
-    props.kindOf === `white` && `border : 1px solid ${props.theme.subTheme_C};`}
+    props.kindOf === `white` && `border : 1px solid ${props.theme.black_C};`}
   ${(props) =>
     props.kindOf === `black` && `background : ${props.theme.black_C};`}
   ${(props) => props.kindOf === `black` && `color : ${props.theme.white_C};`}
@@ -246,11 +247,12 @@ export const CommonButton = styled(Button)`
 
 &:hover {
     background: ${(props) => props.theme.white_C};
-    color: ${(props) => props.theme.basicTheme_C};
+    color: ${(props) => props.theme.black_C};
+    ${(props) => !props.kindOf && `border :1px solid ${props.theme.black_C};`}
     ${(props) =>
-      !props.kindOf && `border :1px solid ${props.theme.basicTheme_C};`}
+      props.kindOf === `white` && `background ${props.theme.black_C};`}
     ${(props) =>
-      props.kindOf === `white` && `background ${props.theme.basicTheme_C};`}
+      props.kindOf === `white` && `border : 1px solid ${props.theme.black_C};`}
     ${(props) => props.kindOf === `white` && `color ${props.theme.white_C};`}
     ${(props) =>
       props.kindOf === `black` && `background : ${props.theme.white_C};`}
@@ -307,6 +309,7 @@ export const Text = styled.p`
   border-bottom: ${(props) => props.borderBottom};
   opacity: ${(props) => props.opacity};
   letter-spacing: ${(props) => props.letterSpacing};
+  text-decoration: ${(props) => props.td};
 
   ${(props) =>
     props.isEllipsis
@@ -324,7 +327,7 @@ export const Text = styled.p`
     transition : 0.5s;
     cursor:pointer;
     &:hover{
-      color :${props.theme.basicTheme_C};
+      color :${props.theme.grey2_C};
     }
   `};
 `;
@@ -560,7 +563,7 @@ export const CustomSelect = styled(Wrapper)`
     width: 100%;
     height: ${(props) => props.height || `50px`};
     border-radius: ${(props) => props.radius || `0`};
-    border: 1px solid ${(props) => props.theme.lightGrey_C};
+    border: ${(props) => props.sBorder || `1px solid ${Theme.lightGrey_C}`};
   }
 
   .ant-select-single .ant-select-selector .ant-select-selection-item,

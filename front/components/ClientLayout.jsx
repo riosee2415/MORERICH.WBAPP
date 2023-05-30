@@ -1,10 +1,8 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Row, Col, Drawer } from "antd";
 import Link from "next/link";
 import { withResizeDetector } from "react-resize-detector";
-import { AlignRightOutlined } from "@ant-design/icons";
 import AppHeader from "./AppHeader";
 import AppFooter from "./AppFooter";
 import { WholeWrapper } from "./commonComponents";
@@ -15,7 +13,7 @@ const ClientLayout = ({ children, width }) => {
       {/* HEADER */}
       <AppHeader />
       {/* content */}
-      <WholeWrapper padding={`100px 0 0`}>{children}</WholeWrapper>
+      <WholeWrapper padding={`120px 0 0`}>{children}</WholeWrapper>
       {/* Footer */}
       <AppFooter />
     </section>

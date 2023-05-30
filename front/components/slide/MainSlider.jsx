@@ -3,7 +3,6 @@ import {
   ColWrapper,
   RowWrapper,
   Wrapper,
-  CommonButton,
   RsWrapper,
   Text,
 } from "../commonComponents";
@@ -18,6 +17,54 @@ import { useRouter } from "next/router";
 const MainSliderWrapper = styled(RowWrapper)`
   & .ant-carousel {
     width: 100%;
+  }
+
+  .ant-carousel .slick-prev,
+  .ant-carousel .slick-next {
+    z-index: 10;
+    transition: 0.3s;
+    margin-top: -20px;
+    width: 18px;
+    height: 33px;
+  }
+
+  .ant-carousel .slick-prev {
+    left: 20px;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 18px;
+      height: 33px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-image: url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg");
+    }
+
+    @media (max-width: 800px) {
+      left: 10px;
+    }
+  }
+
+  .ant-carousel .slick-next {
+    right: 20px;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 18px;
+      height: 33px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-image: url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_next.svg");
+    }
+    @media (max-width: 800px) {
+      right: 10px;
+    }
   }
 `;
 
@@ -42,47 +89,50 @@ const MainSlider = () => {
 
   return (
     <MainSliderWrapper>
-      <Carousel autoplay={true} speed={3000}>
+      <Carousel
+        autoplay={true}
+        speed={3000}
+        arrows={true}
+        dots={false}
+        autoplaySpeed={5000}
+      >
         {banners &&
           banners.map((data, idx) => {
             return (
               <ColWrapper
                 key={idx}
                 span={24}
-                height={width < 800 ? `500px` : `720px`}
-                padding={width < 800 ? `59px 0 0` : `110px 0 0`}
+                height={width < 800 ? `400px` : `500px`}
                 bgImg={`url(${data.imageURL})`}
                 position={`relative`}
                 display={`flex !important`}
+                cursor={data.linkUseYn ? `pointer` : ``}
+                onClick={() =>
+                  data.linkUseYn ? moveLinkHandler(data.link) : ""
+                }
               >
-                <RsWrapper height={`100%`}>
-                  <Wrapper al={`flex-start`}>
-                    <Wrapper
-                      al={`flex-start`}
-                      color={Theme.basicTheme_C}
-                      fontSize={width < 700 ? `22px` : `40px`}
-                      lineHeight={`1.3`}
-                    >
-                      {data.titleUseYn === 1 && <Text>{data.title}</Text>}
-                    </Wrapper>
-
-                    <ColWrapper
-                      color={Theme.basicTheme_C}
-                      lineHeight={`1.5`}
-                      margin={`20px 0`}
-                    >
-                      {data.contentUseYn === 1 && (
-                        <Text fontSize={`1.125rem`}>{data.content}</Text>
-                      )}
-                    </ColWrapper>
-
-                    {data.linkUseYn === 1 && (
-                      <CommonButton onClick={() => moveLinkHandler(data.link)}>
-                        링크이동
-                      </CommonButton>
+                <Wrapper
+                  height={`100%`}
+                  al={`flex-start`}
+                  ju={`flex-end`}
+                  padding={`0 70px`}
+                >
+                  <Wrapper
+                    al={`flex-start`}
+                    fontSize={width < 700 ? `22px` : `41px`}
+                    fontWeight={`600`}
+                  >
+                    {data.titleUseYn === 1 && (
+                      <Text isPoppins>{data.title}</Text>
                     )}
                   </Wrapper>
-                </RsWrapper>
+
+                  <ColWrapper lineHeight={`1.5`} margin={`12px 0 65px`}>
+                    {data.contentUseYn === 1 && (
+                      <Text fontSize={`20px`}>{data.content}</Text>
+                    )}
+                  </ColWrapper>
+                </Wrapper>
               </ColWrapper>
             );
           })}

@@ -152,6 +152,10 @@ export const Wrapper = styled.div`
   text-align: ${(props) => props.textAlign};
   letter-spacing: ${(props) => props.letterSpacing};
   opacity: ${(props) => props.opacity};
+
+  .line {
+    text-decoration: line-through;
+  }
 `;
 
 export const RsWrapper = styled.article`
@@ -296,7 +300,7 @@ export const Text = styled.p`
   left: ${(props) => props.left};
   right: ${(props) => props.right};
   font-style: ${(props) => props.fontStyle};
-  font-family: ${(props) => props.fontFamily};
+  font-family: ${(props) => props.isPoppins && `'Poppins', sans-serif`};
   cursor: ${(props) => props.cursor};
   z-index: 1;
   white-space: pre-wrap;
@@ -514,6 +518,30 @@ export const CustomPage = styled(Pagination)`
       height: 25px;
       line-height: 25px;
     }
+  }
+`;
+
+export const SquareBox = styled(Wrapper)`
+  width: 100%;
+  position: relative;
+  overflow: ${(props) => props.overflow || `hidden`};
+
+  &:before {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+  }
+
+  & img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: 0.5s;
+  }
+
+  &:hover img {
+    transform: scale(1.1);
   }
 `;
 

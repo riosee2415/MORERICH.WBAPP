@@ -16,7 +16,7 @@ export default {
   // red
   red_C: "#e74c3c",
   // grey
-  grey_C: "#747474",
+  grey_C: "#7A7B7E",
   lightGrey_C: "#E2E2E2",
   darkGrey_C: "#2d3436",
   //admin

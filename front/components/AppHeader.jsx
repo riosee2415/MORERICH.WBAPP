@@ -45,6 +45,7 @@ const SubMenu = styled(Wrapper)`
   top: 90px;
   left: 0;
   background: ${(props) => props.theme.white_C};
+  box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.1);
   padding: 30px 0;
   opacity: 0;
   visibility: hidden;
@@ -63,22 +64,17 @@ const SubMenu = styled(Wrapper)`
 `;
 
 const Menu = styled.h2`
-  height: 90px;
+  height: 100px;
   line-height: 90px;
-  font-size: 18px;
-  font-weight: bold;
-  color: ${Theme.white_C};
+  font-size: 17px;
+  font-weight: 600;
   width: 140px;
   text-align: center;
   position: relative;
   margin: 0;
 
-  border-bottom: ${(props) =>
-    props.isActive && `3px solid ${props.theme.white_C}`};
-
   &:hover {
     cursor: pointer;
-    border-bottom: 3px solid ${Theme.white_C};
     transition: 0.4s;
 
     & ${SubMenu} {
@@ -146,75 +142,157 @@ const AppHeader = ({}) => {
               />
             )}
           </ATag>
-          <Wrapper dr={`row`} width={`auto`}>
-            <Menu isActive={router.pathname.includes(`/company`)}>
-              회사소개
-              <SubMenu>
-                <Text
-                  fontSize={`16px`}
-                  lineHeight={`1`}
-                  fontWeight={`bold`}
-                  color={Theme.black_C}
-                  isHover
-                >
-                  <Link href={`/company/intro`}>
-                    <a>회사개요</a>
-                  </Link>
-                </Text>
+          <Wrapper dr={`row`} ju={`space-between`}>
+            <Wrapper dr={`row`} width={`auto`}>
+              <Link href={`/`}>
+                <a>
+                  <Menu isActive={router.pathname === `/`}>NEW</Menu>
+                </a>
+              </Link>
+              <Link href={`/`}>
+                <a>
+                  <Menu isActive={router.pathname === `/`}>BEST</Menu>
+                </a>
+              </Link>
+              <Link href={`/`}>
+                <a>
+                  <Menu isActive={router.pathname === `/`}>
+                    PRODUCT
+                    <SubMenu>
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>회사개요</a>
+                        </Link>
+                      </Text>
 
-                <Text
-                  fontSize={`16px`}
-                  lineHeight={`1`}
-                  fontWeight={`bold`}
-                  color={Theme.black_C}
-                  isHover
-                >
-                  <Link href={`/company/area`}>
-                    <a>사업영역</a>
-                  </Link>
-                </Text>
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>사업영역</a>
+                        </Link>
+                      </Text>
 
-                <Text
-                  fontSize={`16px`}
-                  lineHeight={`1`}
-                  fontWeight={`bold`}
-                  color={Theme.black_C}
-                  isHover
-                >
-                  <Link href={`/company/tree`}>
-                    <a>연혁</a>
-                  </Link>
-                </Text>
-                <Text
-                  fontSize={`16px`}
-                  lineHeight={`1`}
-                  fontWeight={`bold`}
-                  color={Theme.black_C}
-                  isHover
-                >
-                  <Link href={`/company/vision`}>
-                    <a>비전 및 핵심가치</a>
-                  </Link>
-                </Text>
-              </SubMenu>
-            </Menu>
-            <Link href={`/finance`}>
-              <a>
-                <Menu isActive={router.pathname === `/finance`}>재무정보</Menu>
-              </a>
-            </Link>
-            <Link href={`/develop`}>
-              <a>
-                <Menu isActive={router.pathname === `/develop`}>연구개발</Menu>
-              </a>
-            </Link>
-            <Link href={`/info`}>
-              <a>
-                <Menu isActive={router.pathname === `/info`}>사업장 정보</Menu>
-              </a>
-            </Link>
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>연혁</a>
+                        </Link>
+                      </Text>
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>비전 및 핵심가치</a>
+                        </Link>
+                      </Text>
+                    </SubMenu>
+                  </Menu>
+                </a>
+              </Link>
+              <Link href={`/info`}>
+                <a>
+                  <Menu isActive={router.pathname === `/info`}>
+                    고객센터
+                    <SubMenu>
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>회사개요</a>
+                        </Link>
+                      </Text>
+
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>사업영역</a>
+                        </Link>
+                      </Text>
+
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>연혁</a>
+                        </Link>
+                      </Text>
+                      <Text
+                        fontSize={`16px`}
+                        lineHeight={`1`}
+                        fontWeight={`bold`}
+                        color={Theme.black_C}
+                        isHover
+                      >
+                        <Link href={`/`}>
+                          <a>비전 및 핵심가치</a>
+                        </Link>
+                      </Text>
+                    </SubMenu>
+                  </Menu>
+                </a>
+              </Link>
+            </Wrapper>
+            <Wrapper dr={`row`} width={`auto`}>
+              <Link href={`/`}>
+                <a>
+                  <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
+                    <Text margin={`0 24px 0 0`} isHover>
+                      로그인
+                    </Text>
+                  </Wrapper>
+                </a>
+              </Link>
+              <Link href={`/`}>
+                <a>
+                  <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
+                    <Text margin={`0 24px 0 0`} isHover>
+                      마이페이지
+                    </Text>
+                  </Wrapper>
+                </a>
+              </Link>
+              <Link href={`/`}>
+                <a>
+                  <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
+                    <Text isHover>카트</Text>
+                  </Wrapper>
+                </a>
+              </Link>
+            </Wrapper>
           </Wrapper>
-          <Wrapper width={`155px`}></Wrapper>
         </RsWrapper>
       </WholeWrapper>
 

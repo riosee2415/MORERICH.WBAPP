@@ -25,7 +25,7 @@ export const items = {
       useYn: true,
     },
     {
-      name: "페이지접속통계",
+      name: "상품유형별 통계",
       link: "/",
       useYn: true,
     },
@@ -70,11 +70,6 @@ export const items = {
       link: "/admin/boards/notice",
       useYn: true,
     },
-    {
-      name: "겔러리관리",
-      link: "/admin/boards/gallery",
-      useYn: true,
-    },
   ],
   회원관리: [
     {
@@ -90,6 +85,11 @@ export const items = {
     {
       name: "탈퇴회원관리",
       link: "/admin/user/userExitList",
+      useYn: true,
+    },
+    {
+      name: "가입관리",
+      link: "/admin/user/joinManage",
       useYn: true,
     },
   ],
@@ -142,7 +142,28 @@ export const items = {
       useYn: true,
     },
   ],
-  서버관리: [],
+  상점관리: [
+    {
+      name: "상품유형관리",
+      link: "/admin/store/productType",
+      useYn: true,
+    },
+    {
+      name: "상품관리",
+      link: "/admin/store/product",
+      useYn: true,
+    },
+    {
+      name: "위시리스트통계",
+      link: "/",
+      useYn: true,
+    },
+    {
+      name: "판매상품통계",
+      link: "/",
+      useYn: true,
+    },
+  ],
 };
 
 const AdminLayout = ({ children }) => {
@@ -278,8 +299,8 @@ const AdminLayout = ({ children }) => {
           />
           <AdminMenuBox
             right={me && me.menuRight8}
-            title={`서버관리`}
-            menus={items["서버관리"]}
+            title={`상점관리`}
+            menus={items["상점관리"]}
           />
         </Wrapper>
       ) : (

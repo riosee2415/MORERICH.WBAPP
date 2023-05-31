@@ -44,6 +44,14 @@ import {
   SAVE_THUMBNAIL_REQUEST,
   SAVE_THUMBNAIL_SUCCESS,
   SAVE_THUMBNAIL_FAILURE,
+  //
+  UPLOAD_DETAIL_REQUEST,
+  UPLOAD_DETAIL_SUCCESS,
+  UPLOAD_DETAIL_FAILURE,
+  //
+  ADD_DETAIL_REQUEST,
+  ADD_DETAIL_SUCCESS,
+  ADD_DETAIL_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -343,6 +351,60 @@ function* saveThumbnail(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function uploadDetailImageAPI(data) {
+  return await axios.post(`/api/store/image`, data);
+}
+
+function* uploadDetailImage(action) {
+  try {
+    const result = yield call(uploadDetailImageAPI, action.data);
+
+    yield put({
+      type: UPLOAD_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: UPLOAD_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function addDetailImageAPI(data) {
+  return await axios.post(`/api/store/product/detailImage`, data);
+}
+
+function* addDetailImage(action) {
+  try {
+    const result = yield call(addDetailImageAPI, action.data);
+
+    yield put({
+      type: ADD_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADD_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
   yield takeLatest(GET_PRODUCTTYPE_REQUEST, getProductType);
@@ -377,6 +439,12 @@ function* watchUploadThumbnail() {
 function* watchSaveThumbnail() {
   yield takeLatest(SAVE_THUMBNAIL_REQUEST, saveThumbnail);
 }
+function* watchUploadDetailImage() {
+  yield takeLatest(UPLOAD_DETAIL_REQUEST, uploadDetailImage);
+}
+function* watchAddDetailImage() {
+  yield takeLatest(ADD_DETAIL_REQUEST, addDetailImage);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -392,6 +460,8 @@ export default function* storeSaga() {
     fork(watchUpdateProduct),
     fork(watchUploadThumbnail),
     fork(watchSaveThumbnail),
+    fork(watchUploadDetailImage),
+    fork(watchAddDetailImage),
 
     //
   ]);

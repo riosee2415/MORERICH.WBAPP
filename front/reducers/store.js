@@ -5,6 +5,7 @@ export const initailState = {
   productTypes: [],
   productTypes2: [],
   thumbnailPath: null,
+  detailImagePath: null,
   // 상품
   products: [],
   products2: [],
@@ -54,6 +55,16 @@ export const initailState = {
   st_saveThumbnailLoading: false,
   st_saveThumbnailDone: false,
   st_saveThumbnailError: null,
+
+  // 상품데이터 상세이미지 업로드 적용
+  st_uploadDetailImageLoading: false,
+  st_uploadDetailImageDone: false,
+  st_uploadDetailImageError: null,
+
+  // 상품데이터 상세이미지 추가
+  st_addDetailImageLoading: false,
+  st_addDetailImageDone: false,
+  st_addDetailImageError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -99,6 +110,14 @@ export const UPLOAD_THUMBNAIL_FAILURE = "UPLOAD_THUMBNAIL_FAILURE";
 export const SAVE_THUMBNAIL_REQUEST = "SAVE_THUMBNAIL_REQUEST";
 export const SAVE_THUMBNAIL_SUCCESS = "SAVE_THUMBNAIL_SUCCESS";
 export const SAVE_THUMBNAIL_FAILURE = "SAVE_THUMBNAIL_FAILURE";
+
+export const UPLOAD_DETAIL_REQUEST = "UPLOAD_DETAIL_REQUEST";
+export const UPLOAD_DETAIL_SUCCESS = "UPLOAD_DETAIL_SUCCESS";
+export const UPLOAD_DETAIL_FAILURE = "UPLOAD_DETAIL_FAILURE";
+
+export const ADD_DETAIL_REQUEST = "ADD_DETAIL_REQUEST";
+export const ADD_DETAIL_SUCCESS = "ADD_DETAIL_SUCCESS";
+export const ADD_DETAIL_FAILURE = "ADD_DETAIL_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -345,6 +364,29 @@ const reducer = (state = initailState, action) =>
         draft.st_uploadThumbnailError = action.error;
         break;
       }
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case UPLOAD_DETAIL_REQUEST: {
+        draft.st_uploadDetailImageLoading = true;
+        draft.st_uploadDetailImageDone = false;
+        draft.st_uploadDetailImageError = null;
+        break;
+      }
+
+      case UPLOAD_DETAIL_SUCCESS: {
+        draft.st_uploadDetailImageLoading = false;
+        draft.st_uploadDetailImageDone = true;
+        draft.st_uploadDetailImageError = null;
+        draft.detailImagePath = action.data.path;
+        break;
+      }
+
+      case UPLOAD_DETAIL_FAILURE: {
+        draft.st_uploadDetailImageLoading = false;
+        draft.st_uploadDetailImageDone = false;
+        draft.st_uploadDetailImageError = action.error;
+        break;
+      }
 
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
@@ -368,6 +410,29 @@ const reducer = (state = initailState, action) =>
         draft.st_saveThumbnailLoading = false;
         draft.st_saveThumbnailDone = false;
         draft.st_saveThumbnailError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case ADD_DETAIL_REQUEST: {
+        draft.st_addDetailImageLoading = true;
+        draft.st_addDetailImageDone = false;
+        draft.st_addDetailImageError = null;
+        break;
+      }
+
+      case ADD_DETAIL_SUCCESS: {
+        draft.st_addDetailImageLoading = false;
+        draft.st_addDetailImageDone = true;
+        draft.st_addDetailImageError = null;
+        break;
+      }
+
+      case ADD_DETAIL_FAILURE: {
+        draft.st_addDetailImageLoading = false;
+        draft.st_addDetailImageDone = false;
+        draft.st_addDetailImageError = action.error;
         break;
       }
 

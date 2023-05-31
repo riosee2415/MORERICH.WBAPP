@@ -49,6 +49,8 @@ import {
   UPLOAD_THUMBNAIL_REQUEST,
   INIT_TH,
   SAVE_THUMBNAIL_REQUEST,
+  UPLOAD_DETAIL_REQUEST,
+  ADD_DETAIL_REQUEST,
 } from "../../../reducers/store";
 import { numberWithCommas } from "../../../components/commonUtils";
 import BarChart from "../../../components/admin/BarChart";
@@ -84,8 +86,10 @@ const Product = ({}) => {
     products,
     products2,
     thumbnailPath,
+    detailImagePath,
     //
     st_getProduct2Loading,
+    st_getProductDone,
     //
     st_toggleProductDone,
     st_toggleProductError,
@@ -94,9 +98,13 @@ const Product = ({}) => {
     st_updateProductError,
     //
     st_uploadThumbnailLoading,
+    st_uploadDetailImageLoading,
     //
     st_saveThumbnailDone,
     st_saveThumbnailError,
+    //
+    st_addDetailImageDone,
+    st_addDetailImageError,
   } = useSelector((state) => state.store);
 
   const router = useRouter();
@@ -123,6 +131,7 @@ const Product = ({}) => {
   const [infoForm] = Form.useForm();
 
   const thumbnailRef = useRef();
+  const detailImageRef = useRef();
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -148,6 +157,18 @@ const Product = ({}) => {
   ////// HOOKS //////
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (detailImagePath) {
+      dispatch({
+        type: ADD_DETAIL_REQUEST,
+        data: {
+          ProductId: crData.id,
+          filepath: detailImagePath,
+        },
+      });
+    }
+  }, [detailImagePath]);
 
   useEffect(() => {
     if (st_toggleProductDone) {
@@ -191,6 +212,33 @@ const Product = ({}) => {
       return message.error("데이터를 수정할 수 없습니다.");
     }
   }, [st_saveThumbnailDone, st_saveThumbnailError]);
+
+  useEffect(() => {
+    if (st_addDetailImageDone && st_getProductDone) {
+      const targetData = products.find((item) => item.id === crData.id);
+
+      setCrData(targetData);
+    }
+  }, [st_getProductDone]);
+
+  useEffect(() => {
+    if (st_addDetailImageDone) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+    }
+
+    if (st_addDetailImageError) {
+      return message.error(st_addDetailImageError);
+    }
+  }, [st_addDetailImageDone, st_addDetailImageError]);
 
   useEffect(() => {
     if (st_updateProductDone) {
@@ -409,6 +457,10 @@ const Product = ({}) => {
     thumbnailRef.current.click();
   }, [thumbnailRef.current]);
 
+  const clickImageUpload2 = useCallback(() => {
+    detailImageRef.current.click();
+  }, [detailImageRef.current]);
+
   const onChangeImages = useCallback((e) => {
     const formData = new FormData();
 
@@ -418,6 +470,19 @@ const Product = ({}) => {
 
     dispatch({
       type: UPLOAD_THUMBNAIL_REQUEST,
+      data: formData,
+    });
+  });
+
+  const onChangeImages2 = useCallback((e) => {
+    const formData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formData.append("image", file);
+    });
+
+    dispatch({
+      type: UPLOAD_DETAIL_REQUEST,
       data: formData,
     });
   });
@@ -898,7 +963,23 @@ const Product = ({}) => {
           >
             <Wrapper dr="row" ju="space-between">
               <Text fontSize="16px">상품 상세이미지</Text>
-              <ManageButton type="primary">상세이미지 추가</ManageButton>
+
+              <input
+                type="file"
+                name="image"
+                accept=".png, .jpg"
+                // multiple
+                hidden
+                ref={detailImageRef}
+                onChange={onChangeImages2}
+              />
+              <ManageButton
+                onClick={clickImageUpload2}
+                loading={st_uploadDetailImageLoading}
+                type="primary"
+              >
+                상세이미지 추가
+              </ManageButton>
             </Wrapper>
 
             <Wrapper dr="row" ju="flex-start">

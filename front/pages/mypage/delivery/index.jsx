@@ -15,6 +15,7 @@ import {
   CustomPage,
   CommonButton,
   TextInput,
+  SpanText,
 } from "../../../components/commonComponents";
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";
@@ -85,48 +86,112 @@ const Index = () => {
                   </CommonButton>
                 </Wrapper>
               </Wrapper>
-              <Wrapper
-                borderTop={`1px solid ${Theme.black_C}`}
-                dr={`row`}
-                fontSize={`16px`}
-                height={`50px`}
-                borderBottom={`1px solid ${Theme.grey3_C}`}
-              >
-                <Wrapper width={`5%`}>
-                  <Checkbox />
+
+              {width < 800 ? (
+                <Wrapper borderTop={`1px solid ${Theme.black_C}`}>
+                  <Wrapper
+                    borderBottom={`1px solid ${Theme.grey3_C}`}
+                    padding={`25px 0 20px`}
+                    al={`flex-start`}
+                  >
+                    <Wrapper dr={`row`} ju={`space-between`}>
+                      <Checkbox />
+                      <Wrapper width={`auto`} dr={`row`}>
+                        <CommonButton
+                          kindOf={`grey3`}
+                          width={`45px`}
+                          height={`30px`}
+                          padding={`0`}
+                          margin={`0 6px 0 0`}
+                        >
+                          삭제
+                        </CommonButton>
+                        <CommonButton
+                          kindOf={`grey`}
+                          width={`45px`}
+                          height={`30px`}
+                          padding={`0`}
+                        >
+                          수정
+                        </CommonButton>
+                      </Wrapper>
+                    </Wrapper>
+                    <Text
+                      margin={`12px 0 8px`}
+                      fontSize={`16px`}
+                      fontWeight={`600`}
+                    >
+                      판암동마루
+                    </Text>
+                    <Text margin={`0 0 8px`}>
+                      박마루
+                      <SpanText margin={`0 0 0 8px`} color={Theme.grey2_C}>
+                        010-0000-0000
+                      </SpanText>
+                    </Text>
+                    <Text>대전광역시 동구 뭐시깽이 OO로00-00 0000아파트</Text>
+                    <Text margin={`0 0 8px`}>000동 0000호</Text>
+                    <Radio>기본주소로 설정</Radio>
+                  </Wrapper>
                 </Wrapper>
-                <Wrapper width={`15%`}>명칭</Wrapper>
-                <Wrapper width={`20%`}>성명/연락처</Wrapper>
-                <Wrapper width={`45%`}>주소</Wrapper>
-                <Wrapper width={`15%`}>기본주소로 설정</Wrapper>
-              </Wrapper>
-              <Wrapper
-                dr={`row`}
-                padding={`20px 0`}
-                borderBottom={`1px solid ${Theme.grey3_C}`}
-              >
-                <Wrapper width={`5%`}>
-                  <Checkbox />
-                </Wrapper>
-                <Wrapper fontSize={`16px`} width={`15%`} fontWeight={`600`}>
-                  판암동마루
-                </Wrapper>
-                <Wrapper width={`20%`} color={Theme.darkGrey_C}>
-                  <Text>박마루</Text>
-                  <Text>010-0000-0000</Text>
-                </Wrapper>
-                <Wrapper
-                  width={`45%`}
-                  al={`flex-start`}
-                  color={Theme.darkGrey_C}
-                >
-                  <Text>대전광역시 동구 뭐시깽이 OO로00-00 0000아파트</Text>
-                  <Text>000동 0000호</Text>
-                </Wrapper>
-                <Wrapper width={`15%`}>
-                  <Radio />
-                </Wrapper>
-              </Wrapper>
+              ) : (
+                <>
+                  <Wrapper
+                    borderTop={`1px solid ${Theme.black_C}`}
+                    dr={`row`}
+                    fontSize={`16px`}
+                    height={`50px`}
+                    borderBottom={`1px solid ${Theme.grey3_C}`}
+                  >
+                    <Wrapper width={`5%`}>
+                      <Checkbox />
+                    </Wrapper>
+                    <Wrapper width={`15%`}>명칭</Wrapper>
+                    <Wrapper width={`20%`}>성명/연락처</Wrapper>
+                    <Wrapper width={`35%`}>주소</Wrapper>
+                    <Wrapper width={`15%`}>기본주소로 설정</Wrapper>
+                    <Wrapper width={`10%`}>수정</Wrapper>
+                  </Wrapper>
+                  <Wrapper
+                    dr={`row`}
+                    padding={`20px 0`}
+                    borderBottom={`1px solid ${Theme.grey3_C}`}
+                  >
+                    <Wrapper width={`5%`}>
+                      <Checkbox />
+                    </Wrapper>
+                    <Wrapper fontSize={`16px`} width={`15%`} fontWeight={`600`}>
+                      판암동마루
+                    </Wrapper>
+                    <Wrapper width={`20%`} color={Theme.darkGrey_C}>
+                      <Text>박마루</Text>
+                      <Text>010-0000-0000</Text>
+                    </Wrapper>
+                    <Wrapper
+                      width={`35%`}
+                      al={`flex-start`}
+                      color={Theme.darkGrey_C}
+                    >
+                      <Text>대전광역시 동구 뭐시깽이 OO로00-00 0000아파트</Text>
+                      <Text>000동 0000호</Text>
+                    </Wrapper>
+                    <Wrapper width={`15%`}>
+                      <Radio />
+                    </Wrapper>
+                    <Wrapper width={`10%`}>
+                      <CommonButton
+                        kindOf={`grey`}
+                        width={`45px`}
+                        height={`30px`}
+                        padding={`0`}
+                      >
+                        수정
+                      </CommonButton>
+                    </Wrapper>
+                  </Wrapper>
+                </>
+              )}
+
               <CustomPage margin={`60px 0 0`} />
             </Wrapper>
           </RsWrapper>

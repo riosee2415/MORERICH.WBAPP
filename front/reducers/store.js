@@ -4,26 +4,56 @@ export const initailState = {
   // 유형
   productTypes: [],
   productTypes2: [],
-  //
+  thumbnailPath: null,
+  // 상품
+  products: [],
+  products2: [],
+  // 상품유형 가져오기
   st_getProductTypeLoading: false,
   st_getProductTypeDone: false,
   st_getProductTypeError: null,
-  //
+  // 상품유형 통계 가져오기
   st_getProductType2Loading: false,
   st_getProductType2Done: false,
   st_getProductType2Error: null,
-  //
+  // 상품유형 추가하기
   st_newProductTypeLoading: false,
   st_newProductTypeDone: false,
   st_newProductTypeError: null,
-  //
+  // 상품유형 수정하기
   st_modifyProductTypeLoading: false,
   st_modifyProductTypeDone: false,
   st_modifyProductTypeError: null,
-  //
+  // 상품유형 삭제하기
   st_delProductTypeLoading: false,
   st_delProductTypeDone: false,
   st_delProductTypeError: null,
+  // 상품데이터 가져오기
+  st_getProductLoading: false,
+  st_getProductDone: false,
+  st_getProductError: null,
+  // 상품데이터 통계 가져오기
+  st_getProduct2Loading: false,
+  st_getProduct2Done: false,
+  st_getProduct2Error: null,
+  // 상품데이터 토글 수정
+  st_toggleProductLoading: false,
+  st_toggleProductDone: false,
+  st_toggleProductError: null,
+  // 상품데이터 수정
+  st_updateProductLoading: false,
+  st_updateProductDone: false,
+  st_updateProductError: null,
+
+  // 상품데이터 썸네일 업로드
+  st_uploadThumbnailLoading: false,
+  st_uploadThumbnailDone: false,
+  st_uploadThumbnailError: null,
+
+  // 상품데이터 썸네일 업로드 적용
+  st_saveThumbnailLoading: false,
+  st_saveThumbnailDone: false,
+  st_saveThumbnailError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -45,6 +75,32 @@ export const MODIFY_PRODUCTTYPE_FAILURE = "MODIFY_PRODUCTTYPE_FAILURE";
 export const DEL_PRODUCTTYPE_REQUEST = "DEL_PRODUCTTYPE_REQUEST";
 export const DEL_PRODUCTTYPE_SUCCESS = "DEL_PRODUCTTYPE_SUCCESS";
 export const DEL_PRODUCTTYPE_FAILURE = "DEL_PRODUCTTYPE_FAILURE";
+
+export const GET_PRODUCT_REQUEST = "GET_PRODUCT_REQUEST";
+export const GET_PRODUCT_SUCCESS = "GET_PRODUCT_SUCCESS";
+export const GET_PRODUCT_FAILURE = "GET_PRODUCT_FAILURE";
+
+export const GET_PRODUCT2_REQUEST = "GET_PRODUCT2_REQUEST";
+export const GET_PRODUCT2_SUCCESS = "GET_PRODUCT2_SUCCESS";
+export const GET_PRODUCT2_FAILURE = "GET_PRODUCT2_FAILURE";
+
+export const TOGGLE_PRODUCT_REQUEST = "TOGGLE_PRODUCT_REQUEST";
+export const TOGGLE_PRODUCT_SUCCESS = "TOGGLE_PRODUCT_SUCCESS";
+export const TOGGLE_PRODUCT_FAILURE = "TOGGLE_PRODUCT_FAILURE";
+
+export const UPDATE_PRODUCT_REQUEST = "UPDATE_PRODUCT_REQUEST";
+export const UPDATE_PRODUCT_SUCCESS = "UPDATE_PRODUCT_SUCCESS";
+export const UPDATE_PRODUCT_FAILURE = "UPDATE_PRODUCT_FAILURE";
+
+export const UPLOAD_THUMBNAIL_REQUEST = "UPLOAD_THUMBNAIL_REQUEST";
+export const UPLOAD_THUMBNAIL_SUCCESS = "UPLOAD_THUMBNAIL_SUCCESS";
+export const UPLOAD_THUMBNAIL_FAILURE = "UPLOAD_THUMBNAIL_FAILURE";
+
+export const SAVE_THUMBNAIL_REQUEST = "SAVE_THUMBNAIL_REQUEST";
+export const SAVE_THUMBNAIL_SUCCESS = "SAVE_THUMBNAIL_SUCCESS";
+export const SAVE_THUMBNAIL_FAILURE = "SAVE_THUMBNAIL_FAILURE";
+
+export const INIT_TH = "INIT_TH";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -167,6 +223,162 @@ const reducer = (state = initailState, action) =>
         draft.st_delProductTypeLoading = false;
         draft.st_delProductTypeDone = false;
         draft.st_delProductTypeError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case GET_PRODUCT_REQUEST: {
+        draft.st_getProductLoading = true;
+        draft.st_getProductDone = false;
+        draft.st_getProductError = null;
+        break;
+      }
+
+      case GET_PRODUCT_SUCCESS: {
+        draft.st_getProductLoading = false;
+        draft.st_getProductDone = true;
+        draft.st_getProductError = null;
+        draft.products = action.data;
+        break;
+      }
+
+      case GET_PRODUCT_FAILURE: {
+        draft.st_getProductLoading = false;
+        draft.st_getProductDone = false;
+        draft.st_getProductError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case GET_PRODUCT2_REQUEST: {
+        draft.st_getProduct2Loading = true;
+        draft.st_getProduct2Done = false;
+        draft.st_getProduct2Error = null;
+        break;
+      }
+
+      case GET_PRODUCT2_SUCCESS: {
+        draft.st_getProduct2Loading = false;
+        draft.st_getProduct2Done = true;
+        draft.st_getProduct2Error = null;
+        draft.products2 = action.data;
+        break;
+      }
+
+      case GET_PRODUCT2_FAILURE: {
+        draft.st_getProduct2Loading = false;
+        draft.st_getProduct2Done = false;
+        draft.st_getProduct2Error = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case TOGGLE_PRODUCT_REQUEST: {
+        draft.st_toggleProductLoading = true;
+        draft.st_toggleProductDone = false;
+        draft.st_toggleProductError = null;
+        break;
+      }
+
+      case TOGGLE_PRODUCT_SUCCESS: {
+        draft.st_toggleProductLoading = false;
+        draft.st_toggleProductDone = true;
+        draft.st_toggleProductError = null;
+        break;
+      }
+
+      case TOGGLE_PRODUCT_FAILURE: {
+        draft.st_toggleProductLoading = false;
+        draft.st_toggleProductDone = false;
+        draft.st_toggleProductError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case UPDATE_PRODUCT_REQUEST: {
+        draft.st_updateProductLoading = true;
+        draft.st_updateProductDone = false;
+        draft.st_updateProductError = null;
+        break;
+      }
+
+      case UPDATE_PRODUCT_SUCCESS: {
+        draft.st_updateProductLoading = false;
+        draft.st_updateProductDone = true;
+        draft.st_updateProductError = null;
+        break;
+      }
+
+      case UPDATE_PRODUCT_FAILURE: {
+        draft.st_updateProductLoading = false;
+        draft.st_updateProductDone = false;
+        draft.st_updateProductError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case UPLOAD_THUMBNAIL_REQUEST: {
+        draft.st_uploadThumbnailLoading = true;
+        draft.st_uploadThumbnailDone = false;
+        draft.st_uploadThumbnailError = null;
+        break;
+      }
+
+      case UPLOAD_THUMBNAIL_SUCCESS: {
+        draft.st_uploadThumbnailLoading = false;
+        draft.st_uploadThumbnailDone = true;
+        draft.st_uploadThumbnailError = null;
+        draft.thumbnailPath = action.data.path;
+        break;
+      }
+
+      case UPLOAD_THUMBNAIL_FAILURE: {
+        draft.st_uploadThumbnailLoading = false;
+        draft.st_uploadThumbnailDone = false;
+        draft.st_uploadThumbnailError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case SAVE_THUMBNAIL_REQUEST: {
+        draft.st_saveThumbnailLoading = true;
+        draft.st_saveThumbnailDone = false;
+        draft.st_saveThumbnailError = null;
+        break;
+      }
+
+      case SAVE_THUMBNAIL_SUCCESS: {
+        draft.st_saveThumbnailLoading = false;
+        draft.st_saveThumbnailDone = true;
+        draft.st_saveThumbnailError = null;
+        break;
+      }
+
+      case SAVE_THUMBNAIL_FAILURE: {
+        draft.st_saveThumbnailLoading = false;
+        draft.st_saveThumbnailDone = false;
+        draft.st_saveThumbnailError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      case INIT_TH: {
+        draft.st_uploadThumbnailLoading = false;
+        draft.st_uploadThumbnailDone = false;
+        draft.st_uploadThumbnailError = null;
+        draft.thumbnailPath = null;
         break;
       }
 

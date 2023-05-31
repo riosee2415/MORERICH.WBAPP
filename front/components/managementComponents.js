@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Table } from "antd";
+import { Button, Checkbox, Form, Input, Select, Table } from "antd";
 import styled from "styled-components";
 
 export const ManagementTable = styled(Table)`
@@ -14,6 +14,7 @@ export const ManagementTable = styled(Table)`
 `;
 
 export const ManageButton = styled(Button)`
+  width: ${(props) => props.width || ""};
   padding: 0px 10px;
   height: 24px;
 
@@ -53,10 +54,31 @@ export const ManageInput = styled(Input)`
   width: ${(props) => props.width};
   height: 24px;
   margin-right: 4px;
+
+  &:read-only {
+    background-color: ${(props) => props.theme.grey3_C};
+  }
 `;
 
 export const ManagementForm = styled(Form)`
   width: 100%;
+
+  & .ant-form-item {
+    margin-bottom: 4px;
+  }
+
+  & .ant-form-item-label {
+    background-color: ${(props) => props.theme.lightGrey_C} !important;
+    height: 24px;
+  }
+
+  & .ant-form-item-label > label {
+    height: 24px;
+  }
+
+  & .ant-form-item-control-input {
+    min-height: 24px;
+  }
 `;
 
 export const SubTitleTag = styled.article`

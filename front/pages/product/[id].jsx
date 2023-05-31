@@ -8,97 +8,33 @@ import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
 import {
   CustomSelect,
-  ProductWrapper,
   RsWrapper,
-  SquareBox,
   Text,
   WholeWrapper,
   Wrapper,
   Image,
-  CustomPage,
   CommonButton,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Select } from "antd";
+import { Modal, Select } from "antd";
 import styled from "styled-components";
-
-const CateBtn = styled(Wrapper)`
-  padding: 0 14px;
-  width: auto;
-  height: 30px;
-  border-radius: 30px;
-  font-size: 16px;
-  border: ${(props) =>
-    props.isActive ? `1px solid ${Theme.black_C}` : `none`};
-  color: ${(props) => (props.isActive ? Theme.black_C : Theme.grey2_C)};
-  margin: 0 6px 5px;
-
-  &:hover {
-    cursor: pointer;
-    color: ${Theme.grey_C};
-  }
-`;
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { useCallback } from "react";
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const [cartModal, setCartModal] = useState(false);
   ////// HOOKS //////
   const width = useWidth();
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
+  const cartModalToggle = useCallback(() => {
+    setCartModal((prev) => !prev);
+  }, [cartModal]);
   ////// HANDLER //////
   ////// DATAVIEW //////
-
-  const bannerData = [
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod2.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod3.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod4.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-  ];
 
   return (
     <>
@@ -231,6 +167,57 @@ const Index = () => {
                   <Select.Option>옵션</Select.Option>
                 </Select>
               </CustomSelect>
+              <Wrapper
+                bgColor={Theme.lightGrey2_C}
+                padding={width < 800 ? `20px 15px` : `30px 20px`}
+                al={`flex-start`}
+                margin={`0 0 32px`}
+              >
+                <Text fontSize={width < 800 ? `14px` : `16px`}>
+                  [CASESTUDY GOLF CLUB X BALANSA] BALANSA - BLACK
+                </Text>
+                <Wrapper dr={`row`} ju={`space-between`} margin={`12px 0 0`}>
+                  <Wrapper
+                    width={`auto`}
+                    dr={`row`}
+                    border={`1px solid ${Theme.grey3_C}`}
+                    bgColor={Theme.white_C}
+                    color={Theme.grey_C}
+                  >
+                    <Wrapper
+                      width={`30px`}
+                      cursor={`pointer`}
+                      height={`30px`}
+                      fontSize={`12px`}
+                    >
+                      <MinusOutlined />
+                    </Wrapper>
+                    <Wrapper
+                      width={`50px`}
+                      height={`30px`}
+                      fontWeight={`600`}
+                      borderLeft={`1px solid ${Theme.grey3_C}`}
+                      borderRight={`1px solid ${Theme.grey3_C}`}
+                    >
+                      1
+                    </Wrapper>
+                    <Wrapper
+                      width={`30px`}
+                      cursor={`pointer`}
+                      height={`30px`}
+                      fontSize={`12px`}
+                    >
+                      <PlusOutlined />
+                    </Wrapper>
+                  </Wrapper>
+                  <Text
+                    fontSize={width < 800 ? `14px` : `18px`}
+                    fontWeight={`600`}
+                  >
+                    000,000원
+                  </Text>
+                </Wrapper>
+              </Wrapper>
               <Wrapper dr={`row`} ju={`space-between`}>
                 <Text fontSize={width < 800 ? `14px` : `20px`}>Total</Text>
                 <Text
@@ -256,6 +243,7 @@ const Index = () => {
                   fontSize={width < 800 ? `14px` : `20px`}
                   fontWeight={`600`}
                   kindOf={`white`}
+                  onClick={cartModalToggle}
                 >
                   장바구니
                 </CommonButton>
@@ -280,6 +268,38 @@ const Index = () => {
               </Wrapper>
             </Wrapper>
           </RsWrapper>
+
+          <Modal onCancel={cartModalToggle} visible={cartModal} footer={null}>
+            <Wrapper padding={width < 800 ? `30px 0` : `50px 0`}>
+              <Text fontSize={`28px`} fontWeight={`600`}>
+                CART
+              </Text>
+              <Text fontSize={`16px`} margin={`30px 0`}>
+                카트에 상품이 담겼습니다.
+              </Text>
+              <Wrapper dr={`row`}>
+                <CommonButton
+                  width={width < 800 ? `130px` : `170px`}
+                  fontSize={`16px`}
+                  fontWeight={`600`}
+                  height={`50px`}
+                  kindOf={`white`}
+                  margin={`0 4px 0 0`}
+                >
+                  카트 바로가기
+                </CommonButton>
+                <CommonButton
+                  width={width < 800 ? `130px` : `170px`}
+                  fontSize={`16px`}
+                  fontWeight={`600`}
+                  height={`50px`}
+                  margin={`0 0 0 4px`}
+                >
+                  계속 쇼핑하기
+                </CommonButton>
+              </Wrapper>
+            </Wrapper>
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

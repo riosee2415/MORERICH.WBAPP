@@ -226,6 +226,26 @@ export const CommonButton = styled(Button)`
   ${(props) => props.kindOf === `black` && `color : ${props.theme.white_C};`}
   
   ${(props) =>
+    props.kindOf === `grey` && `background : ${props.theme.lightGrey2_C};`}
+  ${(props) => props.kindOf === `grey` && `color : ${props.theme.black_C};`}
+  ${(props) =>
+    props.kindOf === `grey` &&
+    `border : 1px solid ${props.theme.lightGrey2_C};`}
+  
+  ${(props) =>
+    props.kindOf === `grey2` && `background : ${props.theme.lightGrey2_C};`}
+  ${(props) => props.kindOf === `grey2` && `color : ${props.theme.black_C};`}
+  ${(props) =>
+    props.kindOf === `grey2` && `border : 1px solid ${props.theme.black_C};`}
+  
+  ${(props) =>
+    props.kindOf === `grey3` && `background : ${props.theme.white_C};`}
+  ${(props) => props.kindOf === `grey3` && `color : ${props.theme.black_C};`}
+  ${(props) =>
+    props.kindOf === `grey3` &&
+    `border : 1px solid ${props.theme.lightGrey_C};`}
+  
+  ${(props) =>
     props.kindOf === `subTheme` && `background : ${props.theme.subTheme_C};`}
   ${(props) => props.kindOf === `subTheme` && `color : ${props.theme.white_C};`}
   ${(props) =>
@@ -264,6 +284,23 @@ export const CommonButton = styled(Button)`
       props.kindOf === `subTheme` && `color ${props.theme.subTheme_C};`}
     ${(props) =>
       props.kindOf === `subTheme` && `background ${props.theme.white_C};`}
+    ${(props) =>
+      props.kindOf === `grey` && `background : ${props.theme.lightGrey2_C};`}
+    ${(props) => props.kindOf === `grey` && `color : ${props.theme.black_C};`}
+    ${(props) =>
+      props.kindOf === `grey` && `border : 1px solid ${props.theme.black_C};`}
+    ${(props) =>
+      props.kindOf === `grey2` && `background : ${props.theme.lightGrey_C};`}
+    ${(props) => props.kindOf === `grey2` && `color : ${props.theme.black_C};`}
+    ${(props) =>
+      props.kindOf === `grey2` && `border : 1px solid ${props.theme.black_C};`}
+  
+    ${(props) =>
+      props.kindOf === `grey3` && `background : ${props.theme.lightGrey3_C};`}
+    ${(props) => props.kindOf === `grey3` && `color : ${props.theme.black_C};`}
+    ${(props) =>
+      props.kindOf === `grey3` &&
+      `border : 1px solid ${props.theme.grey_C};`}      
     ${(props) =>
       props.kindOf === `kakao` && `background : ${props.theme.kakao_C};`}
     ${(props) =>
@@ -593,7 +630,7 @@ export const ProductWrapper = styled(Wrapper)`
     width: calc(100% / 2);
     margin: 0 0 50px;
 
-    &:nth-child(3n) {
+    &:nth-child(4n) {
       margin: 0 0 50px;
     }
 

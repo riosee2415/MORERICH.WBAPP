@@ -213,6 +213,7 @@ export const CommonButton = styled(Button)`
   font-weight: ${(props) => props.fontWeight};
   color: ${(props) => props.color || props.theme.white_C};
   border-radius: ${(props) => props.radius};
+  border: 1px solid ${(props) => props.theme.black_C};
 
   ${(props) => !props.kindOf && `background : ${props.theme.black_C};`}
   ${(props) =>
@@ -246,7 +247,7 @@ export const CommonButton = styled(Button)`
 
 
 &:hover {
-    background: ${(props) => props.theme.white_C};
+    background: ${(props) => props.theme.lightGrey2_C};
     color: ${(props) => props.theme.black_C};
     ${(props) => !props.kindOf && `border :1px solid ${props.theme.black_C};`}
     ${(props) =>
@@ -421,7 +422,8 @@ export const TextInput = styled.input`
   }
 
   &:read-only {
-    background-color: ${(props) => props.theme.lightGrey_C};
+    background-color: ${(props) => props.theme.lightGrey2_C};
+    border: 1px solid ${(props) => props.theme.grey2_C};
     cursor: auto;
   }
 
@@ -432,7 +434,7 @@ export const TextInput = styled.input`
   &::placeholder {
     font-size: 14px;
     line-height: 1.6;
-    color: ${(props) => props.theme.lightGrey_C};
+    color: ${(props) => props.theme.grey2_C};
   }
 `;
 
@@ -456,7 +458,7 @@ export const TextArea = styled.textarea`
   &::placeholder {
     font-size: 14px;
     line-height: 1.6;
-    color: ${(props) => props.theme.lightGrey_C};
+    color: ${(props) => props.theme.grey2_C};
   }
 `;
 
@@ -563,7 +565,8 @@ export const CustomSelect = styled(Wrapper)`
     width: 100%;
     height: ${(props) => props.height || `50px`};
     border-radius: ${(props) => props.radius || `0`};
-    border: ${(props) => props.sBorder || `1px solid ${Theme.lightGrey_C}`};
+    border: ${(props) =>
+      props.sBorder || `1px solid ${props.theme.lightGrey_C}`};
   }
 
   .ant-select-single .ant-select-selector .ant-select-selection-item,

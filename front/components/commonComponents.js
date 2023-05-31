@@ -563,7 +563,8 @@ export const CustomSelect = styled(Wrapper)`
     width: 100%;
     height: ${(props) => props.height || `50px`};
     border-radius: ${(props) => props.radius || `0`};
-    border: ${(props) => props.sBorder || `1px solid ${Theme.lightGrey_C}`};
+    border: ${(props) =>
+      props.sBorder || `1px solid ${props.theme.lightGrey_C}`};
   }
 
   .ant-select-single .ant-select-selector .ant-select-selection-item,

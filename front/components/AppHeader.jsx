@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { LOGO_GET_REQUEST } from "../reducers/logo";
 import { useRouter } from "next/router";
+import useWidth from "../hooks/useWidth";
 
 const MobileRow = styled(RowWrapper)`
   display: none;
@@ -34,7 +35,7 @@ const MobileRow = styled(RowWrapper)`
     backdrop-filter: blur(3px);
   }
 
-  @media (max-width: 700px) {
+  @media (max-width: 600px) {
     display: flex;
   }
 `;
@@ -42,7 +43,7 @@ const MobileRow = styled(RowWrapper)`
 const SubMenu = styled(Wrapper)`
   width: 140px;
   position: absolute;
-  top: 90px;
+  top: 100px;
   left: 0;
   background: ${(props) => props.theme.white_C};
   box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.1);
@@ -52,10 +53,6 @@ const SubMenu = styled(Wrapper)`
 
   & ${Text} {
     margin-bottom: 16px;
-
-    &:hover {
-      text-decoration: underline;
-    }
   }
 
   & ${Text}:last-child {
@@ -75,7 +72,9 @@ const Menu = styled.h2`
 
   &:hover {
     cursor: pointer;
-    transition: 0.4s;
+    transition: 0.3s;
+
+    text-decoration: underline;
 
     & ${SubMenu} {
       opacity: 1;
@@ -88,6 +87,7 @@ const AppHeader = ({}) => {
   ////////////// - USE STATE- ///////////////
   const router = useRouter();
   const dispatch = useDispatch();
+  const width = useWidth();
 
   const [headerScroll, setHeaderScroll] = useState(false);
   const [pageY, setPageY] = useState(0);
@@ -131,18 +131,19 @@ const AppHeader = ({}) => {
         left={`0`}
         zIndex={`99`}
         bgColor={headerScroll === true && Theme.black_C}
+        color={headerScroll === true && Theme.white_C}
       >
         <RsWrapper dr={`row`} ju={`space-between`}>
-          <ATag href="/" width={`155px`}>
-            {logos && logos.find((data) => data.typeOf === "H") && (
-              <Image
-                width={`155px`}
-                src={logos.find((data) => data.typeOf === "H").imageURL}
-                alt="logo"
-              />
-            )}
-          </ATag>
-          <Wrapper dr={`row`} ju={`space-between`}>
+          <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+            <Wrapper width={`auto`}>
+              <ATag href="/" width={`155px`}>
+                <Image
+                  width={`70px`}
+                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/logo/logo.svg`}
+                  alt="logo"
+                />
+              </ATag>
+            </Wrapper>
             <Wrapper dr={`row`} width={`auto`}>
               <Link href={`/`}>
                 <a>
@@ -156,62 +157,12 @@ const AppHeader = ({}) => {
               </Link>
               <Link href={`/`}>
                 <a>
-                  <Menu isActive={router.pathname === `/`}>
-                    PRODUCT
-                    <SubMenu>
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/`}>
-                          <a>회사개요</a>
-                        </Link>
-                      </Text>
-
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/`}>
-                          <a>사업영역</a>
-                        </Link>
-                      </Text>
-
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/`}>
-                          <a>연혁</a>
-                        </Link>
-                      </Text>
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/`}>
-                          <a>비전 및 핵심가치</a>
-                        </Link>
-                      </Text>
-                    </SubMenu>
-                  </Menu>
+                  <Menu isActive={router.pathname === `/`}>PRODUCT</Menu>
                 </a>
               </Link>
-              <Link href={`/info`}>
+              <Link href={`/`}>
                 <a>
-                  <Menu isActive={router.pathname === `/info`}>
+                  <Menu isActive={router.pathname === `/`}>
                     고객센터
                     <SubMenu>
                       <Text
@@ -222,7 +173,7 @@ const AppHeader = ({}) => {
                         isHover
                       >
                         <Link href={`/`}>
-                          <a>회사개요</a>
+                          <a>공지사항</a>
                         </Link>
                       </Text>
 
@@ -234,30 +185,7 @@ const AppHeader = ({}) => {
                         isHover
                       >
                         <Link href={`/`}>
-                          <a>사업영역</a>
-                        </Link>
-                      </Text>
-
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/`}>
-                          <a>연혁</a>
-                        </Link>
-                      </Text>
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/`}>
-                          <a>비전 및 핵심가치</a>
+                          <a>FAQ</a>
                         </Link>
                       </Text>
                     </SubMenu>
@@ -265,32 +193,46 @@ const AppHeader = ({}) => {
                 </a>
               </Link>
             </Wrapper>
-            <Wrapper dr={`row`} width={`auto`}>
-              <Link href={`/`}>
-                <a>
-                  <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
-                    <Text margin={`0 24px 0 0`} isHover>
-                      로그인
-                    </Text>
-                  </Wrapper>
-                </a>
-              </Link>
-              <Link href={`/`}>
-                <a>
-                  <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
-                    <Text margin={`0 24px 0 0`} isHover>
-                      마이페이지
-                    </Text>
-                  </Wrapper>
-                </a>
-              </Link>
-              <Link href={`/`}>
-                <a>
-                  <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
-                    <Text isHover>카트</Text>
-                  </Wrapper>
-                </a>
-              </Link>
+          </Wrapper>
+          <Wrapper dr={`row`} width={`auto`}>
+            <Link href={`/`}>
+              <a>
+                <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
+                  <Text margin={`0 24px 0 0`} isHover>
+                    로그인
+                  </Text>
+                </Wrapper>
+              </a>
+            </Link>
+            <Link href={`/`}>
+              <a>
+                <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
+                  <Text margin={`0 24px 0 0`} isHover>
+                    마이페이지
+                  </Text>
+                </Wrapper>
+              </a>
+            </Link>
+            <Link href={`/`}>
+              <a>
+                <Wrapper
+                  isActive={router.pathname === `/`}
+                  margin={`0 5px 0 0`}
+                >
+                  <Text fontSize={`15px`} isHover>
+                    카트
+                  </Text>
+                </Wrapper>
+              </a>
+            </Link>
+            <Wrapper
+              width={`16px`}
+              height={`16px`}
+              radius={`100%`}
+              bgColor={Theme.black_C}
+              color={Theme.white_C}
+            >
+              1
             </Wrapper>
           </Wrapper>
         </RsWrapper>
@@ -299,22 +241,15 @@ const AppHeader = ({}) => {
       {/* mobile */}
       <MobileRow justify={`center`} className={headerScroll && "background"}>
         <ColWrapper span={11} al={`flex-start`}>
-          <ATag href="/" width={`155px`}>
-            {logos && logos.find((data) => data.typeOf === "H") && (
-              <Image
-                width={`155px`}
-                src={logos.find((data) => data.typeOf === "H").imageURL}
-                alt="logo"
-              />
-            )}
+          <ATag href="/" width={`128px`}>
+            <Image
+              width={`128px`}
+              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/logo/logo_m.png`}
+              alt="logo"
+            />
           </ATag>
         </ColWrapper>
-        <ColWrapper
-          span={11}
-          al={`flex-end`}
-          fontSize={`2rem`}
-          color={Theme.white_C}
-        >
+        <ColWrapper span={11} al={`flex-end`} fontSize={`2rem`}>
           <AlignRightOutlined onClick={drawarToggle} />
         </ColWrapper>
 

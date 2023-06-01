@@ -15,7 +15,7 @@ const router = express.Router();
  * DEVELOPMENT : 장혜정
  * DEV DATE : 2023/06/01
  */
-router.post("type/list", async (req, res, next) => {
+router.post("/type/list", async (req, res, next) => {
   const selectQuery = `
   SELECT  ROW_NUMBER() OVER(ORDER BY A.createdAt)		  AS num,
           A.id,
@@ -48,7 +48,7 @@ router.post("type/list", async (req, res, next) => {
  * DEVELOPMENT : 장혜정
  * DEV DATE : 2023/06/01
  */
-router.post("type/create", async (req, res, next) => {
+router.post("/type/create", async (req, res, next) => {
   const { value } = req.body;
 
   const insertQuery = `
@@ -84,7 +84,7 @@ router.post("type/create", async (req, res, next) => {
  * DEVELOPMENT : 장혜정
  * DEV DATE : 2023/06/01
  */
-router.post("type/update", isAdminCheck, async (req, res, next) => {
+router.post("/type/update", isAdminCheck, async (req, res, next) => {
   const { id, value } = req.body;
 
   const updateQuery = `
@@ -111,7 +111,7 @@ router.post("type/update", isAdminCheck, async (req, res, next) => {
  * DEVELOPMENT : 장혜정
  * DEV DATE : 2023/06/01
  */
-router.post("type/update", isAdminCheck, async (req, res, next) => {
+router.post("/type/update", isAdminCheck, async (req, res, next) => {
   const { id, value } = req.body;
 
   const deleteQuery = `

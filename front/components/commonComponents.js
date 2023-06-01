@@ -253,8 +253,7 @@ export const CommonButton = styled(Button)`
     `border : 1px solid ${props.theme.subTheme_C};`}
   ${(props) =>
     props.kindOf === `kakao` && `background : ${props.theme.kakao_C};`}
-  ${(props) =>
-    props.kindOf === `kakao` && `color : ${props.theme.subTheme4_C};`}
+  ${(props) => props.kindOf === `kakao` && `color : ${props.theme.kakao2_C};`}
   ${(props) =>
     props.kindOf === `kakao` && `border : 1px solid ${props.theme.kakao_C};`}
 
@@ -302,12 +301,10 @@ export const CommonButton = styled(Button)`
       props.kindOf === `grey3` &&
       `border : 1px solid ${props.theme.grey_C};`}      
     ${(props) =>
-      props.kindOf === `kakao` && `background : ${props.theme.kakao_C};`}
+      props.kindOf === `kakao` && `background : ${props.theme.kakao3_C};`}
+    ${(props) => props.kindOf === `kakao` && `color : ${props.theme.kakao2_C};`}
     ${(props) =>
-      props.kindOf === `kakao` && `color : ${props.theme.subTheme4_C};`}
-    ${(props) =>
-      props.kindOf === `kakao` &&
-      `border : 1px solid ${props.theme.subTheme4_C};`}
+      props.kindOf === `kakao` && `border : 1px solid ${props.theme.kakao3_C};`}
     ${(props) =>
       props.kindOf === `delete` && `background : ${props.theme.white_C};`}
     ${(props) => props.kindOf === `delete` && `color : ${props.theme.red_C};`}

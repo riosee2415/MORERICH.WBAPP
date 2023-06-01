@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Popover, message } from "antd";
+import { Image, Popover, message } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -141,7 +141,7 @@ const Slide = ({}) => {
             <Wrapper
               key={item.id}
               al="flex-start"
-              margin="0px 0px 30px 0px"
+              margin="0px 0px 50px 0px"
               borderBottom={`1px solid ${Theme.grey3_C}`}
               padding="5px"
             >
@@ -150,6 +150,32 @@ const Slide = ({}) => {
                   {item.title}
                 </Text>
                 <ManageButton>타이틀 수정</ManageButton>
+              </Wrapper>
+
+              <Wrapper
+                bgColor={Theme.adminLightGrey_C}
+                padding="5px"
+                dr="row"
+                wrap="wrap"
+                ju="flex-start"
+              >
+                {/*  */}
+                {item.connectArray.map((inItem) => {
+                  return (
+                    <Wrapper width="140px" height="160px" margin="3px">
+                      <Image
+                        src={inItem.thumbnail}
+                        width="140px"
+                        height="140px"
+                        alt="image"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <Wrapper height="20px">{inItem.name}</Wrapper>
+                    </Wrapper>
+                  );
+                })}
+
+                {/*  */}
               </Wrapper>
             </Wrapper>
           );

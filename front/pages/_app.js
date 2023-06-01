@@ -49,7 +49,7 @@ const Fourleaf = ({ Component }) => {
     <ThemeProvider theme={Theme}>
       <GlobalStyles />
       <Head>
-        <title>[[**4LEAF GEAR SAMPLE**]] | administrator</title>
+        <title>MoreRich | administrator</title>
 
         <meta name="author" content="4LEAF SOFTWARE <4leaf.ysh@gmail.com>" />
         {/* <!-- OG tag  --> */}
@@ -61,11 +61,11 @@ const Fourleaf = ({ Component }) => {
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="canonical" href="https://www.sample.com" />
 
-        <meta name="keywords" content="[[**4LEAF GEAR SAMPLE**]]" />
-        <meta property="og:keywords" content="[[**4LEAF GEAR SAMPLE**]]" />
+        <meta name="keywords" content="MoreRich" />
+        <meta property="og:keywords" content="MoreRich" />
 
-        <meta property="og:description" content="[[**4LEAF GEAR SAMPLE**]]" />
-        <meta name="description" content="[[**4LEAF GEAR SAMPLE**]]" />
+        <meta property="og:description" content="MoreRich" />
+        <meta name="description" content="MoreRich" />
 
         {/* 프리텐다드 폰트 */}
         <link

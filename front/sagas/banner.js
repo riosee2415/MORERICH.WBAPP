@@ -40,6 +40,10 @@ import {
   BANNER_HISTORY_REQUEST,
   BANNER_HISTORY_SUCCESS,
   BANNER_HISTORY_FAILURE,
+  //
+  GET_SLIDE_REQUEST,
+  GET_SLIDE_SUCCESS,
+  GET_SLIDE_FAILURE,
 } from "../reducers/banner";
 
 // ******************************************************************************************************************
@@ -322,6 +326,34 @@ function* bannerHistory(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function getSlideAPI(data) {
+  return await axios.post(`/api/banner/list/slide`, data);
+}
+
+function* getSlide(action) {
+  try {
+    const result = yield call(getSlideAPI, action.data);
+
+    yield put({
+      type: GET_SLIDE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: GET_SLIDE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchMainBanner() {
   yield takeLatest(MAIN_BANNER_REQUEST, mainBanner);
@@ -364,6 +396,10 @@ function* watchBannerHistory() {
   yield takeLatest(BANNER_HISTORY_REQUEST, bannerHistory);
 }
 
+function* watchGetSlide() {
+  yield takeLatest(GET_SLIDE_REQUEST, getSlide);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* bannerSaga() {
   yield all([
@@ -377,6 +413,7 @@ export default function* bannerSaga() {
     fork(watchBannerUseYn),
     fork(watchBannerFastCreate),
     fork(watchBannerHistory),
+    fork(watchGetSlide),
     //
   ]);
 }

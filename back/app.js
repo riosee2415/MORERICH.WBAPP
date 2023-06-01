@@ -120,7 +120,8 @@ const task = cron.schedule(
   }
 );
 
-const joinSetCheckHandler = async () => {
+const initDatabaseControl = async () => {
+  ////////////////////////////// JOINSET //////////////////////////////
   const exQ = `
     SELECT  id
       FROM  joinSet
@@ -131,18 +132,38 @@ const joinSetCheckHandler = async () => {
     (2000, 1 , NOW(), NOW())
   `;
 
+  ////////////////////////////// MAINSLIDE //////////////////////////////
+
+  const exQ2 = `
+  SELECT  id
+    FROM  mainSlide
+`;
+
+  const insertQ2 = `
+  INSERT INTO mainSlide (title, createdAt, updatedAt) VALUES 
+  ("Best Product", NOW(), NOW()),
+  ("New Product", NOW(), NOW()),
+  ("Steady Product", NOW(), NOW())
+`;
+
   try {
     const ex = await models.sequelize.query(exQ);
 
     if (ex[0].length < 1) {
       await models.sequelize.query(insertQ);
     }
+
+    const ex2 = await models.sequelize.query(exQ2);
+
+    if (ex2[0].length < 1) {
+      await models.sequelize.query(insertQ2);
+    }
   } catch (error) {
     console.error(error);
   }
 };
 
-joinSetCheckHandler();
+initDatabaseControl();
 // task.start();
 
 app.listen(PORT, () => {

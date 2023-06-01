@@ -59,6 +59,11 @@ export const items = {
       useYn: true,
     },
     {
+      name: "메인슬라이드관리",
+      link: "/admin/banner/slide",
+      useYn: true,
+    },
+    {
       name: "팝업관리",
       link: "/admin/banner/popup",
       useYn: true,

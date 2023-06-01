@@ -406,7 +406,9 @@ router.post("/list/slide", async (req, res, next) => {
           B.name,
           B.subName,
           B.price,
-          B.discount
+          B.discount,
+          CONCAT(FORMAT(B.price, 0), "원") AS viewPrice,
+          CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice
   FROM	mainSlideProduct	A
   INNER
   JOIN	product 			B
@@ -423,6 +425,34 @@ router.post("/list/slide", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).send("데이터를 로드할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 배너 슬라이드 타이틀 수정
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/update/slide", isAdminCheck, async (req, res, next) => {
+  const { id, title } = req.body;
+
+  const updateQ = `
+    UPDATE  mainSlide
+       SET  title = "${title}",
+            updatedAt = NOW()
+     WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(updateQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 수정할 수 없습니다.");
   }
 });
 

@@ -898,86 +898,88 @@ const Product = ({}) => {
         </GuideUl>
       </Wrapper>
 
-      <Wrapper>
-        <Wrapper padding="5px 15px" bgColor={Theme.adminLightGrey_C}>
-          <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
-            <ManageInput
-              width="220px"
-              placeholder="상품명으로 검색"
-              value={sName}
-              onChange={(e) => setSName(e.target.value)}
-              onKeyDown={saveSNameKey}
-            />
-            <ManageButton type="primary" onClick={saveSName}>
-              검색
+      <Wrapper padding="10px">
+        <Wrapper>
+          <Wrapper
+            padding="5px 15px"
+            bgColor={Theme.adminLightGrey_C}
+            margin={`0 0 10px`}
+          >
+            <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
+              <ManageInput
+                width="220px"
+                placeholder="상품명으로 검색"
+                value={sName}
+                onChange={(e) => setSName(e.target.value)}
+                onKeyDown={saveSNameKey}
+              />
+              <ManageButton type="primary" onClick={saveSName}>
+                검색
+              </ManageButton>
+              <ManageButton onClick={initSearch}>검색초기화</ManageButton>
+            </Wrapper>
+
+            <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
+              <Checkbox checked={allCh}>전체</Checkbox>
+              <Checkbox
+                onChange={(e) => setNewCh(e.target.checked)}
+                checked={newCh}
+              >
+                신상품
+              </Checkbox>
+              <Checkbox
+                onChange={(e) => setBestCh(e.target.checked)}
+                checked={bestCh}
+              >
+                베스트
+              </Checkbox>
+              <Checkbox
+                onChange={(e) => setRecCh(e.target.checked)}
+                checked={recCh}
+              >
+                추천상품
+              </Checkbox>
+            </Wrapper>
+
+            <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
+              <ManageButton
+                type={typeId === 0 ? "primary" : "default"}
+                onClick={() => setTypeId(0)}
+              >
+                전체
+              </ManageButton>
+              {productTypes.map((item) => {
+                return (
+                  <ManageButton
+                    key={item.id}
+                    type={typeId === item.id ? "primary" : "default"}
+                    onClick={() => setTypeId(item.id)}
+                  >
+                    {item.value}
+                  </ManageButton>
+                );
+              })}
+            </Wrapper>
+          </Wrapper>
+          <Wrapper
+            dr="row"
+            margin="0px 0px 5px 0px"
+            ju="flex-end"
+            padding="0px 10px"
+          >
+            <ManageButton type="primary" onClick={createGuideModal}>
+              신규상품 +
             </ManageButton>
-            <ManageButton onClick={initSearch}>검색초기화</ManageButton>
-          </Wrapper>
-
-          <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
-            <Checkbox checked={allCh}>전체</Checkbox>
-            <Checkbox
-              onChange={(e) => setNewCh(e.target.checked)}
-              checked={newCh}
-            >
-              신상품
-            </Checkbox>
-            <Checkbox
-              onChange={(e) => setBestCh(e.target.checked)}
-              checked={bestCh}
-            >
-              베스트
-            </Checkbox>
-            <Checkbox
-              onChange={(e) => setRecCh(e.target.checked)}
-              checked={recCh}
-            >
-              추천상품
-            </Checkbox>
-          </Wrapper>
-
-          <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
-            <ManageButton
-              type={typeId === 0 ? "primary" : "default"}
-              onClick={() => setTypeId(0)}
-            >
-              전체
+            <ManageButton type="primary" onClick={() => graphToggle()}>
+              상품통계
             </ManageButton>
-            {productTypes.map((item) => {
-              return (
-                <ManageButton
-                  key={item.id}
-                  type={typeId === item.id ? "primary" : "default"}
-                  onClick={() => setTypeId(item.id)}
-                >
-                  {item.value}
-                </ManageButton>
-              );
-            })}
           </Wrapper>
         </Wrapper>
-
-        <Wrapper
-          dr="row"
-          margin="0px 0px 5px 0px"
-          ju="flex-end"
-          padding="0px 10px"
-        >
-          <ManageButton type="primary" onClick={createGuideModal}>
-            신규상품 +
-          </ManageButton>
-          <ManageButton type="primary" onClick={() => graphToggle()}>
-            상품통계
-          </ManageButton>
-        </Wrapper>
-
-        <Wrapper padding="10px">
-          <ManagementTable
-            columns={column}
-            dataSource={products}
-            rowKey={"num"}
-          />
-        </Wrapper>
+        <ManagementTable
+          columns={column}
+          dataSource={products}
+          rowKey={"num"}
+        />
       </Wrapper>
 
       <Drawer

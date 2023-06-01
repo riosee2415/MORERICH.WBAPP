@@ -60,7 +60,7 @@ const List = styled(Wrapper)`
 
 const Notice = () => {
   ////// GLOBAL STATE //////
-  const { notices, lastPage } = useSelector((state) => state.notice);
+  const { notices, lastPage, noticeLen } = useSelector((state) => state.notice);
 
   const [currentTab, setCurrentTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -167,7 +167,7 @@ const Notice = () => {
                     color={Theme.grey_C}
                     margin={width < 900 ? `0 0 10px` : `0`}
                   >
-                    000개의 게시글이 존재합니다.
+                    {noticeLen}개의 게시글이 존재합니다.
                   </Wrapper>
                   <Wrapper
                     width={width < 900 ? `100%` : `315px`}
@@ -250,7 +250,7 @@ const Notice = () => {
                               fontSize={width < 900 ? `13px` : `16px`}
                               color={Theme.grey_C}
                             >
-                              {data.viewFrontCreatedAt}
+                              {data.viewCreatedAt}
                             </Wrapper>
                           </NoticeList>
                         </ATag>

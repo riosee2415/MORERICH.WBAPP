@@ -7,6 +7,7 @@ export const initailState = {
   noticeDetail: null, // 상세페이지
   uploadFilePath: null,
   noticeHistory: [],
+  noticeLen: null,
   //
   st_noticeListLoading: false, // 공지사항 가져오기
   st_noticeListDone: false,
@@ -105,6 +106,7 @@ const reducer = (state = initailState, action) =>
         draft.st_noticeListDone = true;
         draft.notices = action.data.notice;
         draft.lastPage = action.data.lastPage;
+        draft.noticeLen = action.data.noticeLen;
         break;
       }
       case NOTICE_LIST_FAILURE: {

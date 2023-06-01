@@ -7,6 +7,7 @@ import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
   USERLIST_REQUEST,
+  ADMINUSERLIST_REQUEST,
   USERLIST_UPDATE_REQUEST,
 } from "../../../reducers/user";
 import {
@@ -78,6 +79,8 @@ const Address = ({}) => {
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
 
   const { users } = useSelector((state) => state.user);
+
+  console.log(users);
 
   const [sameDepth, setSameDepth] = useState([]);
 
@@ -152,7 +155,8 @@ const Address = ({}) => {
     },
     {
       title: "회원이름",
-      render: (data) => <div>{data.username}</div>,
+      dataIndex: "username",
+      sorter: (a, b) => a.username.localeCompare(b.username),
     },
     {
       title: "닉네임",
@@ -312,7 +316,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: USERLIST_REQUEST,
+      type: ADMINUSERLIST_REQUEST,
     });
 
     // 구현부 종료

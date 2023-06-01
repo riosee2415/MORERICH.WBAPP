@@ -74,6 +74,22 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+const consistOfArrayToArray = (arr1, arr2, targetColumn) => {
+  arr1.map((item) => {
+    const tempArr = [];
+
+    arr2.map((inItem) => {
+      if (item.id === inItem[targetColumn]) {
+        tempArr.push(inItem);
+      }
+    });
+
+    item["connectArray"] = tempArr;
+  });
+
+  return arr1;
+};
+
 // 권한메뉴 관리자 리스트
 router.post("/adminList", async (req, res, next) => {
   const { username, type } = req.body;
@@ -82,7 +98,8 @@ router.post("/adminList", async (req, res, next) => {
   const _username = username ? username : "";
 
   const selectQuery = `
-  SELECT	id,
+  SELECT	ROW_NUMBER() OVER(ORDER	BY createdAt)		AS num,
+          id,
           username,
           userId,
           email,
@@ -112,12 +129,28 @@ router.post("/adminList", async (req, res, next) => {
    ORDER  BY createdAt DESC
   `;
 
+  const selectQuery2 = `
+  SELECT 	id,
+          post,
+          adrs,
+          dadrs,
+          createdAt,
+          updatedAt,
+          DATE_FORMAT(createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+          DATE_FORMAT(createdAt, '%Y%m%d')			    AS sortCreatedAt,
+          DATE_FORMAT(updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+          DATE_FORMAT(updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+          UserId 
+    FROM 	address
+  `;
+
   try {
     const result = await models.sequelize.query(selectQuery);
+    const result2 = await models.sequelize.query(selectQuery2);
 
-    console.log(result[0]);
+    const final = consistOfArrayToArray(result[0], result2[0], "UserId");
 
-    return res.status(200).json(result[0]);
+    return res.status(200).json(final);
   } catch (error) {
     console.error(error);
     return res.status(400).send("관리자 정보를 불러올 수 없습니다.");
@@ -828,5 +861,41 @@ router.post("/upJoinSet", async (req, res, next) => {
     return res.status(400).send("데이터 로드 실패");
   }
 });
+
+/**
+ * SUBJECT : 유저 주소 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 박은비
+ * DEV DATE : 2023/06/01
+ */
+
+/**
+ * SUBJECT : 상품유형 통계 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 박은비
+ * DEV DATE : 2023/06/01
+ */
+
+/**
+ * SUBJECT : 상품유형 통계 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 박은비
+ * DEV DATE : 2023/06/01
+ */
+
+/**
+ * SUBJECT : 상품유형 통계 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 박은비
+ * DEV DATE : 2023/06/01
+ */
 
 module.exports = router;

@@ -20,9 +20,12 @@ import {
   ATag,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Select } from "antd";
+import { Empty, Select } from "antd";
 import styled from "styled-components";
 import Link from "next/dist/client/link";
+import { useSelector } from "react-redux";
+import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
+import useInput from "../../hooks/useInput";
 
 const NoticeList = styled(Wrapper)`
   flex-direction: row;
@@ -61,12 +64,16 @@ const List = styled(Wrapper)`
 
 const Notice = () => {
   ////// GLOBAL STATE //////
+  const { notices } = useSelector((state) => state.notice);
+
   const [currentTab, setCurrentTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleId, setVisibleId] = useState(null);
 
   ////// HOOKS //////
   const width = useWidth();
+
+  const searchTitle = useInput("");
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
@@ -156,6 +163,7 @@ const Notice = () => {
                       height={`40px`}
                       placeholder={`검색어를 입력해주세요.`}
                       padding={`0 40px 0 20px`}
+                      {...searchTitle}
                     />
                     <Wrapper
                       width={`auto`}
@@ -189,41 +197,52 @@ const Notice = () => {
                   <Wrapper width={`15%`}>조회수</Wrapper>
                   <Wrapper width={width < 900 ? `25%` : `15%`}>작성일</Wrapper>
                 </Wrapper>
-                <Link href={`/customer/1`}>
-                  <ATag>
-                    <NoticeList>
-                      <Wrapper
-                        display={width < 900 ? `none` : `flex`}
-                        width={`10%`}
-                        fontSize={`16px`}
-                        color={Theme.grey_C}
-                      >
-                        10
-                      </Wrapper>
-                      <Wrapper
-                        width={`60%`}
-                        fontSize={width < 900 ? `13px` : `16px`}
-                        al={`flex-start`}
-                        isEllipsis
-                      >
-                        제목을 입력해주세요.
-                      </Wrapper>
-                      <Wrapper
-                        width={`15%`}
-                        fontSize={width < 900 ? `13px` : `16px`}
-                      >
-                        123
-                      </Wrapper>
-                      <Wrapper
-                        width={width < 900 ? `25%` : `15%`}
-                        fontSize={width < 900 ? `13px` : `16px`}
-                        color={Theme.grey_C}
-                      >
-                        2023.05.25
-                      </Wrapper>
-                    </NoticeList>
-                  </ATag>
-                </Link>
+                {notices && notices.length === 0 ? (
+                  <Wrapper padding={`50px 0`}>
+                    <Empty description="조회된 게시글이 없습니다." />
+                  </Wrapper>
+                ) : (
+                  notices.map((data) => {
+                    return (
+                      <Link href={`/customer/${data.id}`} key={data.id}>
+                        <ATag>
+                          <NoticeList>
+                            <Wrapper
+                              display={width < 900 ? `none` : `flex`}
+                              width={`10%`}
+                              fontSize={`16px`}
+                              color={Theme.grey_C}
+                            >
+                              {data.num}
+                            </Wrapper>
+                            <Wrapper
+                              width={`60%`}
+                              fontSize={width < 900 ? `13px` : `16px`}
+                              al={`flex-start`}
+                              isEllipsis
+                            >
+                              {data.title}
+                            </Wrapper>
+                            <Wrapper
+                              width={`15%`}
+                              fontSize={width < 900 ? `13px` : `16px`}
+                            >
+                              {data.hit}
+                            </Wrapper>
+                            <Wrapper
+                              width={width < 900 ? `25%` : `15%`}
+                              fontSize={width < 900 ? `13px` : `16px`}
+                              color={Theme.grey_C}
+                            >
+                              {data.viewFrontCreatedAt}
+                            </Wrapper>
+                          </NoticeList>
+                        </ATag>
+                      </Link>
+                    );
+                  })
+                )}
+
                 <CustomPage margin={`60px 0 100px`} />
               </Wrapper>
             </>
@@ -340,6 +359,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: NOTICE_LIST_REQUEST,
     });
 
     // 구현부 종료

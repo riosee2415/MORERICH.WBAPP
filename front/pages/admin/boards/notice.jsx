@@ -35,6 +35,7 @@ import {
   NOTICE_FILE_INFO_REQUEST,
   UPLOAD_PATH_INIT,
   NOTICE_CREATE_REQUEST,
+  NOTICE_DELETE_REQUEST,
 } from "../../../reducers/notice";
 import Theme from "../../../components/Theme";
 import { items } from "../../../components/AdminLayout";
@@ -44,6 +45,7 @@ import {
   EyeOutlined,
   AlertOutlined,
   CheckOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 
@@ -82,6 +84,7 @@ const Notice = ({}) => {
     st_noticeFileInfoError,
     st_noticeCreateDone,
     st_noticeCreateError,
+    st_noticeDeleteDone,
   } = useSelector((state) => state.notice);
 
   const router = useRouter();
@@ -140,6 +143,16 @@ const Notice = ({}) => {
       );
     }
   }, [st_noticeFileDone]);
+
+  useEffect(() => {
+    if (st_noticeDeleteDone) {
+      dispatch({
+        type: NOTICE_LIST_REQUEST,
+      });
+
+      return message.success("게시글이 삭제되었습니다.");
+    }
+  }, [st_noticeDeleteDone]);
 
   // ********************** 공지사항 생성 후처리 *************************
   useEffect(() => {
@@ -334,8 +347,6 @@ const Notice = ({}) => {
         type: typeValue,
       },
     });
-
-    createModalToggle();
   }, []);
 
   const createModalToggle = useCallback(() => {
@@ -447,6 +458,15 @@ const Notice = ({}) => {
     [currentData, currentTop]
   );
 
+  const deleteHandler = useCallback((data) => {
+    dispatch({
+      type: NOTICE_DELETE_REQUEST,
+      data: {
+        noticeId: data.id,
+      },
+    });
+  }, []);
+
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
@@ -456,10 +476,10 @@ const Notice = ({}) => {
       title: "번호",
       dataIndex: "num",
     },
-    {
-      title: "유형",
-      dataIndex: "type",
-    },
+    // {
+    //   title: "유형",
+    //   dataIndex: "type",
+    // },
     {
       title: "공지사항 제목",
       dataIndex: "title",
@@ -468,6 +488,10 @@ const Notice = ({}) => {
     {
       title: "작성일",
       dataIndex: "viewCreatedAt",
+    },
+    {
+      title: "삭제",
+      render: (data) => <DeleteOutlined onClick={() => deleteHandler(data)} />,
     },
     {
       title: "상태창",
@@ -524,7 +548,7 @@ const Notice = ({}) => {
       </Wrapper>
 
       {/* TAB */}
-      <Wrapper padding={`10px`} dr={`row`} ju="flex-start">
+      {/* <Wrapper padding={`10px`} dr={`row`} ju="flex-start">
         <Button
           type={tab === 0 ? "primary" : "default"}
           size="small"
@@ -549,7 +573,7 @@ const Notice = ({}) => {
         >
           새소식
         </Button>
-      </Wrapper>
+      </Wrapper> */}
 
       {/* CONTENT */}
 
@@ -560,7 +584,11 @@ const Notice = ({}) => {
           shadow={`3px 3px 6px ${Theme.lightGrey_C}`}
         >
           <Wrapper al="flex-end">
-            <Button size="small" type="primary" onClick={createModalToggle}>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => createWithTypeHandler("공지사항")}
+            >
               공지사항 생성
             </Button>
           </Wrapper>
@@ -626,7 +654,7 @@ const Notice = ({}) => {
                   <Input size="small" />
                 </Form.Item>
 
-                <Form.Item
+                {/* <Form.Item
                   label="유형"
                   name="type"
                   rules={[
@@ -637,7 +665,7 @@ const Notice = ({}) => {
                     <Option value="새소식">새소식</Option>
                     <Option value="공지사항">공지사항</Option>
                   </Select>
-                </Form.Item>
+                </Form.Item> */}
 
                 <Form.Item
                   label="내용"

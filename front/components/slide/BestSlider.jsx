@@ -106,6 +106,7 @@ const BestSlider = ({ datum }) => {
             <Empty description="조회된 내역이 없습니다." />
           </Wrapper>
         ) : (
+          datum &&
           datum.map((data, idx) => {
             console.log(data);
             return (
@@ -115,7 +116,7 @@ const BestSlider = ({ datum }) => {
                 display={`flex !important`}
                 padding={`0 15px`}
                 cursor={`pointer`}
-                onClick={() => router.push(`/product/${data.id}`)}
+                onClick={() => router.push(`/product/${data.ProductId}`)}
               >
                 <Wrapper al={`flex-start`}>
                   <SquareBox>
@@ -139,14 +140,17 @@ const BestSlider = ({ datum }) => {
                     margin={`16px 0 20px`}
                     fontSize={width < 900 ? `15px` : `20px`}
                   >
-                    <Text
-                      color={Theme.grey_C}
-                      className="line"
-                      margin={`0 12px 0 0`}
-                    >
-                      {data.price}
-                    </Text>
-                    <Text>{data.price}</Text>
+                    {data.discount !== 0 && (
+                      <Text
+                        color={Theme.grey_C}
+                        className="line"
+                        margin={`0 12px 0 0`}
+                      >
+                        {data.viewPrice}
+                      </Text>
+                    )}
+
+                    <Text>{data.viewCalcPrice}</Text>
                   </Wrapper>
                   <Wrapper dr={`row`} ju={`flex-start`}>
                     <Image

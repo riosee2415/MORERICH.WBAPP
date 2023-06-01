@@ -322,6 +322,8 @@ router.get("/signin", async (req, res, next) => {
         attributes: [
           "id",
           "userId",
+          "point",
+          "pointPer",
           "nickname",
           "email",
           "level",

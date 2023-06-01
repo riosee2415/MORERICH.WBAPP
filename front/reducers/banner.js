@@ -55,6 +55,16 @@ export const initailState = {
   st_updateSlideBannerLoading: false, // 슬라이드 타이틀 수정
   st_updateSlideBannerDone: false,
   st_updateSlideBannerError: null,
+
+  //
+  st_insertSlideBannerLoading: false, // 슬라이드 상품 넣기
+  st_insertSlideBannerDone: false,
+  st_insertSlideBannerError: null,
+
+  //
+  st_deleteSlideBannerLoading: false, // 슬라이드 상품 빼기
+  st_deleteSlideBannerDone: false,
+  st_deleteSlideBannerError: null,
 };
 
 export const MAIN_BANNER_REQUEST = "MAIN_BANNER_REQUEST";
@@ -104,6 +114,14 @@ export const GET_SLIDE_FAILURE = "GET_SLIDE_FAILURE";
 export const UPDATE_SLIDE_REQUEST = "UPDATE_SLIDE_REQUEST";
 export const UPDATE_SLIDE_SUCCESS = "UPDATE_SLIDE_SUCCESS";
 export const UPDATE_SLIDE_FAILURE = "UPDATE_SLIDE_FAILURE";
+
+export const INSERT_SLIDE_REQUEST = "INSERT_SLIDE_REQUEST";
+export const INSERT_SLIDE_SUCCESS = "INSERT_SLIDE_SUCCESS";
+export const INSERT_SLIDE_FAILURE = "INSERT_SLIDE_FAILURE";
+
+export const DELETE_SLIDE_REQUEST = "DELETE_SLIDE_REQUEST";
+export const DELETE_SLIDE_SUCCESS = "DELETE_SLIDE_SUCCESS";
+export const DELETE_SLIDE_FAILURE = "DELETE_SLIDE_FAILURE";
 
 export const UPLOAD_BANNER_INIT_REQUEST = "UPLOAD_BANNER_INIT_REQUEST";
 
@@ -348,6 +366,44 @@ const reducer = (state = initailState, action) =>
         draft.st_updateSlideBannerLoading = false;
         draft.st_updateSlideBannerDone = false;
         draft.st_updateSlideBannerError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      case INSERT_SLIDE_REQUEST: {
+        draft.st_insertSlideBannerLoading = true;
+        draft.st_insertSlideBannerDone = false;
+        draft.st_insertSlideBannerError = null;
+        break;
+      }
+      case INSERT_SLIDE_SUCCESS: {
+        draft.st_insertSlideBannerLoading = false;
+        draft.st_insertSlideBannerDone = true;
+        draft.st_insertSlideBannerError = null;
+        break;
+      }
+      case INSERT_SLIDE_FAILURE: {
+        draft.st_insertSlideBannerLoading = false;
+        draft.st_insertSlideBannerDone = false;
+        draft.st_insertSlideBannerError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      case DELETE_SLIDE_REQUEST: {
+        draft.st_deleteSlideBannerLoading = true;
+        draft.st_deleteSlideBannerDone = false;
+        draft.st_deleteSlideBannerError = null;
+        break;
+      }
+      case DELETE_SLIDE_SUCCESS: {
+        draft.st_deleteSlideBannerLoading = false;
+        draft.st_deleteSlideBannerDone = true;
+        draft.st_deleteSlideBannerError = null;
+        break;
+      }
+      case DELETE_SLIDE_FAILURE: {
+        draft.st_deleteSlideBannerLoading = false;
+        draft.st_deleteSlideBannerDone = false;
+        draft.st_deleteSlideBannerError = action.error;
         break;
       }
       //////////////////////////////////////////////

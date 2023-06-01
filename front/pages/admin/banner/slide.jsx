@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Image, Modal, Popover, message, Form, Drawer } from "antd";
+import { Image, Modal, Popover, message, Form, Drawer, Popconfirm } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -23,11 +23,14 @@ import { HomeOutlined, RightOutlined } from "@ant-design/icons";
 import {
   GET_SLIDE_REQUEST,
   UPDATE_SLIDE_REQUEST,
+  INSERT_SLIDE_REQUEST,
+  DELETE_SLIDE_REQUEST,
 } from "../../../reducers/banner";
 import {
   ManageButton,
   ManageInput,
   ManagementForm,
+  ManagementTable,
 } from "../../../components/managementComponents";
 import { GET_PRODUCT_REQUEST } from "../../../reducers/store";
 
@@ -61,10 +64,14 @@ const Slide = ({}) => {
     //
     st_updateSlideBannerDone,
     st_updateSlideBannerError,
+    //
+    st_insertSlideBannerDone,
+    st_insertSlideBannerError,
+    //
+    st_deleteSlideBannerDone,
+    st_deleteSlideBannerError,
   } = useSelector((state) => state.banner);
   const { products } = useSelector((state) => state.store);
-
-  console.log(products);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -122,6 +129,30 @@ const Slide = ({}) => {
   }, [st_updateSlideBannerDone, st_updateSlideBannerError]);
 
   useEffect(() => {
+    if (st_deleteSlideBannerDone) {
+      dispatch({
+        type: GET_SLIDE_REQUEST,
+      });
+    }
+
+    if (st_deleteSlideBannerError) {
+      return message.error(st_deleteSlideBannerError);
+    }
+  }, [st_deleteSlideBannerDone, st_deleteSlideBannerError]);
+
+  useEffect(() => {
+    if (st_insertSlideBannerDone) {
+      dispatch({
+        type: GET_SLIDE_REQUEST,
+      });
+    }
+
+    if (st_insertSlideBannerError) {
+      return message.error(st_insertSlideBannerError);
+    }
+  }, [st_insertSlideBannerDone, st_insertSlideBannerError]);
+
+  useEffect(() => {
     if (st_loadMyInfoDone) {
       if (!me || parseInt(me.level) < 3) {
         moveLinkHandler(`/admin`);
@@ -156,6 +187,28 @@ const Slide = ({}) => {
 
   ////// HANDLER //////
 
+  const addItemHandler = useCallback(
+    (row) => {
+      dispatch({
+        type: INSERT_SLIDE_REQUEST,
+        data: {
+          MainSlideId: crData.id,
+          ProductId: row.id,
+        },
+      });
+    },
+    [crData]
+  );
+
+  const deleteItenHandler = useCallback((row) => {
+    dispatch({
+      type: DELETE_SLIDE_REQUEST,
+      data: {
+        id: row.id,
+      },
+    });
+  }, []);
+
   const listDrToggle = useCallback((row) => {
     setListDr((p) => !p);
 
@@ -184,6 +237,37 @@ const Slide = ({}) => {
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
+  const column = [
+    {
+      title: "번호",
+      dataIndex: "num",
+    },
+    {
+      title: "썸네일",
+      render: (row) => (
+        <Image
+          src={row.thumbnail}
+          style={{ width: "80px", height: "80px", objectFit: "cover" }}
+        />
+      ),
+    },
+    {
+      title: "상품명",
+      dataIndex: "name",
+    },
+    {
+      title: "카테고리",
+      dataIndex: "value",
+    },
+    {
+      title: "추가",
+      render: (row) => (
+        <ManageButton type="primary" onClick={() => addItemHandler(row)}>
+          추가
+        </ManageButton>
+      ),
+    },
+  ];
 
   return (
     <AdminLayout>
@@ -276,11 +360,17 @@ const Slide = ({}) => {
                       />
                       <Wrapper height="18px" margin="2px 0px 0px 0px">
                         {inItem.name.length > 8
-                          ? inItem.name.substring(1, 7) + "..."
+                          ? inItem.name.substring(0, 7) + "..."
                           : inItem.name}
                       </Wrapper>
 
-                      <DelX>X</DelX>
+                      <Popconfirm
+                        onConfirm={() => deleteItenHandler(inItem)}
+                        title="슬라이드에서 제외하시겠습니까?"
+                        onCancel={null}
+                      >
+                        <DelX>X</DelX>
+                      </Popconfirm>
                     </Wrapper>
                   );
                 })}
@@ -325,9 +415,17 @@ const Slide = ({}) => {
       <Drawer
         visible={listDr}
         onClose={() => listDrToggle(null)}
-        width="500px"
+        width="800px"
         title="상품리스트"
-      ></Drawer>
+      >
+        <Wrapper>
+          <ManagementTable
+            columns={column}
+            dataSource={products}
+            rowKey={"num"}
+          />
+        </Wrapper>
+      </Drawer>
     </AdminLayout>
   );
 };

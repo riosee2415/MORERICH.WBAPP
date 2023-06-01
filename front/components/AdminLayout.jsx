@@ -165,12 +165,12 @@ export const items = {
     },
     {
       name: "위시리스트통계",
-      link: "/",
+      link: "/admin/store/wishchart",
       useYn: true,
     },
     {
-      name: "판매상품통계",
-      link: "/",
+      name: "주문내역",
+      link: "/admin/store/bought",
       useYn: true,
     },
   ],

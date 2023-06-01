@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -15,11 +15,16 @@ import {
   WholeWrapper,
   Wrapper,
   Image,
-  CustomPage,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Select } from "antd";
+import { Empty, Select } from "antd";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  GET_PRODUCTTYPE_REQUEST,
+  GET_PRODUCT_REQUEST,
+} from "../../reducers/store";
+import { useRouter } from "next/router";
 
 const CateBtn = styled(Wrapper)`
   padding: 0 14px;
@@ -40,64 +45,51 @@ const CateBtn = styled(Wrapper)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { products, productTypes } = useSelector((state) => state.store);
+
+  const [type, setType] = useState(0);
+  const [orderType, setOrderType] = useState(1); // 순서
+
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: GET_PRODUCT_REQUEST,
+      data: {
+        ProductTypeId: type,
+        orderType: orderType,
+      },
+    });
+  }, [type, orderType]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
-  ////// DATAVIEW //////
+  const typeHandler = useCallback(
+    (data) => {
+      setType(data);
+    },
+    [type]
+  );
 
-  const bannerData = [
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
+  // 순서
+  const orderTypeHandler = useCallback(
+    (data) => {
+      setOrderType(data);
     },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod2.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod3.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod4.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-  ];
+    [orderType]
+  );
+
+  const movelinkHandler = useCallback((link) => {
+    router.push(link);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  ////// DATAVIEW //////
 
   return (
     <>
@@ -116,36 +108,62 @@ const Index = () => {
               PRODUCT
             </Text>
             <Wrapper dr={`row`} margin={`18px 0 0`}>
-              <CateBtn>카테고리</CateBtn>
-              <CateBtn isActive>카테고리</CateBtn>
-              <CateBtn>카테고리</CateBtn>
-              <CateBtn>카테고리</CateBtn>
+              <CateBtn onClick={() => typeHandler(0)} isActive={0 === type}>
+                전체
+              </CateBtn>
+              {productTypes && productTypes.length === 0 ? (
+                <Wrapper fontSize={`16px`} color={Theme.grey_C}>
+                  조회된 카테고리가 없습니다.
+                </Wrapper>
+              ) : (
+                productTypes.map((data) => {
+                  return (
+                    <CateBtn
+                      onClick={() => typeHandler(data.id)}
+                      isActive={data.id === type}
+                      key={data.id}
+                    >
+                      {data.value}
+                    </CateBtn>
+                  );
+                })
+              )}
             </Wrapper>
           </Wrapper>
           <RsWrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 20px`}>
-              <Text color={Theme.grey_C}>000개의 상품이 존재합니다.</Text>
+              <Text color={Theme.grey_C}>
+                {products && products.length}개의 상품이 존재합니다.
+              </Text>
               <CustomSelect
                 width={width < 900 ? `160px` : `225px`}
                 height={`40px`}
               >
-                <Select placeholder="선택해주세요">
-                  <Select.Option>조회순</Select.Option>
-                  <Select.Option>최신순</Select.Option>
+                <Select
+                  placeholder="선택해주세요"
+                  value={orderType}
+                  onChange={orderTypeHandler}
+                >
+                  <Select.Option value={1}>조회순</Select.Option>
+                  <Select.Option value={2}>가격낮은순</Select.Option>
+                  <Select.Option value={3}>가격높은순</Select.Option>
                 </Select>
               </CustomSelect>
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
-              {bannerData && bannerData.length === 0 ? (
+              {products && products.length === 0 ? (
                 <Wrapper padding={`100px 0`}>
                   <Empty description="조회된 내역이 없습니다." />
                 </Wrapper>
               ) : (
-                bannerData.map((data, idx) => {
+                products.map((data, idx) => {
                   return (
-                    <ProductWrapper key={idx}>
+                    <ProductWrapper
+                      key={idx}
+                      onClick={() => movelinkHandler(`/product/${data.id}`)}
+                    >
                       <SquareBox>
-                        <Image alt="thumbnail" src={data.imgUrl} />
+                        <Image alt="thumbnail" src={data.thumbnail} />
                       </SquareBox>
 
                       <Wrapper
@@ -157,11 +175,11 @@ const Index = () => {
                           fontWeight={`600`}
                           margin={`23px 0 12px`}
                         >
-                          {data.title}
+                          {data.name}
                         </Text>
 
                         <Text fontSize={width < 900 ? `13px` : `17px`}>
-                          {data.name}
+                          {data.subName}
                         </Text>
                         <Wrapper
                           dr={`row`}
@@ -174,9 +192,9 @@ const Index = () => {
                             className="line"
                             margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
                           >
-                            {data.price}
+                            {data.viewCalcPrice}
                           </Text>
-                          <Text>{data.price}</Text>
+                          <Text>{data.viewPrice}</Text>
                         </Wrapper>
                         <Wrapper dr={`row`} ju={`flex-start`}>
                           <Image
@@ -197,8 +215,6 @@ const Index = () => {
                 })
               )}
             </Wrapper>
-
-            <CustomPage />
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
@@ -219,6 +235,14 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_PRODUCT_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_PRODUCTTYPE_REQUEST,
     });
 
     // 구현부 종료

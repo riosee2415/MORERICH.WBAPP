@@ -6,7 +6,7 @@ export const initailState = {
   faqList: [],
 
   faqAdminList: [],
-  lastPage: null,
+  page: 1,
   //
   st_faqTypeListLoading: false,
   st_faqTypeListDone: false,
@@ -39,6 +39,10 @@ export const initailState = {
   st_faqDeleteLoading: false, // faq 삭제하기
   st_faqDeleteDone: false,
   st_faqDeleteError: null,
+  //
+  st_faqUpdateTopLoading: false, // faq 상단고정
+  st_faqUpdateTopDone: false,
+  st_faqUpdateTopError: null,
 };
 
 export const FAQTYPE_LIST_REQUEST = "FAQTYPE_LIST_REQUEST";
@@ -72,6 +76,11 @@ export const FAQ_UPDATE_FAILURE = "FAQ_UPDATE_FAILURE";
 export const FAQ_DELETE_REQUEST = "FAQ_DELETE_REQUEST";
 export const FAQ_DELETE_SUCCESS = "FAQ_DELETE_SUCCESS";
 export const FAQ_DELETE_FAILURE = "FAQ_DELETE_FAILURE";
+
+export const FAQ_UPDATE_TOP_REQUEST = "FAQ_UPDATE_TOP_REQUEST";
+export const FAQ_UPDATE_TOP_SUCCESS = "FAQ_UPDATE_TOP_SUCCESS";
+export const FAQ_UPDATE_TOP_FAILURE = "FAQ_UPDATE_TOP_FAILURE";
+
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
     switch (action.type) {
@@ -157,7 +166,7 @@ const reducer = (state = initailState, action) =>
         draft.st_faqListLoading = false;
         draft.st_faqListDone = true;
         draft.st_faqListError = null;
-        draft.faqList = action.data.faqs;
+        draft.faqList = action.data.faq;
         draft.page = action.data.lastPage;
         break;
       }
@@ -252,6 +261,30 @@ const reducer = (state = initailState, action) =>
         draft.st_faqDeleteError = action.error;
         break;
       }
+
+      ///////////////////////////////////////////////////////
+
+      case FAQ_UPDATE_TOP_REQUEST: {
+        draft.st_faqUpdateTopLoading = true;
+        draft.st_faqUpdateTopDone = false;
+        draft.st_faqUpdateTopError = null;
+        break;
+      }
+      case FAQ_UPDATE_TOP_SUCCESS: {
+        draft.st_faqUpdateTopLoading = false;
+        draft.st_faqUpdateTopDone = true;
+        draft.st_faqUpdateTopError = null;
+        break;
+      }
+      case FAQ_UPDATE_TOP_FAILURE: {
+        draft.st_faqUpdateTopLoading = false;
+        draft.st_faqUpdateTopDone = false;
+        draft.st_faqUpdateTopError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+
       default:
         break;
     }

@@ -33,6 +33,9 @@ const joinset = require("./joinset");
 const mainSlide = require("./mainslide");
 const mainSlideProduct = require("./mainslideproduct");
 const address = require("./address");
+const wish = require("./wish");
+const boughthistory = require("./boughthistory");
+const boughtList = require("./boughtlist");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -82,6 +85,9 @@ db.GalleryImage = galleryImage;
 db.AdminUserRightHistory = adminUserRightHistory;
 
 db.Address = address;
+db.Wish = wish;
+db.BoughtHistory = boughthistory;
+db.BoughtList = boughtList;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

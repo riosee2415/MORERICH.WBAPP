@@ -143,9 +143,7 @@ router.post("/type/delete", isAdminCheck, async (req, res, next) => {
  * DEV DATE : 2023/06/01
  */
 router.post("/list", async (req, res, next) => {
-  const { FaqTypeId, page } = req.body;
-
-  const _FaqTypeId = FaqTypeId ? FaqTypeId : false;
+  const { page } = req.body;
 
   const LIMIT = 10;
 
@@ -164,8 +162,7 @@ router.post("/list", async (req, res, next) => {
           A.updatedAt,
           DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
           DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
-          A.FaqTypeId,
-          B.value
+          A.FaqTypeId
     FROM 	faq   A 
    INNER	
     JOIN	faqType   B 
@@ -175,17 +172,18 @@ router.post("/list", async (req, res, next) => {
     JOIN	users	C
       ON	A.updator = C.id
    WHERE 	A.isDelete = 0
-          ${_FaqTypeId ? `AND A.FaqTypeId = ${_FaqTypeId}` : ``}
    ORDER  BY num DESC 
    LIMIT  ${LIMIT}
   OFFSET  ${OFFSET}
   `;
   try {
-    const faq = await models.sequelize.query(selectQuery);
+    const lengths = await models.sequelize.query(selectQuery);
     const faqLen = lengths[0].length;
 
     const lastpage = faqLen % LIMIT > 0 ? faqLen / LIMIT + 1 : faqLen / LIMIT;
-    return res.status(200).json({ faqs: faq[0], lastpage: parseInt(lastpage) });
+    return res
+      .status(200)
+      .json({ faqs: lengths[0], lastpage: parseInt(lastpage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("자주묻는질문 목록을 불러올 수 없습니다.");

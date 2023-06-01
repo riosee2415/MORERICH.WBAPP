@@ -143,6 +143,63 @@ router.post("/type/delete", isAdminCheck, async (req, res, next) => {
  * DEV DATE : 2023/06/01
  */
 router.post("/list", async (req, res, next) => {
+  const { FaqTypeId, page } = req.body;
+
+  const _FaqTypeId = FaqTypeId ? FaqTypeId : false;
+
+  const LIMIT = 10;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 10;
+
+  const selectQuery = `
+  SELECT  ROW_NUMBER() OVER(ORDER BY A.createdAt)		  AS num,
+          A.id,
+          A.question,
+          A.answer,
+          A.createdAt,
+          A.isUse,
+          A.updatedAt,
+          DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
+          DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
+          A.FaqTypeId,
+          B.value
+    FROM 	faq   A 
+   INNER	
+    JOIN	faqType   B 
+      ON	A.FaqTypeId = B.id
+    LEFT
+   OUTER
+    JOIN	users	C
+      ON	A.updator = C.id
+   WHERE 	A.isDelete = 0
+          ${_FaqTypeId ? `AND A.FaqTypeId = ${_FaqTypeId}` : ``}
+   ORDER  BY num DESC 
+   LIMIT  ${LIMIT}
+  OFFSET  ${OFFSET}
+  `;
+  try {
+    const faq = await models.sequelize.query(selectQuery);
+    const faqLen = lengths[0].length;
+
+    const lastpage = faqLen % LIMIT > 0 ? faqLen / LIMIT + 1 : faqLen / LIMIT;
+    return res.status(200).json({ faqs: faq[0], lastpage: parseInt(lastpage) });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("자주묻는질문 목록을 불러올 수 없습니다.");
+  }
+});
+/**
+ * SUBJECT : 자주묻는질문 목록 [관리자]
+ * PARAMETERS : FaqTypeId
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 장혜정
+ * DEV DATE : 2023/06/01
+ */
+router.post("/admin/list", isAdminCheck, async (req, res, next) => {
   const { FaqTypeId } = req.body;
 
   const _FaqTypeId = FaqTypeId ? FaqTypeId : false;
@@ -153,22 +210,25 @@ router.post("/list", async (req, res, next) => {
           A.question,
           A.answer,
           A.createdAt,
+          A.isUse,
           A.updatedAt,
           DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
           DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
           A.FaqTypeId,
-          B.value
+          B.value,
+          C.username 										               AS updator
     FROM 	faq   A 
-   INNER	
+    INNER	
     JOIN	faqType   B 
       ON	A.FaqTypeId = B.id
-    LEFT 
-   OUTER 	
-    JOIN 	users   C
-      ON	updator = C.id
-   WHERE 	isDelete = 0
+    LEFT
+    OUTER
+     JOIN	users	C
+       ON	A.updator = C.id
+    WHERE A.isDelete = 0
           ${_FaqTypeId ? `AND A.FaqTypeId = ${_FaqTypeId}` : ``}
-   ORDER  BY num DESC 
+    ORDER BY num DESC 
+
   `;
   try {
     const faq = await models.sequelize.query(selectQuery);
@@ -177,6 +237,105 @@ router.post("/list", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(401).send("자주묻는질문 목록을 불러올 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 자주묻는질문 생성
+ * PARAMETERS : FaqTypeId
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 장혜정
+ * DEV DATE : 2023/06/01
+ */
+router.post("/create", isAdminCheck, async (req, res, next) => {
+  const { FaqTypeId } = req.body;
+
+  const insertQuery = `
+  INSERT  INTO  faq
+  (
+    question,
+    answer,
+    FaqTypeId,
+    createdAt,
+    updatedAt,
+    updator
+  )
+  VALUES
+  (
+    "임시 FAQ",
+    "임시 FAQ 답변입니다. 내용을 입력해주세요.",
+    ${FaqTypeId},
+    NOW(),
+    NOW(),
+    ${req.user.id}
+  )
+  `;
+  try {
+    await models.sequelize.query(insertQuery);
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("자주묻는질문을 생성할 수 없습니다.");
+  }
+});
+/**
+ * SUBJECT : 자주묻는질문 수정
+ * PARAMETERS : id, question, answer, FaqTypeId
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 장혜정
+ * DEV DATE : 2023/06/01
+ */
+router.post("/update", isAdminCheck, async (req, res, next) => {
+  const { id, question, answer, FaqTypeId } = req.body;
+
+  const updateQuery = `
+  UPDATE  faq
+     SET  question = "${question}",
+          answer = "${answer}",
+          FaqTypeId = ${FaqTypeId},
+          updatedAt = NOW(),
+          updator = ${req.user.id}
+   WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(updateQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("자주묻는질문을 수정할 수 없습니다.");
+  }
+});
+/**
+ * SUBJECT : 자주묻는질문 삭제
+ * PARAMETERS : id
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 장혜정
+ * DEV DATE : 2023/06/01
+ */
+router.post("/delete", isAdminCheck, async (req, res, next) => {
+  const { id } = req.body;
+
+  const deleteQuery = `
+  UPDATE  faq
+     SET  isDelete = 1,
+          deletedAt = NOW(),
+          updator = ${req.user.id}
+   WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(deleteQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("자주묻는질문을 삭제할 수 없습니다.");
   }
 });
 module.exports = router;

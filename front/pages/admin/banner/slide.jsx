@@ -20,7 +20,10 @@ import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import Theme from "../../../components/Theme";
 import { items } from "../../../components/AdminLayout";
 import { HomeOutlined, RightOutlined } from "@ant-design/icons";
-import { GET_SLIDE_REQUEST } from "../../../reducers/banner";
+import {
+  GET_SLIDE_REQUEST,
+  UPDATE_SLIDE_REQUEST,
+} from "../../../reducers/banner";
 import {
   ManageButton,
   ManageInput,
@@ -52,7 +55,12 @@ const DelX = styled.div`
 `;
 const Slide = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
-  const { slides } = useSelector((state) => state.banner);
+  const {
+    slides,
+    //
+    st_updateSlideBannerDone,
+    st_updateSlideBannerError,
+  } = useSelector((state) => state.banner);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -92,6 +100,21 @@ const Slide = ({}) => {
   ////// HOOKS //////
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_updateSlideBannerDone) {
+      dispatch({
+        type: GET_SLIDE_REQUEST,
+      });
+
+      titleModalToggle(null);
+      message.info("타이틀이 변경되었습니다.");
+    }
+
+    if (st_updateSlideBannerError) {
+      return message.error(st_updateSlideBannerError);
+    }
+  }, [st_updateSlideBannerDone, st_updateSlideBannerError]);
 
   useEffect(() => {
     if (st_loadMyInfoDone) {
@@ -136,8 +159,13 @@ const Slide = ({}) => {
 
   const updateTitleHandler = useCallback(
     (data) => {
-      console.log(data);
-      console.log(crData.id);
+      dispatch({
+        type: UPDATE_SLIDE_REQUEST,
+        data: {
+          id: crData.id,
+          title: data.title,
+        },
+      });
     },
     [crData]
   );
@@ -205,6 +233,8 @@ const Slide = ({}) => {
                 <ManageButton onClick={() => titleModalToggle(item)}>
                   타이틀 수정
                 </ManageButton>
+
+                <ManageButton type="primary">상품추가</ManageButton>
               </Wrapper>
 
               <Wrapper
@@ -218,6 +248,7 @@ const Slide = ({}) => {
                 {item.connectArray.map((inItem) => {
                   return (
                     <Wrapper
+                      key={inItem.name}
                       width="140px"
                       height="160px"
                       margin="3px"

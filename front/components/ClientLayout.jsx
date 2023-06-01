@@ -11,7 +11,7 @@ const ClientLayout = ({ children, width }) => {
   return (
     <section>
       {/* HEADER */}
-      {/* <AppHeader /> */}
+      <AppHeader />
       {/* content */}
       <WholeWrapper padding={`120px 0 0`}>{children}</WholeWrapper>
       {/* Footer */}

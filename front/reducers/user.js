@@ -7,6 +7,7 @@ export const initailState = {
   updateModal: false,
   userHistory: [],
   adminUserRightHistory: [],
+  joinSet: null,
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -55,6 +56,14 @@ export const initailState = {
   st_adminUserExitFalseLoading: false, // 재가입
   st_adminUserExitFalseDone: false,
   st_adminUserExitFalseError: null,
+  //
+  st_getJoinSetLoading: false,
+  st_getJoinSetDone: false,
+  st_getJoinSetError: null,
+  //
+  st_upJoinSetLoading: false,
+  st_upJoinSetDone: false,
+  st_upJoinSetError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -108,6 +117,14 @@ export const ADMINUSER_EXITTRUE_FAILURE = "ADMINUSER_EXITTRUE_FAILURE";
 export const ADMINUSER_EXITFALSE_REQUEST = "ADMINUSER_EXITFALSE_REQUEST";
 export const ADMINUSER_EXITFALSE_SUCCESS = "ADMINUSER_EXITFALSE_SUCCESS";
 export const ADMINUSER_EXITFALSE_FAILURE = "ADMINUSER_EXITFALSE_FAILURE";
+//
+export const GET_JOIN_SET_REQUEST = "GET_JOIN_SET_REQUEST";
+export const GET_JOIN_SET_SUCCESS = "GET_JOIN_SET_SUCCESS";
+export const GET_JOIN_SET_FAILURE = "GET_JOIN_SET_FAILURE";
+
+export const UP_JOIN_SET_REQUEST = "UP_JOIN_SET_REQUEST";
+export const UP_JOIN_SET_SUCCESS = "UP_JOIN_SET_SUCCESS";
+export const UP_JOIN_SET_FAILURE = "UP_JOIN_SET_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -385,6 +402,49 @@ const reducer = (state = initailState, action) =>
         draft.st_adminUserExitFalseLoading = false;
         draft.st_adminUserExitFalseDone = false;
         draft.st_adminUserExitFalseError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      case GET_JOIN_SET_REQUEST: {
+        draft.st_getJoinSetLoading = true;
+        draft.st_getJoinSetDone = false;
+        draft.st_getJoinSetError = null;
+        break;
+      }
+      case GET_JOIN_SET_SUCCESS: {
+        draft.st_getJoinSetLoading = false;
+        draft.st_getJoinSetDone = true;
+        draft.st_getJoinSetError = null;
+        draft.joinSet = action.data;
+        break;
+      }
+      case GET_JOIN_SET_FAILURE: {
+        draft.st_getJoinSetLoading = false;
+        draft.st_getJoinSetDone = false;
+        draft.st_getJoinSetError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      case UP_JOIN_SET_REQUEST: {
+        draft.st_upJoinSetLoading = true;
+        draft.st_upJoinSetDone = false;
+        draft.st_upJoinSetError = null;
+        break;
+      }
+      case UP_JOIN_SET_SUCCESS: {
+        draft.st_upJoinSetLoading = false;
+        draft.st_upJoinSetDone = true;
+        draft.st_upJoinSetError = null;
+        break;
+      }
+      case UP_JOIN_SET_FAILURE: {
+        draft.st_upJoinSetLoading = false;
+        draft.st_upJoinSetDone = false;
+        draft.st_upJoinSetError = action.error;
         break;
       }
       //////////////////////////////////////////////

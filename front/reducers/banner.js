@@ -4,6 +4,8 @@ export const initailState = {
   banners: null,
   uploadBannerPath: null,
   bannerHistory: [],
+  slides: [],
+
   //
   st_mainBannerLoading: false, // 메인배너 가져오기
   st_mainBannerDone: false,
@@ -45,6 +47,14 @@ export const initailState = {
   st_bannerHistoryLoading: false, // 배너 빠른생성!
   st_bannerHistoryDone: false,
   st_bannerHistoryError: null,
+  //
+  st_getSlideBannerLoading: false, // 슬라이드 가져오기
+  st_getSlideBannerDone: false,
+  st_getSlideBannerError: null,
+  //
+  st_updateSlideBannerLoading: false, // 슬라이드 타이틀 수정
+  st_updateSlideBannerDone: false,
+  st_updateSlideBannerError: null,
 };
 
 export const MAIN_BANNER_REQUEST = "MAIN_BANNER_REQUEST";
@@ -86,6 +96,14 @@ export const BANNER_FAST_CREATE_FAILURE = "BANNER_FAST_CREATE_FAILURE";
 export const BANNER_HISTORY_REQUEST = "BANNER_HISTORY_REQUEST";
 export const BANNER_HISTORY_SUCCESS = "BANNER_HISTORY_SUCCESS";
 export const BANNER_HISTORY_FAILURE = "BANNER_HISTORY_FAILURE";
+
+export const GET_SLIDE_REQUEST = "GET_SLIDE_REQUEST";
+export const GET_SLIDE_SUCCESS = "GET_SLIDE_SUCCESS";
+export const GET_SLIDE_FAILURE = "GET_SLIDE_FAILURE";
+
+export const UPDATE_SLIDE_REQUEST = "UPDATE_SLIDE_REQUEST";
+export const UPDATE_SLIDE_SUCCESS = "UPDATE_SLIDE_SUCCESS";
+export const UPDATE_SLIDE_FAILURE = "UPDATE_SLIDE_FAILURE";
 
 export const UPLOAD_BANNER_INIT_REQUEST = "UPLOAD_BANNER_INIT_REQUEST";
 
@@ -291,6 +309,45 @@ const reducer = (state = initailState, action) =>
         draft.st_bannerHistoryLoading = false;
         draft.st_bannerHistoryDone = false;
         draft.st_bannerHistoryError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      case GET_SLIDE_REQUEST: {
+        draft.st_getSlideBannerLoading = true;
+        draft.st_getSlideBannerDone = false;
+        draft.st_getSlideBannerError = null;
+        break;
+      }
+      case GET_SLIDE_SUCCESS: {
+        draft.st_getSlideBannerLoading = false;
+        draft.st_getSlideBannerDone = true;
+        draft.st_getSlideBannerError = null;
+        draft.slides = action.data;
+        break;
+      }
+      case GET_SLIDE_FAILURE: {
+        draft.st_getSlideBannerLoading = false;
+        draft.st_getSlideBannerDone = false;
+        draft.st_getSlideBannerError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+      case UPDATE_SLIDE_REQUEST: {
+        draft.st_updateSlideBannerLoading = true;
+        draft.st_updateSlideBannerDone = false;
+        draft.st_updateSlideBannerError = null;
+        break;
+      }
+      case UPDATE_SLIDE_SUCCESS: {
+        draft.st_updateSlideBannerLoading = false;
+        draft.st_updateSlideBannerDone = true;
+        draft.st_updateSlideBannerError = null;
+        break;
+      }
+      case UPDATE_SLIDE_FAILURE: {
+        draft.st_updateSlideBannerLoading = false;
+        draft.st_updateSlideBannerDone = false;
+        draft.st_updateSlideBannerError = action.error;
         break;
       }
       //////////////////////////////////////////////

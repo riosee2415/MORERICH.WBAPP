@@ -20,6 +20,7 @@ import {
   Input,
   Form,
   Checkbox,
+  Drawer,
 } from "antd";
 import {
   HomeText,
@@ -72,9 +73,16 @@ const LoadNotification = (msg, content) => {
   });
 };
 
-const UserList = ({}) => {
+const Address = ({}) => {
   // LOAD CURRENT INFO AREA /////////////////////////////////////////////
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
+
+  const { users } = useSelector((state) => state.user);
+
+  const [sameDepth, setSameDepth] = useState([]);
+
+  const [level1, setLevel1] = useState("회원관리");
+  const [level2, setLevel2] = useState("");
 
   const router = useRouter();
 
@@ -94,34 +102,6 @@ const UserList = ({}) => {
       }
     }
   }, [st_loadMyInfoDone]);
-  /////////////////////////////////////////////////////////////////////////
-
-  ////// HOOKS //////
-  const dispatch = useDispatch();
-
-  const {
-    users,
-    updateModal,
-    st_userListError,
-    st_userListUpdateDone,
-    st_userListUpdateError,
-  } = useSelector((state) => state.user);
-
-  const [sameDepth, setSameDepth] = useState([]);
-
-  const [updateData, setUpdateData] = useState(null);
-
-  const [sData, setSData] = useState("");
-
-  const [levelForm] = Form.useForm();
-  const [sForm] = Form.useForm();
-
-  const [currentTab, setCurrentTab] = useState(0);
-
-  const [level1, setLevel1] = useState("회원관리");
-  const [level2, setLevel2] = useState("");
-
-  ////// USEEFFECT //////
 
   useEffect(() => {
     const currentMenus = items[level1];
@@ -134,104 +114,19 @@ const UserList = ({}) => {
       }
     });
   }, []);
+  /////////////////////////////////////////////////////////////////////////
+  const dispatch = useDispatch();
 
-  // 권한 수정 후처리
-  useEffect(() => {
-    if (st_userListUpdateDone) {
-      dispatch({
-        type: UPDATE_MODAL_CLOSE_REQUEST,
-      });
+  ////// HOOKS //////
 
-      dispatch({
-        type: USERLIST_REQUEST,
-      });
+  //   DRAWER
+  const [isDrawer, setIsDrawer] = useState(false); // 배송지확인
 
-      return message.success("유저정보가 수정되었습니다.");
-    }
-  }, [st_userListUpdateDone]);
-
-  // 사용자 리스트 조회 에러처리
-  useEffect(() => {
-    if (st_userListError) {
-      return message.error(st_userListError);
-    }
-  }, [st_userListError]);
-
-  // 권한 수정 에러 메세지
-  useEffect(() => {
-    if (st_userListUpdateError) {
-      return message.error(st_userListUpdateError);
-    }
-  }, [st_userListUpdateError]);
-
-  useEffect(() => {
-    dispatch({
-      type: USERLIST_REQUEST,
-      data: {
-        searchData: sData,
-        searchLevel: currentTab,
-      },
-    });
-  }, [currentTab, sData]);
+  ////// USEEFFECT //////
 
   ////// TOGGLE //////
-  const updateModalOpen = useCallback(
-    (data) => {
-      dispatch({
-        type: UPDATE_MODAL_OPEN_REQUEST,
-      });
-
-      setUpdateData(data);
-      levelForm.setFieldsValue({ level: data.level });
-    },
-    [updateModal]
-  );
-
-  const updateModalClose = useCallback(() => {
-    dispatch({
-      type: UPDATE_MODAL_CLOSE_REQUEST,
-    });
-  }, [updateModal]);
 
   ////// HANDLER //////
-
-  const tabClickHandler = useCallback(
-    (tab) => {
-      setCurrentTab(tab);
-    },
-    [currentTab]
-  );
-
-  const searchHandler = useCallback(
-    (data) => {
-      setSData(data.sData);
-    },
-    [sForm, sData]
-  );
-
-  const levelFormClick = useCallback(() => {
-    levelForm.submit();
-  }, []);
-
-  const onSubmitUpdate = useCallback(
-    (data) => {
-      if (updateData.level === data.level) {
-        return LoadNotification(
-          "ADMIN SYSTEM ERRLR",
-          "현재 사용자와 같은 레벨로 수정할 수 없습니다."
-        );
-      }
-
-      dispatch({
-        type: USERLIST_UPDATE_REQUEST,
-        data: {
-          selectUserId: updateData.id,
-          changeLevel: data.level,
-        },
-      });
-    },
-    [updateData]
-  );
 
   const content = (
     <PopWrapper>
@@ -249,34 +144,6 @@ const UserList = ({}) => {
   );
 
   ////// DATAVIEW //////
-
-  const levelArr = [
-    {
-      id: 1,
-      name: "일반회원",
-      disabled: false,
-    },
-    // {
-    //   id: 2,
-    //   name: "비어있음",
-    //   disabled: true,
-    // },
-    {
-      id: 3,
-      name: "운영자",
-      disabled: false,
-    },
-    {
-      id: 4,
-      name: "최고관리자",
-      disabled: false,
-    },
-    {
-      id: 5,
-      name: "개발사",
-      disabled: true,
-    },
-  ];
 
   const columns = [
     {
@@ -308,16 +175,45 @@ const UserList = ({}) => {
       render: (data) => <div>{data.viewLevel}</div>,
     },
     {
-      title: "권한수정",
-      render: (data) => (
-        <SettingBtn
-          size="small"
+      title: "배송지",
+      render: () => (
+        <Button
           type="primary"
-          onClick={() => updateModalOpen(data)}
+          size="small"
+          onClick={() => setIsDrawer(!isDrawer)}
         >
-          수정
-        </SettingBtn>
+          배송지확인
+        </Button>
       ),
+    },
+  ];
+
+  const addressCol = [
+    {
+      title: "번호",
+      dataIndex: "num",
+    },
+    {
+      title: "기본배송지",
+      render: () => <div>기본배송지</div>,
+      //   아니라면 -로 표시
+    },
+    {
+      title: "우편번호",
+      dataIndex: "postcode",
+    },
+    {
+      title: "주소",
+      dataIndex: "address",
+    },
+    {
+      title: "상세주소",
+      dataIndex: "detailAddress",
+      width: `40%`,
+    },
+    {
+      title: "생성일",
+      dataIndex: "viewCreatedAt",
     },
   ];
 
@@ -353,16 +249,11 @@ const UserList = ({}) => {
       {/* GUIDE */}
       <Wrapper margin={`10px 0 0`}>
         <GuideUl>
-          <GuideLi isImpo={true}>
-            해당 메뉴에서 홈페이지에 가입된 회원의 정보를 확인할 수 있습니다.
+          <GuideLi>
+            해당 메뉴에서 홈페이지에 가입된 회원의 배송지정보를 확인 할 수
+            있습니다.
           </GuideLi>
-          <GuideLi isImpo={true}>
-            이름 및 이메일로 사용자를 검색할 수 있습니다.
-          </GuideLi>
-          <GuideLi isImpo={true}>
-            변경된 정보는 홈페이지에 즉시 적용되기 때문에, 신중한 처리를 필요로
-            합니다.
-          </GuideLi>
+          <GuideLi isImpo={true}>배송지 확인만 가능합니다.</GuideLi>
         </GuideUl>
       </Wrapper>
 
@@ -387,52 +278,20 @@ const UserList = ({}) => {
         />
       </Wrapper>
 
-      {/* MODAL AREA */}
-      <Modal
-        width={`600px`}
-        title={`사용자 권한 수정`}
-        //
-        visible={updateModal}
-        //
-        cancelText="취소"
-        onCancel={updateModalClose}
-        cancelButtonProps={{ size: "small" }}
-        //
-        okText="수정"
-        onOk={levelFormClick}
-        okButtonProps={{ size: "small" }}
+      <Drawer
+        visible={isDrawer}
+        title="배송지 정보"
+        width={`900px`}
+        onClose={() => setIsDrawer(!isDrawer)}
       >
-        <Wrapper
-          radius="5px"
-          bgColor={Theme.lightGrey_C}
-          padding="5px"
-          fontSize="12px"
-          al="flex-start"
-        >
-          <GuideDiv isImpo={true}>
-            권한수정은 수정 시 사이트 및 어플리케이션에 즉시 적용되기 때문에
-            신중한 처리를 필요로 합니다.
-          </GuideDiv>
-          <GuideDiv isImpo={true}>
-            개발사로는 권한을 수정하실수 없습니다.
-          </GuideDiv>
-        </Wrapper>
-        <Form form={levelForm} onFinish={onSubmitUpdate}>
-          <Form.Item label="권한" name="level">
-            <Select size="small">
-              {levelArr.map((data) => (
-                <Select.Option
-                  key={data.id}
-                  value={data.id}
-                  disabled={data.disabled}
-                >
-                  {data.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
+        <Table
+          style={{ width: "100%" }}
+          rowKey="id"
+          columns={addressCol}
+          dataSource={users ? users : []}
+          size="small"
+        />
+      </Drawer>
     </AdminLayout>
   );
 };
@@ -463,4 +322,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default withRouter(UserList);
+export default withRouter(Address);

@@ -29,6 +29,9 @@ const productTypeHistory = require("./producttypehistory");
 const product = require("./product");
 const productImage = require("./productImage");
 const productOption = require("./productoption");
+const joinset = require("./joinset");
+const mainSlide = require("./mainslide");
+const mainSlideProduct = require("./mainslideproduct");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -62,12 +65,15 @@ db.MainBannerHistory = mainBannerHistory;
 db.PopupHistory = popupHistory;
 db.Faq = faq;
 db.FaqType = faqType;
+db.JoinSet = joinset;
 
 db.ProductType = productType;
 db.ProductTypeHistory = productTypeHistory;
 db.Product = product;
 db.ProductImage = productImage;
 db.ProductOption = productOption;
+db.MainSlide = mainSlide;
+db.MainSlideProduct = mainSlideProduct;
 
 db.QuestionHistory = questionhistory;
 db.NoticeHistory = noticeHistory;

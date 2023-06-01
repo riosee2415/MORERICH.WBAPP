@@ -59,6 +59,11 @@ export const items = {
       useYn: true,
     },
     {
+      name: "메인슬라이드관리",
+      link: "/admin/banner/slide",
+      useYn: true,
+    },
+    {
       name: "팝업관리",
       link: "/admin/banner/popup",
       useYn: true,
@@ -88,8 +93,13 @@ export const items = {
       useYn: true,
     },
     {
-      name: "가입관리",
+      name: "신규가입관리",
       link: "/admin/user/joinManage",
+      useYn: true,
+    },
+    {
+      name: "회원배송지관리",
+      link: "/admin/user/address",
       useYn: true,
     },
   ],
@@ -190,8 +200,8 @@ const AdminLayout = ({ children }) => {
           />
 
           <Image
-            width={`170px`}
-            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/4LEAFSOFTWARE/assets/images/LOGO/logo4.png`}
+            width={`70px`}
+            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/logo/logo_w.png`}
           />
 
           <Wrapper margin={`20px 0px 0px 0px`}>

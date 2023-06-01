@@ -22,6 +22,7 @@ import Mainslider from "../components/slide/MainSlider";
 import BestSlider from "../components/slide/BestSlider";
 import NewSlider from "../components/slide/NewSlider";
 import SteadySlider from "../components/slide/SteadySlider";
+import { GET_SLIDE_REQUEST } from "../reducers/banner";
 
 const Box = styled(Wrapper)`
   width: calc(100% / 3);
@@ -61,6 +62,7 @@ const Box = styled(Wrapper)`
 
 const Home = ({}) => {
   ////// GLOBAL STATE //////
+  const { slides } = useSelector((state) => state.banner);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -82,10 +84,10 @@ const Home = ({}) => {
             <Mainslider />
             <Wrapper al={`flex-start`} margin={`103px 0 30px`}>
               <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
-                Best Product
+                {slides[0] && slides[0].title}
               </Text>
             </Wrapper>
-            <BestSlider />
+            <BestSlider datum={slides[0] && slides[0].connectArray} />
             <Image
               margin={`120px 0`}
               alt="banner img"
@@ -97,7 +99,7 @@ const Home = ({}) => {
             />
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>
               <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
-                New Product
+                {slides[1] && slides[1].title}
               </Text>
             </Wrapper>
             <NewSlider />
@@ -257,6 +259,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_SLIDE_REQUEST,
     });
 
     // 구현부 종료

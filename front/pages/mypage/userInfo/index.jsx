@@ -129,7 +129,7 @@ const Index = () => {
                     fontWeight={`600`}
                     height={`50px`}
                   >
-                    주문취소
+                    우편번호
                   </CommonButton>
                 </Wrapper>
                 <TextInput

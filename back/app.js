@@ -11,6 +11,7 @@ const db = require("./models");
 const passportConfig = require("./passport");
 const passport = require("passport");
 const cron = require("node-cron");
+const models = require("./models");
 
 const userRouter = require("./routers/userRouter");
 const bannerRouter = require("./routers/bannerRouter");
@@ -119,6 +120,50 @@ const task = cron.schedule(
   }
 );
 
+const initDatabaseControl = async () => {
+  ////////////////////////////// JOINSET //////////////////////////////
+  const exQ = `
+    SELECT  id
+      FROM  joinSet
+  `;
+
+  const insertQ = `
+    INSERT INTO joinSet (point, pointPer, createdAt, updatedAt) VALUES 
+    (2000, 1 , NOW(), NOW())
+  `;
+
+  ////////////////////////////// MAINSLIDE //////////////////////////////
+
+  const exQ2 = `
+  SELECT  id
+    FROM  mainSlide
+`;
+
+  const insertQ2 = `
+  INSERT INTO mainSlide (title, createdAt, updatedAt) VALUES 
+  ("Best Product", NOW(), NOW()),
+  ("New Product", NOW(), NOW()),
+  ("Steady Product", NOW(), NOW())
+`;
+
+  try {
+    const ex = await models.sequelize.query(exQ);
+
+    if (ex[0].length < 1) {
+      await models.sequelize.query(insertQ);
+    }
+
+    const ex2 = await models.sequelize.query(exQ2);
+
+    if (ex2[0].length < 1) {
+      await models.sequelize.query(insertQ2);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+initDatabaseControl();
 // task.start();
 
 app.listen(PORT, () => {

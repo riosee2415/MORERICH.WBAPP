@@ -6,7 +6,7 @@ export const initailState = {
   faqList: [],
 
   faqAdminList: [],
-  page: 1,
+  lastPage: 1,
   //
   st_faqTypeListLoading: false,
   st_faqTypeListDone: false,
@@ -166,8 +166,8 @@ const reducer = (state = initailState, action) =>
         draft.st_faqListLoading = false;
         draft.st_faqListDone = true;
         draft.st_faqListError = null;
-        draft.faqList = action.data.faqS;
-        draft.page = action.data.lastpage;
+        draft.faqList = action.data.faqs;
+        draft.lastPage = action.data.lastpage;
         break;
       }
       case FAQ_LIST_FAILURE: {

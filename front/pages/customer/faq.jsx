@@ -14,6 +14,7 @@ import {
   CustomPage,
   TextInput,
   ATag,
+  RsWrapper,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { Empty, Select } from "antd";
@@ -36,18 +37,11 @@ const NoticeList = styled(Wrapper)`
   }
 `;
 
-const ListWrapper = styled(Wrapper)`
-  margin: 0 0 16px;
-
-  &:last-child {
-    margin: 0;
-  }
-`;
+const ListWrapper = styled(Wrapper)``;
 
 const List = styled(Wrapper)`
   flex-direction: row;
   justify-content: space-between;
-  border-top: 1px solid ${Theme.grey3_C};
   border-bottom: 1px solid ${Theme.grey3_C};
   padding: 26px 30px;
 
@@ -61,7 +55,7 @@ const List = styled(Wrapper)`
 
 const Notice = () => {
   ////// GLOBAL STATE //////
-  const { faqList, page } = useSelector((state) => state.faq);
+  const { faqList, lastPage } = useSelector((state) => state.faq);
 
   const [currentTab, setCurrentTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -76,15 +70,6 @@ const Notice = () => {
   const searchTitle = useInput("");
   ////// REDUX //////
   ////// USEEFFECT //////
-
-  useEffect(() => {
-    dispatch({
-      type: FAQ_LIST_REQUEST,
-      data: {
-        page: nextPage,
-      },
-    });
-  }, [nextPage]);
 
   ////// TOGGLE //////
   const faqToggle = useCallback(
@@ -109,16 +94,17 @@ const Notice = () => {
   const otherPageCall = useCallback(
     (changePage) => {
       setCurrentPage(changePage);
+
+      dispatch({
+        type: FAQ_LIST_REQUEST,
+        data: {
+          page: changePage,
+        },
+      });
     },
     [currentPage]
   );
 
-  const nextPageCall = useCallback(
-    (changePage) => {
-      setNextPage(changePage);
-    },
-    [nextPage]
-  );
   ////// DATAVIEW //////
 
   return (
@@ -162,7 +148,7 @@ const Notice = () => {
               </Wrapper>
             </Wrapper>
           </Wrapper>
-          <Wrapper width={width < 900 ? `90%` : `75%`}>
+          <RsWrapper>
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>
               <Text
                 fontSize={width < 900 ? `22px` : `26px`}
@@ -171,69 +157,73 @@ const Notice = () => {
                 FAQ
               </Text>
             </Wrapper>
-          </Wrapper>
-          {faqList && faqList.length === 0 ? (
-            <Wrapper padding={`50px 0`}>
-              <Empty description="조회된 자주 묻는 질문이 없습니다." />
+            <Wrapper borderTop={`1px solid ${Theme.grey3_C}`}>
+              {faqList.length === 0 ? (
+                <Wrapper padding={`50px 0`}>
+                  <Empty description="조회된 자주 묻는 질문이 없습니다." />
+                </Wrapper>
+              ) : (
+                faqList.map((data) => {
+                  return (
+                    <>
+                      <List onClick={() => faqToggle(data)}>
+                        <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+                          <Text
+                            fontSize={width < 900 ? `15px` : `18px`}
+                            fontWeight={`600`}
+                            color={Theme.black_C}
+                          >
+                            Q
+                          </Text>
+                          <Text
+                            maxWidth={`calc(100% - 32px - 30px)`}
+                            fontSize={width < 900 ? `16px` : `20px`}
+                            color={Theme.black_C}
+                            margin={`0 12px`}
+                          >
+                            {data.question}
+                          </Text>
+                        </Wrapper>
+                        {visibleId === data.id && isVisible ? (
+                          <Image
+                            alt="icon"
+                            width={`18px`}
+                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_top.png`}
+                          />
+                        ) : (
+                          <Image
+                            alt="icon"
+                            width={`18px`}
+                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_select-box.png`}
+                          />
+                        )}
+                      </List>
+                      {visibleId === data.id && isVisible && (
+                        <Wrapper
+                          padding={width < 900 ? `15px` : `24px`}
+                          al={`flex-start`}
+                          bgColor={Theme.lightGrey2_C}
+                          fontSize={`16px`}
+                          color={Theme.darkGrey_C}
+                        >
+                          {data.answer}
+                        </Wrapper>
+                      )}
+                    </>
+                  );
+                })
+              )}
             </Wrapper>
-          ) : (
-            faqList.map((data) => {
-              <ListWrapper key={data.id}>
-                <List onClick={() => faqToggle(data)}>
-                  <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-                    <Text
-                      fontSize={width < 900 ? `15px` : `18px`}
-                      fontWeight={`600`}
-                      color={Theme.black_C}
-                    >
-                      Q
-                    </Text>
-                    <Text
-                      maxWidth={`calc(100% - 32px - 30px)`}
-                      fontSize={width < 900 ? `16px` : `20px`}
-                      color={Theme.black_C}
-                      margin={`0 12px`}
-                    >
-                      {data.question}
-                    </Text>
-                  </Wrapper>
-                  {visibleId === data.id && isVisible ? (
-                    <Image
-                      alt="icon"
-                      width={`18px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_top.png`}
-                    />
-                  ) : (
-                    <Image
-                      alt="icon"
-                      width={`18px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_select-box.png`}
-                    />
-                  )}
-                </List>
-                {visibleId === data.id && isVisible && (
-                  <Wrapper
-                    padding={width < 900 ? `15px` : `24px`}
-                    al={`flex-start`}
-                    bgColor={Theme.lightGrey2_C}
-                    fontSize={`16px`}
-                    color={Theme.darkGrey_C}
-                  >
-                    {data.answer}
-                  </Wrapper>
-                )}
-              </ListWrapper>;
-            })
-          )}
 
-          <CustomPage
-            margin={`60px 0 100px`}
-            defaultCurrent={1}
-            current={parseInt(nextPage)}
-            total={page * 10}
-            pageSize={10}
-            onChange={(page) => nextPageCall(page)}
-          />
+            <Wrapper margin={`50px 0 0`}>
+              <CustomPage
+                defaultCurrent={1}
+                current={parseInt(currentPage)}
+                onChange={(page) => otherPageCall(page)}
+                total={lastPage * 10}
+              />
+            </Wrapper>
+          </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
     </>

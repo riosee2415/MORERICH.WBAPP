@@ -19,6 +19,7 @@ import {
   notification,
   Input,
   Form,
+  Checkbox,
 } from "antd";
 import {
   HomeText,
@@ -31,6 +32,13 @@ import {
 } from "../../../components/commonComponents";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
+import {
+  ManageButton,
+  ManageInput,
+  ManagementTable,
+  ManageDelButton,
+  ManagementForm,
+} from "../../../components/managementComponents";
 import { END } from "redux-saga";
 import { items } from "../../../components/AdminLayout";
 import axios from "axios";
@@ -343,7 +351,7 @@ const UserList = ({}) => {
       </Wrapper>
 
       {/* GUIDE */}
-      <Wrapper margin={`10px 0px 0px 10px`}>
+      <Wrapper margin={`10px 0 0`}>
         <GuideUl>
           <GuideLi isImpo={true}>
             해당 메뉴에서 홈페이지에 가입된 회원의 정보를 확인할 수 있습니다.
@@ -358,57 +366,18 @@ const UserList = ({}) => {
         </GuideUl>
       </Wrapper>
 
-      <Wrapper padding="0px 20px">
-        {/* SEARCH FORM */}
-        <SearchForm
-          layout="inline"
-          style={{ width: "100%" }}
-          form={sForm}
-          onFinish={searchHandler}
+      <Wrapper padding={`10px`}>
+        <Wrapper
+          padding="5px 15px"
+          bgColor={Theme.adminLightGrey_C}
+          margin={`0 0 10px`}
         >
-          <SearchFormItem name="sData" style={{ margin: `0px 0px 0px 5px` }}>
-            <Input
-              size="small"
-              style={{ width: "320px" }}
-              placeholder={`회원을 검색할 정보를 입력해주세요.`}
-            />
-          </SearchFormItem>
-
-          <SearchFormItem>
-            <Button size="small" type="primary" htmlType="submit">
-              검색
-            </Button>
-          </SearchFormItem>
-        </SearchForm>
-      </Wrapper>
-
-      <Wrapper
-        padding="0px 20px"
-        dr="row"
-        ju="flex-start"
-        margin="0px 0px 5px 0px"
-      >
-        <TypeButton
-          type={currentTab === 0 ? "primary" : "default"}
-          size="small"
-          onClick={() => tabClickHandler(0)}
-        >
-          전체
-        </TypeButton>
-
-        {levelArr.map((data) => (
-          <TypeButton
-            key={data.id}
-            type={currentTab === data.id ? "primary" : "default"}
-            size="small"
-            onClick={() => tabClickHandler(data.id)}
-          >
-            {data.name}
-          </TypeButton>
-        ))}
-      </Wrapper>
-
-      <Wrapper padding={`0px 20px`}>
+          <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
+            <ManageInput width="220px" placeholder="회원명으로 검색" />
+            <ManageButton type="primary">검색</ManageButton>
+            <ManageButton>검색초기화</ManageButton>
+          </Wrapper>
+        </Wrapper>
         <Table
           style={{ width: "100%" }}
           rowKey="id"

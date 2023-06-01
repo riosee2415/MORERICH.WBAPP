@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -19,19 +19,46 @@ import {
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { Select } from "antd";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GET_PRODUCT_REQUEST } from "../../reducers/store";
+import { useRouter } from "next/router";
 
 const Index = () => {
   ////// GLOBAL STATE //////
   const { products } = useSelector((state) => state.store);
+  const [orderType, setOrderType] = useState(1); // 순서
 
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: GET_PRODUCT_REQUEST,
+      data: {
+        orderType: orderType,
+        isNew: 1,
+      },
+    });
+  }, [orderType]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
+  // 순서
+  const orderTypeHandler = useCallback(
+    (data) => {
+      setOrderType(data);
+    },
+    [orderType]
+  );
+
+  const movelinkHandler = useCallback((link) => {
+    router.push(link);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -56,14 +83,21 @@ const Index = () => {
           </Wrapper>
           <RsWrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 20px`}>
-              <Text color={Theme.grey_C}>000개의 상품이 존재합니다.</Text>
+              <Text color={Theme.grey_C}>
+                {products && products.length}개의 상품이 존재합니다.
+              </Text>
               <CustomSelect
                 width={width < 900 ? `160px` : `225px`}
                 height={`40px`}
               >
-                <Select placeholder="선택해주세요">
-                  <Select.Option>조회순</Select.Option>
-                  <Select.Option>최신순</Select.Option>
+                <Select
+                  placeholder="선택해주세요"
+                  value={orderType}
+                  onChange={orderTypeHandler}
+                >
+                  <Select.Option value={1}>조회순</Select.Option>
+                  <Select.Option value={2}>가격낮은순</Select.Option>
+                  <Select.Option value={3}>가격높은순</Select.Option>
                 </Select>
               </CustomSelect>
             </Wrapper>
@@ -74,65 +108,64 @@ const Index = () => {
                 </Wrapper>
               ) : (
                 products.map((data, idx) => {
-                  if (data.isNew === 1) {
-                    return (
-                      <ProductWrapper key={idx}>
-                        <SquareBox>
-                          <Image alt="thumbnail" src={data.thumbnail} />
-                        </SquareBox>
+                  return (
+                    <ProductWrapper
+                      key={idx}
+                      onClick={() => movelinkHandler(`/product/${data.id}`)}
+                    >
+                      <SquareBox>
+                        <Image alt="thumbnail" src={data.thumbnail} />
+                      </SquareBox>
 
+                      <Wrapper
+                        padding={width < 900 && `0 5px 0 0`}
+                        al={`flex-start`}
+                      >
+                        <Text
+                          fontSize={width < 900 ? `16px` : `18px`}
+                          fontWeight={`600`}
+                          margin={`23px 0 12px`}
+                        >
+                          {data.name}
+                        </Text>
+
+                        <Text fontSize={width < 900 ? `13px` : `17px`}>
+                          {data.subName}
+                        </Text>
                         <Wrapper
-                          padding={width < 900 && `0 5px 0 0`}
-                          al={`flex-start`}
+                          dr={`row`}
+                          ju={`flex-start`}
+                          margin={`16px 0 20px`}
+                          fontSize={width < 900 ? `14px` : `20px`}
                         >
                           <Text
-                            fontSize={width < 900 ? `16px` : `18px`}
-                            fontWeight={`600`}
-                            margin={`23px 0 12px`}
+                            color={Theme.grey_C}
+                            className="line"
+                            margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
                           >
-                            {data.name}
+                            {data.viewCalcPrice}
                           </Text>
-
-                          <Text fontSize={width < 900 ? `13px` : `17px`}>
-                            {data.subName}
-                          </Text>
-                          <Wrapper
-                            dr={`row`}
-                            ju={`flex-start`}
-                            margin={`16px 0 20px`}
-                            fontSize={width < 900 ? `14px` : `20px`}
-                          >
-                            <Text
-                              color={Theme.grey_C}
-                              className="line"
-                              margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
-                            >
-                              {data.price}
-                            </Text>
-                            <Text>{data.viewPrice}</Text>
-                          </Wrapper>
-                          <Wrapper dr={`row`} ju={`flex-start`}>
-                            <Image
-                              alt="heart icon"
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                              width={`22px`}
-                              margin={`0 18px 0 0`}
-                            />
-                            <Image
-                              alt="cart icon"
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
-                              width={`22px`}
-                            />
-                          </Wrapper>
+                          <Text>{data.viewPrice}</Text>
                         </Wrapper>
-                      </ProductWrapper>
-                    );
-                  }
+                        <Wrapper dr={`row`} ju={`flex-start`}>
+                          <Image
+                            alt="heart icon"
+                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                            width={`22px`}
+                            margin={`0 18px 0 0`}
+                          />
+                          <Image
+                            alt="cart icon"
+                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
+                            width={`22px`}
+                          />
+                        </Wrapper>
+                      </Wrapper>
+                    </ProductWrapper>
+                  );
                 })
               )}
             </Wrapper>
-
-            <CustomPage />
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>
@@ -157,6 +190,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: GET_PRODUCT_REQUEST,
+      data: {
+        isNew: 1,
+      },
     });
 
     // 구현부 종료

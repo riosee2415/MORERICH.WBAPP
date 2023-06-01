@@ -6,6 +6,11 @@ module.exports = class User extends Model {
     return super.init(
       {
         // id가 기본적으로 들어있다.
+        userId: {
+          type: DataTypes.STRING(60), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
+          allowNull: false, // 필수
+          unique: true, // 고유한 값
+        },
         email: {
           type: DataTypes.STRING(60), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
           allowNull: false, // 필수
@@ -34,6 +39,17 @@ module.exports = class User extends Model {
           allowNull: false, //
           defaultValue: 1,
         },
+
+        point: {
+          type: DataTypes.INTEGER,
+          allowNull: false, //
+        },
+
+        pointPer: {
+          type: DataTypes.INTEGER,
+          allowNull: false, //
+        },
+
         secret: {
           type: DataTypes.STRING(10),
           allowNull: true,

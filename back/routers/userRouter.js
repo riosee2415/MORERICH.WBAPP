@@ -22,10 +22,13 @@ router.post("/list", isAdminCheck, async (req, res, next) => {
   const selectQuery = `
   SELECT	ROW_NUMBER() OVER(ORDER	BY createdAt)		AS num,
           id,
+          userId,
           email,
           username,
           nickname,
           mobile,
+          point,
+          pointPer,
           level,
           isExit,
           CASE
@@ -81,9 +84,12 @@ router.post("/adminList", async (req, res, next) => {
   const selectQuery = `
   SELECT	id,
           username,
+          userId,
           email,
           level,
           mobile,
+          point,
+          pointPer,
           DATE_FORMAT(createdAt, "%Y년 %m월 %d일") AS viewCreatedAt,
           DATE_FORMAT(updatedAt, "%Y년 %m월 %d일") AS updatedAt,
           DATE_FORMAT(exitedAt, "%Y년 %m월 %d일") AS viewExitedAt,
@@ -315,6 +321,7 @@ router.get("/signin", async (req, res, next) => {
         where: { id: req.user.id },
         attributes: [
           "id",
+          "userId",
           "nickname",
           "email",
           "level",
@@ -368,9 +375,12 @@ router.post("/signin", (req, res, next) => {
         where: { id: user.id },
         attributes: [
           "id",
+          "userId",
           "nickname",
           "email",
           "level",
+          "point",
+          "pointPer",
           "username",
           "menuRight1",
           "menuRight2",
@@ -419,7 +429,10 @@ router.post("/signin/admin", (req, res, next) => {
         where: { id: user.id },
         attributes: [
           "id",
+          "userId",
           "nickname",
+          "point",
+          "pointPer",
           "email",
           "level",
           "username",
@@ -444,7 +457,8 @@ router.post("/signin/admin", (req, res, next) => {
 });
 
 router.post("/signup", async (req, res, next) => {
-  const { email, username, nickname, mobile, password, terms } = req.body;
+  const { userId, email, username, nickname, mobile, password, terms } =
+    req.body;
 
   if (!terms) {
     return res.status(401).send("이용약관에 동의해주세요.");
@@ -462,9 +476,10 @@ router.post("/signup", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await User.create({
+      userId,
       email,
       username,
-      nickname,
+      nickname: userId,
       mobile,
       terms,
       password: hashedPassword,
@@ -772,6 +787,8 @@ router.get("/logout", function (req, res) {
 });
 
 router.post("/getJoinSet", async (req, res, next) => {
+  console.log(req.user);
+
   const sq = `
   SELECT  id,
           point,

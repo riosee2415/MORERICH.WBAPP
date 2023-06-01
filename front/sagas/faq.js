@@ -274,7 +274,7 @@ function* watchFaqUpdate() {
 function* watchFaqDelete() {
   yield takeLatest(FAQ_DELETE_REQUEST, faqDelete);
 }
-fun;
+
 //////////////////////////////////////////////////////////////
 export default function* faqSaga() {
   yield all([

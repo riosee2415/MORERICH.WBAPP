@@ -312,74 +312,81 @@ const Slide = ({}) => {
       </Wrapper>
 
       <Wrapper padding="15px">
-        {slides.map((item) => {
-          return (
-            <Wrapper
-              key={item.id}
-              al="flex-start"
-              margin="0px 0px 50px 0px"
-              borderBottom={`1px solid ${Theme.grey3_C}`}
-              padding="5px"
-            >
-              <Wrapper dr="row" ju="flex-start">
-                <Text margin="0px 10px 0px 0px" fontSize="18px">
-                  {item.title}
-                </Text>
-                <ManageButton onClick={() => titleModalToggle(item)}>
-                  타이틀 수정
-                </ManageButton>
-
-                <ManageButton type="primary" onClick={() => listDrToggle(item)}>
-                  상품추가
-                </ManageButton>
-              </Wrapper>
-
+        {slides.length === 0 ? (
+          <div></div>
+        ) : (
+          slides.map((item) => {
+            return (
               <Wrapper
-                bgColor={Theme.adminLightGrey_C}
+                key={item.id}
+                al="flex-start"
+                margin="0px 0px 50px 0px"
+                borderBottom={`1px solid ${Theme.grey3_C}`}
                 padding="5px"
-                dr="row"
-                wrap="wrap"
-                ju="flex-start"
               >
-                {/*  */}
-                {item.connectArray.map((inItem) => {
-                  return (
-                    <Wrapper
-                      key={inItem.name}
-                      width="140px"
-                      height="160px"
-                      margin="3px"
-                      position="relative"
-                    >
-                      <Image
-                        src={inItem.thumbnail}
+                <Wrapper dr="row" ju="flex-start">
+                  <Text margin="0px 10px 0px 0px" fontSize="18px">
+                    {item.title}
+                  </Text>
+                  <ManageButton onClick={() => titleModalToggle(item)}>
+                    타이틀 수정
+                  </ManageButton>
+
+                  <ManageButton
+                    type="primary"
+                    onClick={() => listDrToggle(item)}
+                  >
+                    상품추가
+                  </ManageButton>
+                </Wrapper>
+
+                <Wrapper
+                  bgColor={Theme.adminLightGrey_C}
+                  padding="5px"
+                  dr="row"
+                  wrap="wrap"
+                  ju="flex-start"
+                >
+                  {/*  */}
+                  {item.connectArray.map((inItem) => {
+                    return (
+                      <Wrapper
+                        key={inItem.name}
                         width="140px"
-                        height="140px"
-                        alt="image"
-                        style={{ objectFit: "cover" }}
-                      />
-                      <Wrapper height="18px" margin="2px 0px 0px 0px">
-                        {inItem.name.length > 8
-                          ? inItem.name.substring(0, 7) + "..."
-                          : inItem.name}
-                      </Wrapper>
-
-                      <Popconfirm
-                        onConfirm={() => deleteItenHandler(inItem)}
-                        title="슬라이드에서 제외하시겠습니까?"
-                        onCancel={null}
+                        height="160px"
+                        margin="3px"
+                        position="relative"
                       >
-                        <DelX>X</DelX>
-                      </Popconfirm>
-                    </Wrapper>
-                  );
-                })}
+                        <Image
+                          src={inItem.thumbnail}
+                          width="140px"
+                          height="140px"
+                          alt="image"
+                          style={{ objectFit: "cover" }}
+                        />
+                        <Wrapper height="18px" margin="2px 0px 0px 0px">
+                          {inItem.name.length > 8
+                            ? inItem.name.substring(0, 7) + "..."
+                            : inItem.name}
+                        </Wrapper>
 
-                {/*  */}
+                        <Popconfirm
+                          onConfirm={() => deleteItenHandler(inItem)}
+                          title="슬라이드에서 제외하시겠습니까?"
+                          onCancel={null}
+                        >
+                          <DelX>X</DelX>
+                        </Popconfirm>
+                      </Wrapper>
+                    );
+                  })}
+
+                  {/*  */}
+                </Wrapper>
               </Wrapper>
-            </Wrapper>
-          );
-        })}
+            );
+          })
+        )}
       </Wrapper>
 
       <Modal

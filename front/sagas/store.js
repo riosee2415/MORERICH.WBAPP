@@ -72,6 +72,10 @@ import {
   DEL_OPTION_REQUEST,
   DEL_OPTION_SUCCESS,
   DEL_OPTION_FAILURE,
+  //
+  WISH_CHART_REQUEST,
+  WISH_CHART_SUCCESS,
+  WISH_CHART_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -557,6 +561,32 @@ function* delOption(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function wishChartAPI(data) {
+  return await axios.post(`/api/store/wishchart`, data);
+}
+
+function* wishChart(action) {
+  try {
+    const result = yield call(wishChartAPI, action.data);
+
+    yield put({
+      type: WISH_CHART_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: WISH_CHART_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
@@ -613,6 +643,9 @@ function* watchAddOption() {
 function* watchDelOption() {
   yield takeLatest(DEL_OPTION_REQUEST, delOption);
 }
+function* watchWishChart() {
+  yield takeLatest(WISH_CHART_REQUEST, wishChart);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -635,6 +668,7 @@ export default function* storeSaga() {
     fork(watchDelProduct),
     fork(watchAddOption),
     fork(watchDelOption),
+    fork(watchWishChart),
 
     //
   ]);

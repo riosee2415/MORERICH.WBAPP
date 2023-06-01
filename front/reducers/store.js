@@ -6,6 +6,7 @@ export const initailState = {
   productTypes2: [],
   thumbnailPath: null,
   detailImagePath: null,
+  wishChart: [],
   // 상품
   products: [],
   products2: [],
@@ -90,6 +91,11 @@ export const initailState = {
   st_delOptionLoading: false,
   st_delOptionDone: false,
   st_delOptionError: null,
+
+  // 위시 통계
+  st_wishChartLoading: false,
+  st_wishChartDone: false,
+  st_wishChartError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -163,6 +169,10 @@ export const ADD_OPTION_FAILURE = "ADD_OPTION_FAILURE";
 export const DEL_OPTION_REQUEST = "DEL_OPTION_REQUEST";
 export const DEL_OPTION_SUCCESS = "DEL_OPTION_SUCCESS";
 export const DEL_OPTION_FAILURE = "DEL_OPTION_FAILURE";
+
+export const WISH_CHART_REQUEST = "WISH_CHART_REQUEST";
+export const WISH_CHART_SUCCESS = "WISH_CHART_SUCCESS";
+export const WISH_CHART_FAILURE = "WISH_CHART_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -593,6 +603,30 @@ const reducer = (state = initailState, action) =>
         draft.st_delOptionLoading = false;
         draft.st_delOptionDone = false;
         draft.st_delOptionError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case WISH_CHART_REQUEST: {
+        draft.st_wishChartLoading = true;
+        draft.st_wishChartDone = false;
+        draft.st_wishChartError = null;
+        break;
+      }
+
+      case WISH_CHART_SUCCESS: {
+        draft.st_wishChartLoading = false;
+        draft.st_wishChartDone = true;
+        draft.st_wishChartError = null;
+        draft.wishChart = action.data;
+        break;
+      }
+
+      case WISH_CHART_FAILURE: {
+        draft.st_wishChartLoading = false;
+        draft.st_wishChartDone = false;
+        draft.st_wishChartError = action.error;
         break;
       }
 

@@ -165,7 +165,7 @@ export const items = {
     },
     {
       name: "위시리스트통계",
-      link: "/",
+      link: "/admin/store/wishchart",
       useYn: true,
     },
     {

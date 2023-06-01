@@ -29,7 +29,7 @@ const AdminHome = () => {
   const onLoginHandler = () => {
     dispatch({
       type: LOGIN_ADMIN_REQUEST,
-      data: { email: inputId.value, password: inputPw.value },
+      data: { userId: inputId.value, password: inputPw.value },
     });
   };
 
@@ -78,7 +78,7 @@ const AdminHome = () => {
                 >
                   Log in
                 </Wrapper>
-                <Wrapper al={`flex-start`}>이메일</Wrapper>
+                <Wrapper al={`flex-start`}>아이디</Wrapper>
                 <Wrapper>
                   <Input
                     {...inputId}

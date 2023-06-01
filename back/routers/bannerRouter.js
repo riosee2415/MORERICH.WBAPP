@@ -400,7 +400,8 @@ router.post("/list/slide", async (req, res, next) => {
   `;
 
   const sq2 = `
-  SELECT	A.MainSlideId,
+  SELECT	A.id,
+          A.MainSlideId,
           A.ProductId,
           B.thumbnail,
           B.name,
@@ -453,6 +454,57 @@ router.post("/update/slide", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).send("데이터를 수정할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 배너 슬라이드 상품 넣기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/insert/slide", isAdminCheck, async (req, res, next) => {
+  const { MainSlideId, ProductId } = req.body;
+
+  const insertQ = `
+  INSERT INTO mainSlideProduct (createdAt, updatedAt, MainSlideId, ProductId) VALUES 
+  (NOW(), NOW(), ${MainSlideId}, ${ProductId})
+  `;
+
+  try {
+    await models.sequelize.query(insertQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 추가할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 배너 슬라이드 상품 빼기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/delete/slide", isAdminCheck, async (req, res, next) => {
+  const { id } = req.body;
+
+  const dq = `
+    DELETE  FROM mainSlideProduct
+      WHERE id = ${id}
+  `;
+  try {
+    await models.sequelize.query(dq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 삭제할 수 없습니다.");
   }
 });
 

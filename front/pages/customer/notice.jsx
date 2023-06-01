@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -7,10 +7,6 @@ import axios from "axios";
 import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
 import {
-  CustomSelect,
-  ProductWrapper,
-  RsWrapper,
-  SquareBox,
   Text,
   WholeWrapper,
   Wrapper,
@@ -23,7 +19,7 @@ import Theme from "../../components/Theme";
 import { Empty, Select } from "antd";
 import styled from "styled-components";
 import Link from "next/dist/client/link";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
 import useInput from "../../hooks/useInput";
 
@@ -64,18 +60,30 @@ const List = styled(Wrapper)`
 
 const Notice = () => {
   ////// GLOBAL STATE //////
-  const { notices } = useSelector((state) => state.notice);
+  const { notices, lastPage, noticeLen } = useSelector((state) => state.notice);
 
   const [currentTab, setCurrentTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleId, setVisibleId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   ////// HOOKS //////
   const width = useWidth();
+  const dispatch = useDispatch();
 
   const searchTitle = useInput("");
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: NOTICE_LIST_REQUEST,
+      data: {
+        searchTitle: searchTitle.value,
+        page: currentPage,
+      },
+    });
+  }, [searchTitle.value, currentPage]);
+
   ////// TOGGLE //////
   const faqToggle = useCallback(() => {
     if (visibleId !== null) {
@@ -88,6 +96,14 @@ const Notice = () => {
   }, [isVisible, visibleId]);
 
   ////// HANDLER //////
+  // 페이지네이션
+  const otherPageCall = useCallback(
+    (changePage) => {
+      setCurrentPage(changePage);
+    },
+    [currentPage]
+  );
+
   ////// DATAVIEW //////
 
   return (
@@ -151,7 +167,7 @@ const Notice = () => {
                     color={Theme.grey_C}
                     margin={width < 900 ? `0 0 10px` : `0`}
                   >
-                    000개의 게시글이 존재합니다.
+                    {noticeLen}개의 게시글이 존재합니다.
                   </Wrapper>
                   <Wrapper
                     width={width < 900 ? `100%` : `315px`}
@@ -234,7 +250,7 @@ const Notice = () => {
                               fontSize={width < 900 ? `13px` : `16px`}
                               color={Theme.grey_C}
                             >
-                              {data.viewFrontCreatedAt}
+                              {data.viewCreatedAt}
                             </Wrapper>
                           </NoticeList>
                         </ATag>
@@ -243,7 +259,14 @@ const Notice = () => {
                   })
                 )}
 
-                <CustomPage margin={`60px 0 100px`} />
+                <CustomPage
+                  margin={`60px 0 100px`}
+                  defaultCurrent={1}
+                  current={parseInt(currentPage)}
+                  total={lastPage * 10}
+                  pageSize={10}
+                  onChange={(page) => otherPageCall(page)}
+                />
               </Wrapper>
             </>
           )}

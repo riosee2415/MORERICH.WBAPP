@@ -60,109 +60,254 @@ const upload = multer({
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post("/update/file", isAdminCheck, async (req, res, next) => {
-  const { id, filepath, title } = req.body;
+/**
+ * SUBJECT : 공지사항 이미지
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
+router.post("/image", isAdminCheck, async (req, res, next) => {
+  const uploadImage = upload.single("image");
 
-  const updateQ = `
-      UPDATE  notices
-        SET   file = "${filepath}",
-              updatedAt = now(),
-              updator = ${req.user.id}
-      WHERE  id = ${id}
-    `;
+  await uploadImage(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(401).send("첨부 가능한 용량을 초과했습니다.");
+    } else if (err) {
+      return res.status(401).send("업로드 중 문제가 발생했습니다.");
+    }
 
-  const insertQuery2 = `
-    INSERT INTO noticeHistory (content, title, updator, createdAt, updatedAt) VALUES 
-    (
-      "파일정보 수정",
-      "${title}",
-      ${req.user.id},
-      now(),
-      now()
-    )
-    `;
-
-  try {
-    await models.sequelize.query(updateQ);
-    await models.sequelize.query(insertQuery2);
-
-    return res.status(200).json({ result: true });
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("공지사항을 수정할 수 없습니다. [CODE 087]");
-  }
+    return res.json({
+      path: req.file.location,
+    });
+  });
 });
 
-router.post(
-  "/file",
-  isAdminCheck,
-  upload.single("file"),
-  async (req, res, next) => {
-    return res.json({ path: req.file.location });
-  }
-);
-
+/**
+ * SUBJECT : 공지사항 리스트
+ * PARAMETERS : page, searchTitle, orderType
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
 router.post("/list", async (req, res, next) => {
-  const { title, type } = req.body;
+  const { page, searchTitle, orderType } = req.body;
 
-  const _title = title ? title : "";
-  const _type = type ? type : "";
+  const LIMIT = 10;
 
-  const selectQ = `
-  SELECT	ROW_NUMBER() OVER(ORDER BY A.createdAt ASC)		AS num, 
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 10;
+
+  const _searchTitle = searchTitle ? searchTitle : "";
+  const _orderType = parseInt(orderType) || 1;
+
+  const lengthQuery = `
+  SELECT	ROW_NUMBER() OVER(${
+    _orderType === 1 ? `ORDER BY A.createdAt` : `ORDER BY A.title DESC`
+  })		  AS num, 
           A.id,
           A.title,
-          A.type,
           A.content,
-          A.author,
           A.hit,
-          A.isTop,
-          A.file,
+          A.imagePath,
           A.createdAt,
           A.updatedAt,
           DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
-          DATE_FORMAT(A.createdAt, "%Y.%m.%d")       AS viewFrontCreatedAt,
           DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
-          B.username 										AS updator 
-    FROM	notices		A
+          B.username 										              AS updator 
+    FROM	notice		A
    INNER
-    JOIN	users		B
+    JOIN	users		  B
       ON	A.updator = B.id
    WHERE	A.isDelete = 0
-     AND	A.title LIKE "%${_title}%"
-     ${_type ? `AND	A.type = "${_type}"` : ""}
-   ORDER	BY	A.createdAt DESC
+     AND	A.title LIKE "%${_searchTitle}%"
+  `;
+
+  const selectQuery = `
+  SELECT	ROW_NUMBER() OVER(${
+    _orderType === 1 ? `ORDER BY A.createdAt` : `ORDER BY A.title DESC`
+  })		  AS num, 
+          A.id,
+          A.title,
+          A.content,
+          A.hit,
+          A.imagePath,
+          A.createdAt,
+          A.updatedAt,
+          DATE_FORMAT(A.createdAt, "%Y.%m.%d") 		     AS viewCreatedAt,
+          DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
+          B.username 										              AS updator 
+    FROM	notice		A
+   INNER
+    JOIN	users		  B
+      ON	A.updator = B.id
+   WHERE	A.isDelete = 0
+     AND	A.title LIKE "%${_searchTitle}%"
+   ORDER	BY  num DESC
+   LIMIT  ${LIMIT}
+  OFFSET  ${OFFSET}
   `;
 
   try {
-    const result = await models.sequelize.query(selectQ);
+    const lengths = await models.sequelize.query(lengthQuery);
+    const notice = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json(result[0]);
+    const noticeLen = lengths[0].length;
+
+    const lastPage =
+      noticeLen % LIMIT > 0 ? noticeLen / LIMIT + 1 : noticeLen / LIMIT;
+
+    return res.status(200).json({
+      notice: notice[0],
+      lastPage: parseInt(lastPage),
+      noticeLen: parseInt(noticeLen),
+    });
   } catch (error) {
     console.error(error);
-    return res.status(400).send("공지사항 데이터를 불러올 수 없습니다.");
+    return res.status(400).send("공지사항을 조회할 수 없습니다.");
   }
 });
 
+/**
+ * SUBJECT : 공지사항 리스트 (관리자)
+ * PARAMETERS : searchTitle
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
+router.post("/admin/list", async (req, res, next) => {
+  const { searchTitle } = req.body;
+
+  const _searchTitle = searchTitle ? searchTitle : "";
+
+  const selectQuery = `
+  SELECT	ROW_NUMBER() OVER(ORDER BY A.createdAt)		  AS num, 
+          A.id,
+          A.title,
+          A.content,
+          A.hit,
+          A.imagePath,
+          A.createdAt,
+          A.updatedAt,
+          DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
+          DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
+          B.username 										              AS updator 
+    FROM	notice		A
+   INNER
+    JOIN	users		  B
+      ON	A.updator = B.id
+   WHERE	A.isDelete = 0
+     AND	A.title LIKE "%${_searchTitle}%"
+   ORDER	BY num DESC
+  `;
+
+  try {
+    const notice = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json(notice[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("공지사항을 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 공지사항 상세정보
+ * PARAMETERS : id
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
+router.post("/detail", async (req, res, next) => {
+  const { id } = req.body;
+
+  const detailQuery = `
+  SELECT	A.id,
+          A.title,
+          A.content,
+          A.hit,
+          A.imagePath,
+          A.createdAt,
+          A.updatedAt,
+          DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
+          DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
+          B.username 										              AS updator 
+    FROM	notice		A
+   INNER
+    JOIN	users		  B
+      ON	A.updator = B.id
+   WHERE	A.isDelete = 0
+     AND	A.id = ${id}
+  `;
+
+  try {
+    const detailData = await models.sequelize.query(detailQuery);
+
+    if (detailData[0].length === 0) {
+      return res.status(401).send("존재하지 않는 게시글입니다.");
+    }
+
+    await models.sequelize.query(
+      `
+    UPDATE  notice
+       SET  hit = ${detailData[0][0].hit + 1}
+     WHERE  id = ${id}
+    `
+    );
+
+    return res.status(200).json(detailData[0][0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("공지사항을 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 공지사항 생성하기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
 router.post("/create", isAdminCheck, async (req, res, next) => {
-  const { type } = req.body;
+  const insertQuery = `
+  INSERT INTO notice
+  (
+    title,
+    content,
+    imagePath,
+    updator,
+    createdAt,
+    updatedAt
+  )
+  VALUES
+  (
+    "임시 공지사항",
+    "임시 공지사항 내용입니다. 내용을 입력해주세요.",
+    "http://via.placeholder.com/420x400",
+    ${req.user.id},
+    NOW(),
+    NOW()
+  )
+`;
 
-  const insertQuery1 = `
-      INSERT INTO notices (title, type, content, author, updator, createdAt, updatedAt)
-      VALUES
-      (
-        "임시 공지사항",
-        "${type}",
-        "임시 공지사항 입니다. 데이터를 입력해주세요.",
-        "관리자",
-        ${req.user.id},
-        now(),
-        now()
-      )
-    `;
-
-  const insertQuery2 = `
-  INSERT INTO noticeHistory (content, title, updator, createdAt, updatedAt) VALUES 
+  const historyInsertQuery = `
+  INSERT INTO noticeHistory
+  (
+    content,
+    title,
+    updator,
+    createdAt,
+    updatedAt
+  )
+  VALUES 
   (
     "데이터 생성",
     "임시 공지사항",
@@ -173,31 +318,47 @@ router.post("/create", isAdminCheck, async (req, res, next) => {
   `;
 
   try {
-    await models.sequelize.query(insertQuery1);
-    await models.sequelize.query(insertQuery2);
+    await models.sequelize.query(insertQuery);
+    await models.sequelize.query(historyInsertQuery);
 
     return res.status(201).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("게시글을 등록할 수 없습니다. [CODE 077]");
+    return res.status(401).send("공지사항을 등록할 수 없습니다.");
   }
 });
 
+/**
+ * SUBJECT : 공지사항 수정하기
+ * PARAMETERS : id, title, content, imagePath
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
 router.post("/update", isAdminCheck, async (req, res, next) => {
-  const { id, title, content, type } = req.body;
+  const { id, title, content, imagePath } = req.body;
 
-  const updateQ = `
-    UPDATE  notices
+  const updateQuery = `
+    UPDATE  notice
       SET   title = "${title}",
             content = "${content}",
-            type = "${type}",
-            updatedAt = now(),
+            imagePath = "${imagePath}",
+            updatedAt = NOW(),
             updator = ${req.user.id}
      WHERE  id = ${id}
   `;
 
-  const insertQuery2 = `
-  INSERT INTO noticeHistory (content, title, updator, createdAt, updatedAt) VALUES 
+  const historyInsertQuery = `
+  INSERT INTO noticeHistory
+  (
+    content,
+    title,
+    updator,
+    createdAt,
+    updatedAt
+  )
+  VALUES 
   (
     "데이터 수정",
     "${title}",
@@ -208,31 +369,47 @@ router.post("/update", isAdminCheck, async (req, res, next) => {
   `;
 
   try {
-    await models.sequelize.query(updateQ);
-    await models.sequelize.query(insertQuery2);
+    await models.sequelize.query(updateQuery);
+    await models.sequelize.query(historyInsertQuery);
 
     return res.status(200).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("공지사항을 수정할 수 없습니다. [CODE 087]");
+    return res.status(401).send("공지사항을 수정할 수 없습니다.");
   }
 });
 
-router.post("/update/top", isAdminCheck, async (req, res, next) => {
-  const { id, flag, title } = req.body;
+/**
+ * SUBJECT : 공지사항 삭제하기
+ * PARAMETERS : id, title
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
+router.post("/delete", isAdminCheck, async (req, res, next) => {
+  const { id, title } = req.body;
 
-  const updateQ = `
-    UPDATE  notices
-      SET   isTop = ${flag},
-            updatedAt = now(),
+  const deleteQuery = `
+    UPDATE  notice
+      SET   isDelete = 1,
+            deletedAt = NOW(),
             updator = ${req.user.id}
      WHERE  id = ${id}
   `;
 
-  const insertQuery2 = `
-  INSERT INTO noticeHistory (content, title, updator, createdAt, updatedAt) VALUES 
+  const historyInsertQuery = `
+  INSERT INTO noticeHistory
   (
-    "${flag === 0 ? "상단고정 해제" : "상단고정 적용"}",
+    content,
+    title,
+    updator,
+    createdAt,
+    updatedAt
+  )
+  VALUES 
+  (
+    "데이터 삭제",
     "${title}",
     ${req.user.id},
     now(),
@@ -241,150 +418,24 @@ router.post("/update/top", isAdminCheck, async (req, res, next) => {
   `;
 
   try {
-    await models.sequelize.query(updateQ);
-    await models.sequelize.query(insertQuery2);
+    await models.sequelize.query(deleteQuery);
+    await models.sequelize.query(historyInsertQuery);
 
     return res.status(200).json({ result: true });
   } catch (error) {
     console.error(error);
-    return res.status(401).send("공지사항을 수정할 수 없습니다. [CODE 087]");
+    return res.status(401).send("공지사항을 삭제할 수 없습니다.");
   }
 });
 
-router.delete("/delete/:noticeId", isAdminCheck, async (req, res, next) => {
-  const { noticeId } = req.params;
-
-  try {
-    const exNotice = await Notice.findOne({
-      where: { id: parseInt(noticeId) },
-    });
-
-    if (!exNotice) {
-      return res.status(401).send("존재하지 않는 게시글 입니다.");
-    }
-
-    const updateResult = await Notice.update(
-      {
-        isDelete: true,
-        deletedAt: new Date(),
-      },
-      {
-        where: { id: parseInt(noticeId) },
-      }
-    );
-
-    if (updateResult[0] > 0) {
-      return res.status(200).json({ result: true });
-    } else {
-      return res.status(200).json({ result: false });
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("게시글을 삭제할 수 없습니다. [CODE 097]");
-  }
-});
-
-router.get("/list/:noticeId", async (req, res, next) => {
-  const { noticeId } = req.params;
-
-  try {
-    const exNotice = await Notice.findOne({
-      where: { id: parseInt(noticeId) },
-    });
-
-    const nextHit = exNotice.dataValues.hit + 1;
-
-    const commentQuery = `
-    SELECT	A.id,
-            A.content,
-            A.isDelete,
-            A.deletedAt,
-            A.parent,
-            A.parentId,
-            DATE_FORMAT(A.createdAt, '%Y-%m-%d')  AS createdAt,
-            DATE_FORMAT(A.updatedAt, '%Y-%m-%d')  AS updatedAt,
-            A.NoticeId,
-            A.UserId,
-            B.email,
-            B.username
-      FROM	noticeComments		A
-     INNER
-      JOIN	users 					  B
-        ON	A.UserId = B.id
-     WHERE	A.isDelete = FALSE
-       AND	A.parentId  IS NULL
-       AND  A.NoticeId = ${noticeId}
-    `;
-
-    const comments = await models.sequelize.query(commentQuery);
-
-    await Notice.update(
-      {
-        hit: nextHit,
-      },
-      {
-        where: { id: parseInt(noticeId) },
-      }
-    );
-
-    if (!exNotice) {
-      return res.status(401).send("존재하지 않는 게시글 입니다.");
-    }
-
-    return res.status(200).json({ exNotice, comments: comments[0] });
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("게시글 정보를 불러올 수 없습니다. [CODE 107]");
-  }
-});
-
-router.get("/next/:noticeId", async (req, res, next) => {
-  const { noticeId } = req.params;
-
-  try {
-    const notices = await Notice.findAll({
-      where: {
-        id: {
-          [Op.gt]: parseInt(noticeId),
-        },
-      },
-      limit: 1,
-    });
-
-    if (!notices[0]) {
-      return res.status(401).send("마지막 게시글 입니다.");
-    }
-
-    return res.redirect(`/api/notice/list/${notices[0].id}`);
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("게시글 정보를 불러올 수 없습니다. [CODE 107]");
-  }
-});
-
-router.get("/prev/:noticeId", async (req, res, next) => {
-  const { noticeId } = req.params;
-
-  try {
-    const notices = await Notice.findAll({
-      where: {
-        id: {
-          [Op.lt]: parseInt(noticeId),
-        },
-      },
-    });
-
-    if (!notices[0]) {
-      return res.status(401).send("첫번째 게시글 입니다.");
-    }
-
-    return res.redirect(`/api/notice/list/${notices[notices.length - 1].id}`);
-  } catch (error) {
-    console.error(error);
-    return res.status(401).send("게시글 정보를 불러올 수 없습니다. [CODE 107]");
-  }
-});
-
+/**
+ * SUBJECT : 공지사항 이력 목록
+ * PARAMETERS : datePick
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 신태섭
+ * DEV DATE : 2023/03/02
+ */
 router.post("/history/list", isAdminCheck, async (req, res, next) => {
   const { datePick } = req.body;
 

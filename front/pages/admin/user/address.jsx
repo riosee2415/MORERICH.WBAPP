@@ -4,7 +4,11 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
   LOAD_MY_INFO_REQUEST,
+  UPDATE_MODAL_CLOSE_REQUEST,
+  UPDATE_MODAL_OPEN_REQUEST,
+  USERLIST_REQUEST,
   ADMINUSERLIST_REQUEST,
+  USERLIST_UPDATE_REQUEST,
 } from "../../../reducers/user";
 import {
   Table,
@@ -76,6 +80,8 @@ const Address = ({}) => {
   const { me, st_loadMyInfoDone } = useSelector((state) => state.user);
 
   const { users } = useSelector((state) => state.user);
+
+  console.log(users);
 
   const [sameDepth, setSameDepth] = useState([]);
 
@@ -171,7 +177,8 @@ const Address = ({}) => {
     },
     {
       title: "회원이름",
-      render: (data) => <div>{data.username}</div>,
+      dataIndex: "username",
+      sorter: (a, b) => a.username.localeCompare(b.username),
     },
     {
       title: "닉네임",

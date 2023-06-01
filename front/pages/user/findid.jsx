@@ -23,23 +23,25 @@ import {
 import Theme from "../../components/Theme";
 import useWidth from "../../hooks/useWidth";
 
-const Login = () => {
+const FindId = () => {
   ////// GLOBAL STATE //////
 
   ////// HOOKS //////
   const width = useWidth();
 
   ////// REDUX //////
+
   ////// USEEFFECT //////
+
   ////// TOGGLE //////
-  ////// HANDLER //////\
+  ////// HANDLER //////
 
   ////// DATAVIEW //////
 
   return (
     <>
       <Head>
-        <title>MoreRich | LOGIN</title>
+        <title>MoreRich | FINDID</title>
       </Head>
 
       <ClientLayout>
@@ -52,23 +54,23 @@ const Login = () => {
                 fontWeight={`bold`}
                 margin={`0 0 36px`}
               >
-                Login
+                FIND ID
               </Text>
               <TextInput
-                placeholder="ExampleID"
+                placeholder="성함"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 8px`}
               />
               <TextInput
-                placeholder="비밀번호"
+                placeholder="이메일 주소"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 11px`}
               />
               <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 12px`}>
                 <Text color={Theme.grey_C} isHover>
-                  ID찾기
+                  로그인
                 </Text>
                 <Text color={Theme.grey_C} isHover td={`underline`}>
                   PW재설정
@@ -81,32 +83,7 @@ const Login = () => {
                 height={`50px`}
                 margin={`0 0 8px`}
               >
-                로그인
-              </CommonButton>
-              <CommonButton
-                width={`356px`}
-                fontSize={`16px`}
-                fontWeight={`600`}
-                height={`50px`}
-                margin={`0 0 8px`}
-                kindOf={`white`}
-              >
-                회원가입
-              </CommonButton>
-              <CommonButton
-                width={`356px`}
-                fontSize={`16px`}
-                fontWeight={`600`}
-                height={`50px`}
-                kindOf={`kakao`}
-              >
-                <Image
-                  width={`19px`}
-                  margin={`0 6px 0 0`}
-                  alt="kakao"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_kakao_h.png`}
-                />
-                카카오로 로그인
+                아이디 찾기
               </CommonButton>
             </Wrapper>
           </RsWrapper>
@@ -138,4 +115,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default Login;
+export default FindId;

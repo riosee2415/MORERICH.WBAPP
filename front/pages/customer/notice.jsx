@@ -59,7 +59,7 @@ const List = styled(Wrapper)`
   }
 `;
 
-const Index = () => {
+const Notice = () => {
   ////// GLOBAL STATE //////
   const [currentTab, setCurrentTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -204,6 +204,7 @@ const Index = () => {
                         width={`60%`}
                         fontSize={width < 900 ? `13px` : `16px`}
                         al={`flex-start`}
+                        isEllipsis
                       >
                         제목을 입력해주세요.
                       </Wrapper>
@@ -262,9 +263,12 @@ const Index = () => {
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
-              <Wrapper width={`75%`}>
+              <Wrapper width={width < 900 ? `90%` : `75%`}>
                 <Wrapper al={`flex-start`} margin={`0 0 30px`}>
-                  <Text fontSize={`26px`} fontWeight={`bold`}>
+                  <Text
+                    fontSize={width < 900 ? `22px` : `26px`}
+                    fontWeight={`bold`}
+                  >
                     FAQ
                   </Text>
                 </Wrapper>
@@ -301,7 +305,7 @@ const Index = () => {
                       />
                     )}
                   </List>
-                  {visibleId === isVisible && (
+                  {isVisible && (
                     <Wrapper
                       padding={width < 900 ? `15px` : `24px`}
                       al={`flex-start`}
@@ -345,4 +349,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default Index;
+export default Notice;

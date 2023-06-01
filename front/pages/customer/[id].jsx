@@ -25,7 +25,7 @@ import { Select } from "antd";
 import styled from "styled-components";
 import Link from "next/dist/client/link";
 
-const Index = () => {
+const Detail = () => {
   ////// GLOBAL STATE //////
   const [currentTab, setCurrentTab] = useState(0);
   ////// HOOKS //////
@@ -220,4 +220,4 @@ export const getServerSideProps = wrapper.getServerSideProps(
   }
 );
 
-export default Index;
+export default Detail;

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Router from "next/router";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form, Checkbox } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,101 +11,154 @@ import wrapper from "../../store/configureStore";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
+import {
+  CommonButton,
+  Image,
+  RsWrapper,
+  Text,
+  TextInput,
+  WholeWrapper,
+  Wrapper,
+} from "../../components/commonComponents";
+import Theme from "../../components/Theme";
+import useWidth from "../../hooks/useWidth";
 
 const SignUp = () => {
   ////// GLOBAL STATE //////
 
   ////// HOOKS //////
-  const dispatch = useDispatch();
-
-  const email = useInput(``);
-  const nickname = useInput(``);
-
-  const password = useInput(``);
-
-  const [passwordCheck, setPasswordCheck] = useState(``);
-  const [passwordError, setPasswordError] = useState(false);
-
+  const width = useWidth();
   ////// REDUX //////
-  const { st_signUpLoading, st_signUpDone } = useSelector(
-    (state) => state.user
-  );
+
   ////// USEEFFECT //////
-  useEffect(() => {
-    if (st_signUpDone) {
-      alert("회원가입 성공!");
-      Router.replace("/");
-    }
-  }, [st_signUpDone]);
+
   ////// TOGGLE //////
   ////// HANDLER //////\
-
-  const checkPasswordChangeHandler = useCallback(
-    (e) => {
-      setPasswordCheck(e.target.value);
-      setPasswordError(e.target.value !== password.value);
-    },
-    [password.value]
-  );
-
-  const onSubmit = useCallback(() => {
-    if (password.value !== passwordCheck) {
-      alert("비밀번호 확인!");
-      return setPasswordError(true);
-    }
-
-    dispatch({
-      type: SIGNUP_REQUEST,
-      data: {
-        email: email.value,
-        password: password.value,
-        nickname: nickname.value,
-      },
-    });
-  }, [email, nickname, password, passwordCheck]);
 
   ////// DATAVIEW //////
 
   return (
     <>
       <Head>
-        <title></title>
+        <title>MoreRich | SIGNUP</title>
       </Head>
 
       <ClientLayout>
-        <div>
-          <Form onFinish={onSubmit}>
-            <div>
-              <label>EMAIL</label>
-              <Input type="email" required {...email} />
-            </div>
-            <div>
-              <label>NICKNAME</label>
-              <Input type="text" required {...nickname} />
-            </div>
-            <div>
-              <label>PASSOWRD</label>
-              <Input.Password type="password" required {...password} />
-            </div>
-            <div>
-              <label>RE-PASSWORD</label>
-              <Input.Password
-                type="password"
-                required
-                value={passwordCheck}
-                onChange={checkPasswordChangeHandler}
-                iconRender={(visible) =>
-                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                }
+        <WholeWrapper padding={`180px 0`}>
+          <RsWrapper>
+            <Wrapper width={`356px`}>
+              <Text
+                isPoppins
+                fontSize={`46px`}
+                fontWeight={`bold`}
+                margin={`0 0 35px`}
+              >
+                Join
+              </Text>
+              <Wrapper al={`flex-start`} margin={`0 0 8px`}>
+                *아이디
+              </Wrapper>
+              <TextInput
+                placeholder="ExampleID"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 27px`}
               />
-            </div>
-            <div>{passwordError && <p> 비밀번호가 일치하지 않습니다. </p>}</div>
-
-            <Button type="primary" htmlType="submit" loading={st_signUpLoading}>
-              가입하기
-            </Button>
-          </Form>
-        </div>
+              <Wrapper al={`flex-start`} margin={`0 0 8px`}>
+                *비밀번호
+              </Wrapper>
+              <TextInput
+                placeholder="비밀번호"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 8px`}
+              />
+              <TextInput
+                placeholder="비밀번호 재확인"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 27px`}
+              />
+              <Wrapper al={`flex-start`} margin={`0 0 8px`}>
+                *성함
+              </Wrapper>
+              <TextInput
+                placeholder="성함"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 27px`}
+              />
+              <Wrapper al={`flex-start`} margin={`0 0 8px`}>
+                연락처
+              </Wrapper>
+              <TextInput
+                placeholder="(선택사항)'-'를 제외한 연락처"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 27px`}
+              />
+              <Wrapper al={`flex-start`} margin={`0 0 8px`}>
+                *이메일
+              </Wrapper>
+              <TextInput
+                placeholder="추후 아이디/비번을 찾기 위한 이메일"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 27px`}
+              />
+              <Wrapper al={`flex-start`} margin={`0 0 8px`}>
+                주소
+              </Wrapper>
+              <Wrapper
+                dr={`row`}
+                al={`flex-start`}
+                ju={`space-between`}
+                margin={`0 0 8px`}
+              >
+                <TextInput
+                  placeholder="(선택사항)"
+                  width={`228px`}
+                  height={`50px`}
+                />
+                <CommonButton
+                  width={`calc(100% - 228px - 8px)`}
+                  height={`50px`}
+                  fontSize={`16px`}
+                >
+                  주소검색
+                </CommonButton>
+              </Wrapper>
+              <TextInput
+                placeholder="주소"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 8px`}
+              />
+              <TextInput
+                placeholder="상세주소"
+                width={`356px`}
+                height={`50px`}
+                margin={`0 0 27px`}
+              />
+              <Wrapper
+                al={`flex-start`}
+                padding={`16px`}
+                bgColor={Theme.lightGrey2_C}
+                margin={`0 0 8px`}
+              >
+                <Checkbox>개인정보 처리방침에 동의합니다.</Checkbox>
+              </Wrapper>
+              <CommonButton
+                width={`356px`}
+                height={`50px`}
+                fontSize={`16px`}
+                fontWeight={`600`}
+              >
+                회원가입
+              </CommonButton>
+            </Wrapper>
+          </RsWrapper>
+        </WholeWrapper>
       </ClientLayout>
     </>
   );

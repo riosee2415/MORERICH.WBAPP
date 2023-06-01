@@ -7,37 +7,21 @@ module.exports = class Notice extends Model {
       {
         // id가 기본적으로 들어있다.
         title: {
-          type: DataTypes.STRING(300), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: false, // 필수
-        },
-        type: {
-          // ["공지사항", "새소식"]
-          type: DataTypes.STRING(30), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: false, // 필수
-          defaultValue: "공지사항",
-        },
-        isTop: {
-          type: DataTypes.BOOLEAN,
+          type: DataTypes.STRING(300),
           allowNull: false,
-          defaultValue: false,
         },
         content: {
           type: DataTypes.TEXT,
-          allowNull: false, // 필수
-        },
-        author: {
-          type: DataTypes.STRING(30),
           allowNull: false,
-          defaultValue: "관리자",
         },
         hit: {
           type: DataTypes.INTEGER,
           allowNull: false,
           defaultValue: 0,
         },
-        file: {
-          type: DataTypes.STRING(2000), // STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-          allowNull: true,
+        imagePath: {
+          type: DataTypes.STRING(600),
+          allowNull: false,
         },
         isDelete: {
           type: DataTypes.BOOLEAN,
@@ -55,7 +39,7 @@ module.exports = class Notice extends Model {
       },
       {
         modelName: "Notice",
-        tableName: "notices",
+        tableName: "notice",
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci", // 한글 저장
         sequelize,

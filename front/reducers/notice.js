@@ -1,15 +1,20 @@
 import produce from "../util/produce";
 
 export const initailState = {
-  notices: [],
-  maxPage: 1,
-
+  notices: [], // 리스트
+  lastPage: 1,
+  adminNotices: [], // 관리자 리스트
+  noticeDetail: null, // 상세페이지
   uploadFilePath: null,
   noticeHistory: [],
   //
   st_noticeListLoading: false, // 공지사항 가져오기
   st_noticeListDone: false,
   st_noticeListError: null,
+  //
+  st_adminNoticeListLoading: false, //관리자 공지사항 가져오기
+  st_adminNoticeListDone: false,
+  st_adminNoticeListError: null,
   //
   st_noticeCreateLoading: false, // 공지사항 생성하기
   st_noticeCreateDone: false,
@@ -39,39 +44,50 @@ export const initailState = {
   st_noticeHistoryDone: false,
   st_noticeHistoryError: null,
   //
+  st_noticeDetailLoading: false, // 공지사항 detail
+  st_noticeDetailDone: false,
+  st_noticeDetailError: null,
 };
 
 export const NOTICE_LIST_REQUEST = "NOTICE_LIST_REQUEST";
 export const NOTICE_LIST_SUCCESS = "NOTICE_LIST_SUCCESS";
 export const NOTICE_LIST_FAILURE = "NOTICE_LIST_FAILURE";
-//
+
+export const ADMIN_NOTICE_LIST_REQUEST = "ADMIN_NOTICE_LIST_REQUEST";
+export const ADMIN_NOTICE_LIST_SUCCESS = "ADMIN_NOTICE_LIST_SUCCESS";
+export const ADMIN_NOTICE_LIST_FAILURE = "ADMIN_NOTICE_LIST_FAILURE";
+
 export const NOTICE_CREATE_REQUEST = "NOTICE_CREATE_REQUEST";
 export const NOTICE_CREATE_SUCCESS = "NOTICE_CREATE_SUCCESS";
 export const NOTICE_CREATE_FAILURE = "NOTICE_CREATE_FAILURE";
-//
+
 export const NOTICE_UPDATE_REQUEST = "NOTICE_UPDATE_REQUEST";
 export const NOTICE_UPDATE_SUCCESS = "NOTICE_UPDATE_SUCCESS";
 export const NOTICE_UPDATE_FAILURE = "NOTICE_UPDATE_FAILURE";
-//
+
 export const NOTICE_UPDATE_TOP_REQUEST = "NOTICE_UPDATE_TOP_REQUEST";
 export const NOTICE_UPDATE_TOP_SUCCESS = "NOTICE_UPDATE_TOP_SUCCESS";
 export const NOTICE_UPDATE_TOP_FAILURE = "NOTICE_UPDATE_TOP_FAILURE";
-//
+
 export const NOTICE_DELETE_REQUEST = "NOTICE_DELETE_REQUEST";
 export const NOTICE_DELETE_SUCCESS = "NOTICE_DELETE_SUCCESS";
 export const NOTICE_DELETE_FAILURE = "NOTICE_DELETE_FAILURE";
-//
+
 export const NOTICE_FILE_REQUEST = "NOTICE_FILE_REQUEST";
 export const NOTICE_FILE_SUCCESS = "NOTICE_FILE_SUCCESS";
 export const NOTICE_FILE_FAILURE = "NOTICE_FILE_FAILURE";
-//
+
 export const NOTICE_FILE_INFO_REQUEST = "NOTICE_FILE_INFO_REQUEST";
 export const NOTICE_FILE_INFO_SUCCESS = "NOTICE_FILE_INFO_SUCCESS";
 export const NOTICE_FILE_INFO_FAILURE = "NOTICE_FILE_INFO_FAILURE";
-//
+
 export const NOTICE_HISTORY_REQUEST = "NOTICE_HISTORY_REQUEST";
 export const NOTICE_HISTORY_SUCCESS = "NOTICE_HISTORY_SUCCESS";
 export const NOTICE_HISTORY_FAILURE = "NOTICE_HISTORY_FAILURE";
+
+export const NOTICE_DETAIL_REQUEST = "NOTICE_DETAIL_REQUEST";
+export const NOTICE_DETAIL_SUCCESS = "NOTICE_DETAIL_SUCCESS";
+export const NOTICE_DETAIL_FAILURE = "NOTICE_DETAIL_FAILURE";
 
 export const UPLOAD_PATH_INIT = "UPLOAD_PATH_INIT";
 
@@ -87,7 +103,8 @@ const reducer = (state = initailState, action) =>
       case NOTICE_LIST_SUCCESS: {
         draft.st_noticeListLoading = false;
         draft.st_noticeListDone = true;
-        draft.notices = action.data;
+        draft.notices = action.data.notice;
+        draft.lastPage = action.data.lastPage;
         break;
       }
       case NOTICE_LIST_FAILURE: {
@@ -97,6 +114,28 @@ const reducer = (state = initailState, action) =>
         break;
       }
       ///////////////////////////////////////////////////////
+
+      case ADMIN_NOTICE_LIST_REQUEST: {
+        draft.st_adminNoticeListLoading = true;
+        draft.st_adminNoticeListDone = false;
+        draft.st_adminNoticeListError = null;
+        break;
+      }
+      case ADMIN_NOTICE_LIST_SUCCESS: {
+        draft.st_adminNoticeListLoading = false;
+        draft.st_adminNoticeListDone = true;
+        draft.st_adminNoticeListError = null;
+        draft.adminNotices = action.data;
+        break;
+      }
+      case ADMIN_NOTICE_LIST_FAILURE: {
+        draft.st_adminNoticeListLoading = false;
+        draft.st_adminNoticeListDone = false;
+        draft.st_adminNoticeListError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
       case NOTICE_CREATE_REQUEST: {
         draft.st_noticeCreateLoading = true;
         draft.st_noticeCreateDone = false;
@@ -241,6 +280,29 @@ const reducer = (state = initailState, action) =>
         draft.st_noticeHistoryLoading = false;
         draft.st_noticeHistoryDone = false;
         draft.st_noticeHistoryError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      case NOTICE_DETAIL_REQUEST: {
+        draft.st_noticeDetailLoading = true;
+        draft.st_noticeDetailDone = false;
+        draft.st_noticeDetailError = null;
+        break;
+      }
+      case NOTICE_DETAIL_SUCCESS: {
+        draft.st_noticeDetailLoading = false;
+        draft.st_noticeDetailDone = true;
+        draft.st_noticeDetailError = null;
+        draft.noticeDetail = action.data;
+        break;
+      }
+      case NOTICE_DETAIL_FAILURE: {
+        draft.st_noticeDetailLoading = false;
+        draft.st_noticeDetailDone = false;
+        draft.st_noticeDetailError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

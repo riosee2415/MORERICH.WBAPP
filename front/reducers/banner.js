@@ -5,6 +5,7 @@ export const initailState = {
   uploadBannerPath: null,
   bannerHistory: [],
   slides: [],
+
   //
   st_mainBannerLoading: false, // 메인배너 가져오기
   st_mainBannerDone: false,

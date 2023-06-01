@@ -75,67 +75,18 @@ const SliderWrapper = styled(Carousel)`
   overflow: hidden;
 
   & .slick-list {
+    height: 488px;
     width: auto;
   }
 `;
 
-const BestSlider = () => {
+const BestSlider = ({ datum }) => {
+  console.log(datum);
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
 
   const { me } = useSelector((state) => state.user);
-
-  const bannerData = [
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod2.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod3.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod4.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-  ];
 
   return (
     <BestSliderWrapper>
@@ -150,12 +101,13 @@ const BestSlider = () => {
         dots={false}
         arrows={true}
       >
-        {bannerData && bannerData.length === 0 ? (
+        {datum && datum.length === 0 ? (
           <Wrapper padding={`100px 0`}>
             <Empty description="조회된 내역이 없습니다." />
           </Wrapper>
         ) : (
-          bannerData.map((data, idx) => {
+          datum.map((data, idx) => {
+            console.log(data);
             return (
               <Wrapper
                 key={idx}
@@ -163,10 +115,11 @@ const BestSlider = () => {
                 display={`flex !important`}
                 padding={`0 15px`}
                 cursor={`pointer`}
+                onClick={() => router.push(`/product/${data.id}`)}
               >
                 <Wrapper al={`flex-start`}>
                   <SquareBox>
-                    <Image alt="thumbnail" src={data.imgUrl} />
+                    <Image alt="thumbnail" src={data.thumbnail} />
                   </SquareBox>
 
                   <Text
@@ -174,11 +127,11 @@ const BestSlider = () => {
                     fontWeight={`600`}
                     margin={`23px 0 12px`}
                   >
-                    {data.title}
+                    {data.name}
                   </Text>
 
                   <Text fontSize={width < 900 ? `15px` : `17px`}>
-                    {data.name}
+                    {data.subName}
                   </Text>
                   <Wrapper
                     dr={`row`}

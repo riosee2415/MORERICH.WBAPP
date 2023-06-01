@@ -18,8 +18,8 @@ const snsInfoHistory = require("./snsInfoHistory");
 const kakaoch = require("./kakaoch");
 const kakaochHistory = require("./kakaochHistory");
 const popupHistory = require("./popupHistory");
+const faq = require("./faq");
 const faqType = require("./faqtype");
-const faqhistory = require("./faqhistory");
 const questionhistory = require("./questionhistory");
 const noticeHistory = require("./noticeHistory");
 const galleryImage = require("./galleryImage");
@@ -63,6 +63,7 @@ db.Kakaoch = kakaoch;
 db.KakaochHistory = kakaochHistory;
 db.MainBannerHistory = mainBannerHistory;
 db.PopupHistory = popupHistory;
+db.Faq = faq;
 db.FaqType = faqType;
 db.JoinSet = joinset;
 
@@ -74,7 +75,6 @@ db.ProductOption = productOption;
 db.MainSlide = mainSlide;
 db.MainSlideProduct = mainSlideProduct;
 
-db.FaqHistory = faqhistory;
 db.QuestionHistory = questionhistory;
 db.NoticeHistory = noticeHistory;
 db.GalleryImage = galleryImage;

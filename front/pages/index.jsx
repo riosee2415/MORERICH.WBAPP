@@ -102,7 +102,7 @@ const Home = ({}) => {
                 {slides[1] && slides[1].title}
               </Text>
             </Wrapper>
-            <NewSlider />
+            <NewSlider datum={slides[1] && slides[1].connectArray} />
             <Wrapper dr={`row`} margin={`120px 0`}>
               <Box>
                 <Image
@@ -234,10 +234,10 @@ const Home = ({}) => {
 
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>
               <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
-                Steady Product
+                {slides[2] && slides[2].title}
               </Text>
             </Wrapper>
-            <SteadySlider />
+            <SteadySlider datum={slides[2] && slides[2].connectArray} />
           </RsWrapper>
           <Popup />
         </WholeWrapper>

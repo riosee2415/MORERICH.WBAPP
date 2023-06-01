@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Router from "next/router";
-import { Input, Button, Form } from "antd";
+import Router, { useRouter } from "next/router";
+import { Input, Button, Form, message } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { SIGNUP_REQUEST } from "../../reducers/user";
+import { LOGIN_REQUEST, SIGNUP_REQUEST } from "../../reducers/user";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -29,10 +29,34 @@ const Login = () => {
   ////// HOOKS //////
   const width = useWidth();
 
+  // INPUT
+  const idInput = useInput(``);
+  const pwInput = useInput(``);
+
   ////// REDUX //////
+  const dispatch = useDispatch();
+  const router = useRouter();
   ////// USEEFFECT //////
   ////// TOGGLE //////
-  ////// HANDLER //////\
+  ////// HANDLER ///////
+
+  const loginHandler = useCallback(() => {
+    if (!idInput.value) {
+      return message.error("아이디를 입력해주세요.");
+    }
+
+    if (!pwInput.value) {
+      return message.error("비밀번호를 입력해주세요.");
+    }
+
+    dispatch({
+      type: LOGIN_REQUEST,
+      data: {
+        id: idInput.value,
+        password: pwInput.value,
+      },
+    });
+  }, [idInput, pwInput]);
 
   ////// DATAVIEW //////
 
@@ -59,12 +83,14 @@ const Login = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 8px`}
+                {...idInput}
               />
               <TextInput
                 placeholder="비밀번호"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 11px`}
+                {...pwInput}
               />
               <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 12px`}>
                 <Text color={Theme.grey_C} isHover>
@@ -80,6 +106,7 @@ const Login = () => {
                 fontWeight={`600`}
                 height={`50px`}
                 margin={`0 0 8px`}
+                onClick={loginHandler}
               >
                 로그인
               </CommonButton>
@@ -90,6 +117,7 @@ const Login = () => {
                 height={`50px`}
                 margin={`0 0 8px`}
                 kindOf={`white`}
+                onClick={() => router.push(`/user/signup`)}
               >
                 회원가입
               </CommonButton>

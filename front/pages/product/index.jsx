@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -18,8 +18,13 @@ import {
   CustomPage,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Select } from "antd";
+import { Empty, Select } from "antd";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  GET_PRODUCTTYPE_REQUEST,
+  GET_PRODUCT_REQUEST,
+} from "../../reducers/store";
 
 const CateBtn = styled(Wrapper)`
   padding: 0 14px;
@@ -40,64 +45,37 @@ const CateBtn = styled(Wrapper)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { products, productTypes } = useSelector((state) => state.store);
+
+  const [type, setType] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
   ////// HOOKS //////
   const width = useWidth();
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: GET_PRODUCT_REQUEST,
+      data: {
+        ProductTypeId: type,
+        page: currentPage,
+      },
+    });
+  }, [type, currentPage]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
-  ////// DATAVIEW //////
+  const typeHandler = useCallback(
+    (data) => {
+      setCurrentPage(1);
+    },
+    [type, currentPage]
+  );
 
-  const bannerData = [
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod2.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod3.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod4.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-  ];
+  ////// DATAVIEW //////
 
   return (
     <>
@@ -116,10 +94,23 @@ const Index = () => {
               PRODUCT
             </Text>
             <Wrapper dr={`row`} margin={`18px 0 0`}>
-              <CateBtn>카테고리</CateBtn>
-              <CateBtn isActive>카테고리</CateBtn>
-              <CateBtn>카테고리</CateBtn>
-              <CateBtn>카테고리</CateBtn>
+              {productTypes && productTypes.length === 0 ? (
+                <Wrapper fontSize={`16px`} color={Theme.grey_C}>
+                  조회된 카테고리가 없습니다.
+                </Wrapper>
+              ) : (
+                productTypes.map((data) => {
+                  return (
+                    <CateBtn
+                      onClick={() => typeHandler(data.id)}
+                      isActive={data.id === type}
+                      key={data.id}
+                    >
+                      {data.value}
+                    </CateBtn>
+                  );
+                })
+              )}
             </Wrapper>
           </Wrapper>
           <RsWrapper>
@@ -136,16 +127,16 @@ const Index = () => {
               </CustomSelect>
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
-              {bannerData && bannerData.length === 0 ? (
+              {products && products.length === 0 ? (
                 <Wrapper padding={`100px 0`}>
                   <Empty description="조회된 내역이 없습니다." />
                 </Wrapper>
               ) : (
-                bannerData.map((data, idx) => {
+                products.map((data, idx) => {
                   return (
                     <ProductWrapper key={idx}>
                       <SquareBox>
-                        <Image alt="thumbnail" src={data.imgUrl} />
+                        <Image alt="thumbnail" src={data.thumbnail} />
                       </SquareBox>
 
                       <Wrapper
@@ -157,11 +148,11 @@ const Index = () => {
                           fontWeight={`600`}
                           margin={`23px 0 12px`}
                         >
-                          {data.title}
+                          {data.name}
                         </Text>
 
                         <Text fontSize={width < 900 ? `13px` : `17px`}>
-                          {data.name}
+                          {data.subName}
                         </Text>
                         <Wrapper
                           dr={`row`}
@@ -176,7 +167,7 @@ const Index = () => {
                           >
                             {data.price}
                           </Text>
-                          <Text>{data.price}</Text>
+                          <Text>{data.viewPrice}</Text>
                         </Wrapper>
                         <Wrapper dr={`row`} ju={`flex-start`}>
                           <Image
@@ -219,6 +210,14 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_PRODUCT_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_PRODUCTTYPE_REQUEST,
     });
 
     // 구현부 종료

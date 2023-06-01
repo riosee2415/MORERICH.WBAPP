@@ -8,6 +8,8 @@ export const initailState = {
   userHistory: [],
   adminUserRightHistory: [],
   joinSet: null,
+  findId: null, // 아이디찾기
+
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -64,6 +66,10 @@ export const initailState = {
   st_upJoinSetLoading: false,
   st_upJoinSetDone: false,
   st_upJoinSetError: null,
+  //
+  st_userFindIdLoading: false,
+  st_userFindIdDone: false,
+  st_userFindIdError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -125,6 +131,10 @@ export const GET_JOIN_SET_FAILURE = "GET_JOIN_SET_FAILURE";
 export const UP_JOIN_SET_REQUEST = "UP_JOIN_SET_REQUEST";
 export const UP_JOIN_SET_SUCCESS = "UP_JOIN_SET_SUCCESS";
 export const UP_JOIN_SET_FAILURE = "UP_JOIN_SET_FAILURE";
+
+export const USER_FIND_ID_REQUEST = "USER_FIND_ID_REQUEST";
+export const USER_FIND_ID_SUCCESS = "USER_FIND_ID_SUCCESS";
+export const USER_FIND_ID_FAILURE = "USER_FIND_ID_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -445,6 +455,27 @@ const reducer = (state = initailState, action) =>
         draft.st_upJoinSetLoading = false;
         draft.st_upJoinSetDone = false;
         draft.st_upJoinSetError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case USER_FIND_ID_REQUEST: {
+        draft.st_userFindIdLoading = true;
+        draft.st_userFindIdDone = false;
+        draft.st_userFindIdError = null;
+        break;
+      }
+      case USER_FIND_ID_SUCCESS: {
+        draft.st_userFindIdLoading = false;
+        draft.st_userFindIdDone = true;
+        draft.st_userFindIdError = null;
+        draft.findId = action.data;
+        break;
+      }
+      case USER_FIND_ID_FAILURE: {
+        draft.st_userFindIdLoading = false;
+        draft.st_userFindIdDone = false;
+        draft.st_userFindIdError = action.error;
         break;
       }
       //////////////////////////////////////////////

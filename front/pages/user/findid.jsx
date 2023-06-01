@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import { Input, Button, Form } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
@@ -29,12 +29,23 @@ const FindId = () => {
   ////// HOOKS //////
   const width = useWidth();
 
+  // CRUEET
+  const [currentTab, setCurrentTab] = useState(0); // 0:이메일,성함 / 1:인증번호 / 2:아이디결과
+
+  // INPUT
+  const nameInput = useInput(``);
+  const emailInput = useInput(``);
+
   ////// REDUX //////
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   ////// USEEFFECT //////
-
   ////// TOGGLE //////
   ////// HANDLER //////
+
+  // 아이디 찾기
+  const findIdHandler = useCallback(() => {}, []);
 
   ////// DATAVIEW //////
 
@@ -61,18 +72,29 @@ const FindId = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 8px`}
+                {...nameInput}
               />
               <TextInput
                 placeholder="이메일 주소"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 11px`}
+                {...emailInput}
               />
               <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 12px`}>
-                <Text color={Theme.grey_C} isHover>
+                <Text
+                  color={Theme.grey_C}
+                  isHover
+                  onClick={() => router.push(`/user/login`)}
+                >
                   로그인
                 </Text>
-                <Text color={Theme.grey_C} isHover td={`underline`}>
+                <Text
+                  color={Theme.grey_C}
+                  isHover
+                  td={`underline`}
+                  onClick={() => router.push(`/user/findPw`)}
+                >
                   PW재설정
                 </Text>
               </Wrapper>

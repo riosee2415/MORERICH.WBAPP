@@ -6,7 +6,7 @@ import {
   LOAD_MY_INFO_REQUEST,
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
-  USERLIST_REQUEST,
+  ADMINUSERLIST_REQUEST,
   USERLIST_UPDATE_REQUEST,
 } from "../../../reducers/user";
 import {
@@ -49,6 +49,7 @@ import {
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 import { HomeOutlined, RightOutlined } from "@ant-design/icons";
+import useInput from "../../../hooks/useInput";
 
 const TypeButton = styled(Button)`
   margin-right: 5px;
@@ -121,6 +122,8 @@ const UserList = ({}) => {
   const [level1, setLevel1] = useState("회원관리");
   const [level2, setLevel2] = useState("");
 
+  // INPUT
+  const nameInput = useInput(``);
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -143,7 +146,7 @@ const UserList = ({}) => {
       });
 
       dispatch({
-        type: USERLIST_REQUEST,
+        type: ADMINUSERLIST_REQUEST,
       });
 
       return message.success("유저정보가 수정되었습니다.");
@@ -166,7 +169,7 @@ const UserList = ({}) => {
 
   useEffect(() => {
     dispatch({
-      type: USERLIST_REQUEST,
+      type: ADMINUSERLIST_REQUEST,
       data: {
         searchData: sData,
         searchLevel: currentTab,
@@ -195,19 +198,23 @@ const UserList = ({}) => {
 
   ////// HANDLER //////
 
-  const tabClickHandler = useCallback(
-    (tab) => {
-      setCurrentTab(tab);
-    },
-    [currentTab]
-  );
+  // 초기화
+  const searchResetHandler = useCallback(() => {
+    nameInput.setValue("");
+    dispatch({
+      type: ADMINUSERLIST_REQUEST,
+    });
+  }, []);
 
-  const searchHandler = useCallback(
-    (data) => {
-      setSData(data.sData);
-    },
-    [sForm, sData]
-  );
+  // 검색
+  const searchHandler = useCallback(() => {
+    dispatch({
+      type: ADMINUSERLIST_REQUEST,
+      data: {
+        username: nameInput.value,
+      },
+    });
+  }, [nameInput]);
 
   const levelFormClick = useCallback(() => {
     levelForm.submit();
@@ -353,7 +360,7 @@ const UserList = ({}) => {
       {/* GUIDE */}
       <Wrapper margin={`10px 0 0`}>
         <GuideUl>
-          <GuideLi isImpo={true}>
+          <GuideLi>
             해당 메뉴에서 홈페이지에 가입된 회원의 정보를 확인할 수 있습니다.
           </GuideLi>
           <GuideLi isImpo={true}>
@@ -373,9 +380,15 @@ const UserList = ({}) => {
           margin={`0 0 10px`}
         >
           <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
-            <ManageInput width="220px" placeholder="회원명으로 검색" />
-            <ManageButton type="primary">검색</ManageButton>
-            <ManageButton>검색초기화</ManageButton>
+            <ManageInput
+              width="220px"
+              placeholder="회원명으로 검색"
+              {...nameInput}
+            />
+            <ManageButton type="primary" onClick={searchHandler}>
+              검색
+            </ManageButton>
+            <ManageButton onClick={searchResetHandler}>검색초기화</ManageButton>
           </Wrapper>
         </Wrapper>
         <Table
@@ -453,7 +466,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: USERLIST_REQUEST,
+      type: ADMINUSERLIST_REQUEST,
     });
 
     // 구현부 종료

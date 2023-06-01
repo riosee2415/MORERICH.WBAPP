@@ -51,6 +51,7 @@ import {
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
 import { HomeOutlined, RightOutlined } from "@ant-design/icons";
+import useInput from "../../../hooks/useInput";
 
 const TypeButton = styled(Button)`
   margin-right: 5px;
@@ -117,19 +118,6 @@ const Address = ({}) => {
       }
     });
   }, []);
-  /////////////////////////////////////////////////////////////////////////
-  const dispatch = useDispatch();
-
-  ////// HOOKS //////
-
-  //   DRAWER
-  const [isDrawer, setIsDrawer] = useState(false); // 배송지확인
-
-  ////// USEEFFECT //////
-
-  ////// TOGGLE //////
-
-  ////// HANDLER //////
 
   const content = (
     <PopWrapper>
@@ -145,6 +133,40 @@ const Address = ({}) => {
       })}
     </PopWrapper>
   );
+  /////////////////////////////////////////////////////////////////////////
+  const dispatch = useDispatch();
+
+  ////// HOOKS //////
+
+  //   DRAWER
+  const [isDrawer, setIsDrawer] = useState(false); // 배송지확인
+
+  // INPUT
+  const nameInput = useInput(``);
+
+  ////// USEEFFECT //////
+
+  ////// TOGGLE //////
+
+  ////// HANDLER //////
+
+  // 초기화
+  const searchResetHandler = useCallback(() => {
+    nameInput.setValue("");
+    dispatch({
+      type: ADMINUSERLIST_REQUEST,
+    });
+  }, []);
+
+  // 검색
+  const searchHandler = useCallback(() => {
+    dispatch({
+      type: ADMINUSERLIST_REQUEST,
+      data: {
+        username: nameInput.value,
+      },
+    });
+  }, [nameInput]);
 
   ////// DATAVIEW //////
 
@@ -268,9 +290,15 @@ const Address = ({}) => {
           margin={`0 0 10px`}
         >
           <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
-            <ManageInput width="220px" placeholder="회원명으로 검색" />
-            <ManageButton type="primary">검색</ManageButton>
-            <ManageButton>검색초기화</ManageButton>
+            <ManageInput
+              width="220px"
+              placeholder="회원명으로 검색"
+              {...nameInput}
+            />
+            <ManageButton onClick={searchHandler} type="primary">
+              검색
+            </ManageButton>
+            <ManageButton onClick={searchResetHandler}>검색초기화</ManageButton>
           </Wrapper>
         </Wrapper>
         <Table

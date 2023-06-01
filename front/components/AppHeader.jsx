@@ -192,30 +192,27 @@ const AppHeader = ({}) => {
             </Wrapper>
           </Wrapper>
           <Wrapper dr={`row`} width={`auto`}>
-            <Link href={`/`}>
+            <Link href={`/user/login`}>
               <a>
-                <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
+                <Wrapper fontSize={`15px`}>
                   <Text margin={`0 24px 0 0`} isHover>
                     로그인
                   </Text>
                 </Wrapper>
               </a>
             </Link>
-            <Link href={`/`}>
+            <Link href={`/mypage`}>
               <a>
-                <Wrapper fontSize={`15px`} isActive={router.pathname === `/`}>
+                <Wrapper fontSize={`15px`}>
                   <Text margin={`0 24px 0 0`} isHover>
                     마이페이지
                   </Text>
                 </Wrapper>
               </a>
             </Link>
-            <Link href={`/`}>
+            <Link href={`/cart`}>
               <a>
-                <Wrapper
-                  isActive={router.pathname === `/`}
-                  margin={`0 5px 0 0`}
-                >
+                <Wrapper margin={`0 5px 0 0`}>
                   <Text fontSize={`15px`} isHover>
                     카트
                   </Text>

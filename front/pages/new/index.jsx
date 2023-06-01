@@ -18,7 +18,7 @@ import {
   CustomPage,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Select } from "antd";
+import { Empty, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { GET_PRODUCT_REQUEST } from "../../reducers/store";
 import { useRouter } from "next/router";

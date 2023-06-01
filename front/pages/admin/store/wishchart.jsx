@@ -21,6 +21,7 @@ import Theme from "../../../components/Theme";
 import { items } from "../../../components/AdminLayout";
 import { HomeOutlined, RightOutlined } from "@ant-design/icons";
 import BarChart from "../../../components/admin/BarChart";
+import LineChart from "../../../components/admin/LineChart";
 import { WISH_CHART_REQUEST } from "../../../reducers/store";
 
 const Wishchart = ({}) => {
@@ -29,8 +30,6 @@ const Wishchart = ({}) => {
 
   const router = useRouter();
   const dispatch = useDispatch();
-
-  console.log(wishChart);
 
   // 상위메뉴 변수
   const [level1, setLevel1] = useState("상점관리");

@@ -39,15 +39,15 @@ const SignUp = () => {
   const nameInput = useInput(``);
   const mobileInput = useInput(``);
   const emailInput = useInput(``);
-  const addressInput = useInput(``);
-  const postcodeInput = useInput(``);
-  const detailAddressInput = useInput(``);
+  // const addressInput = useInput(``);
+  // const postcodeInput = useInput(``);
+  // const detailAddressInput = useInput(``);
 
   // BOOLEAN
   const [isTerms, setIsTerms] = useState(false);
 
   // MODAL
-  const [isAddressModal, setIsAddressModal] = useState(false);
+  // const [isAddressModal, setIsAddressModal] = useState(false);
 
   ////// REDUX //////
   const dispatch = useDispatch();
@@ -87,26 +87,15 @@ const SignUp = () => {
     dispatch({
       type: SIGNUP_REQUEST,
       data: {
-        id: idInput.value,
+        userId: idInput.value,
         password: pwInput.value,
         username: nameInput.value,
         mobile: mobileInput.value,
         email: emailInput.value,
-        address: addressInput.value,
-        postcode: postcodeInput.value,
-        detailAddress: detailAddressInput.value,
+        terms: isTerms,
       },
     });
-  }, [
-    idInput,
-    pwInput,
-    nameInput,
-    mobileInput,
-    emailInput,
-    addressInput,
-    postcodeInput,
-    detailAddressInput,
-  ]);
+  }, [idInput, pwInput, nameInput, mobileInput, emailInput, isTerms]);
 
   ////// DATAVIEW //////
 
@@ -185,7 +174,7 @@ const SignUp = () => {
                 margin={`0 0 27px`}
                 {...emailInput}
               />
-              <Wrapper al={`flex-start`} margin={`0 0 8px`}>
+              {/* <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 주소
               </Wrapper>
               <Wrapper
@@ -224,7 +213,7 @@ const SignUp = () => {
                 height={`50px`}
                 margin={`0 0 27px`}
                 {...detailAddressInput}
-              />
+              /> */}
               <Wrapper
                 al={`flex-start`}
                 padding={`16px`}
@@ -243,13 +232,14 @@ const SignUp = () => {
                 height={`50px`}
                 fontSize={`16px`}
                 fontWeight={`600`}
+                onClick={signUpHandler}
               >
                 회원가입
               </CommonButton>
             </Wrapper>
           </RsWrapper>
 
-          <Modal
+          {/* <Modal
             width={`500px`}
             style={{ top: 200 }}
             footer={null}
@@ -269,7 +259,7 @@ const SignUp = () => {
               animation
               style={style}
             />
-          </Modal>
+          </Modal> */}
         </WholeWrapper>
       </ClientLayout>
     </>

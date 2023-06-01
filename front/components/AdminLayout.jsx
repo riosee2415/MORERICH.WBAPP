@@ -169,8 +169,8 @@ export const items = {
       useYn: true,
     },
     {
-      name: "판매상품통계",
-      link: "/",
+      name: "주문내역",
+      link: "/admin/store/bought",
       useYn: true,
     },
   ],

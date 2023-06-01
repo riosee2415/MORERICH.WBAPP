@@ -181,7 +181,9 @@ router.post("/list", async (req, res, next) => {
     const faqLen = lengths[0].length;
 
     const lastpage = faqLen % LIMIT > 0 ? faqLen / LIMIT + 1 : faqLen / LIMIT;
-    return res.status(200).json({ faqs: faq[0], lastpage: parseInt(lastpage) });
+    return res
+      .status(200)
+      .json({ faqs: lengths[0], lastpage: parseInt(lastpage) });
   } catch (error) {
     console.error(error);
     return res.status(401).send("자주묻는질문 목록을 불러올 수 없습니다.");

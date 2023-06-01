@@ -18,10 +18,16 @@ import {
   CustomPage,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Select } from "antd";
+import { Empty, Select } from "antd";
+import { useSelector } from "react-redux";
+import { GET_PRODUCT_REQUEST } from "../../reducers/store";
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { products } = useSelector((state) => state.store);
+
+  console.log(products);
+
   ////// HOOKS //////
   const width = useWidth();
   ////// REDUX //////
@@ -29,57 +35,6 @@ const Index = () => {
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
-
-  const bannerData = [
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod2.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod3.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod4.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-  ];
 
   return (
     <>
@@ -115,64 +70,66 @@ const Index = () => {
               </CustomSelect>
             </Wrapper>
             <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
-              {bannerData && bannerData.length === 0 ? (
+              {products && products.length === 0 ? (
                 <Wrapper padding={`100px 0`}>
                   <Empty description="조회된 내역이 없습니다." />
                 </Wrapper>
               ) : (
-                bannerData.map((data, idx) => {
-                  return (
-                    <ProductWrapper key={idx}>
-                      <SquareBox>
-                        <Image alt="thumbnail" src={data.imgUrl} />
-                      </SquareBox>
+                products.map((data, idx) => {
+                  if (data.isBest === 1) {
+                    return (
+                      <ProductWrapper key={idx}>
+                        <SquareBox>
+                          <Image alt="thumbnail" src={data.thumbnail} />
+                        </SquareBox>
 
-                      <Wrapper
-                        padding={width < 900 && `0 5px 0 0`}
-                        al={`flex-start`}
-                      >
-                        <Text
-                          fontSize={width < 900 ? `16px` : `18px`}
-                          fontWeight={`600`}
-                          margin={`23px 0 12px`}
-                        >
-                          {data.title}
-                        </Text>
-
-                        <Text fontSize={width < 900 ? `13px` : `17px`}>
-                          {data.name}
-                        </Text>
                         <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          margin={`16px 0 20px`}
-                          fontSize={width < 900 ? `14px` : `20px`}
+                          padding={width < 900 && `0 5px 0 0`}
+                          al={`flex-start`}
                         >
                           <Text
-                            color={Theme.grey_C}
-                            className="line"
-                            margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
+                            fontSize={width < 900 ? `16px` : `18px`}
+                            fontWeight={`600`}
+                            margin={`23px 0 12px`}
                           >
-                            {data.price}
+                            {data.title}
                           </Text>
-                          <Text>{data.price}</Text>
+
+                          <Text fontSize={width < 900 ? `13px` : `17px`}>
+                            {data.name}
+                          </Text>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-start`}
+                            margin={`16px 0 20px`}
+                            fontSize={width < 900 ? `14px` : `20px`}
+                          >
+                            <Text
+                              color={Theme.grey_C}
+                              className="line"
+                              margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
+                            >
+                              {data.price}
+                            </Text>
+                            <Text>{data.viewPrice}</Text>
+                          </Wrapper>
+                          <Wrapper dr={`row`} ju={`flex-start`}>
+                            <Image
+                              alt="heart icon"
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                              width={`22px`}
+                              margin={`0 18px 0 0`}
+                            />
+                            <Image
+                              alt="cart icon"
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
+                              width={`22px`}
+                            />
+                          </Wrapper>
                         </Wrapper>
-                        <Wrapper dr={`row`} ju={`flex-start`}>
-                          <Image
-                            alt="heart icon"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                            width={`22px`}
-                            margin={`0 18px 0 0`}
-                          />
-                          <Image
-                            alt="cart icon"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
-                            width={`22px`}
-                          />
-                        </Wrapper>
-                      </Wrapper>
-                    </ProductWrapper>
-                  );
+                      </ProductWrapper>
+                    );
+                  }
                 })
               )}
             </Wrapper>
@@ -198,6 +155,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_PRODUCT_REQUEST,
     });
 
     // 구현부 종료

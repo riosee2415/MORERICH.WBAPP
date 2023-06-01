@@ -32,6 +32,7 @@ const productOption = require("./productoption");
 const joinset = require("./joinset");
 const mainSlide = require("./mainslide");
 const mainSlideProduct = require("./mainslideproduct");
+const address = require("./address");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -79,6 +80,8 @@ db.QuestionHistory = questionhistory;
 db.NoticeHistory = noticeHistory;
 db.GalleryImage = galleryImage;
 db.AdminUserRightHistory = adminUserRightHistory;
+
+db.Address = address;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

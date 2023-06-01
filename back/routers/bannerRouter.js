@@ -368,4 +368,59 @@ router.post("/history/list", isAdminCheck, async (req, res, next) => {
   }
 });
 
+const consistOfArrayToArray = (arr1, arr2, targetColumn) => {
+  arr1.map((item) => {
+    const tempArr = [];
+
+    arr2.map((inItem) => {
+      if (item.id === inItem[targetColumn]) {
+        tempArr.push(inItem);
+      }
+    });
+
+    item["connectArray"] = tempArr;
+  });
+
+  return arr1;
+};
+
+/**
+ * SUBJECT : 배너 슬라이드 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/list/slide", async (req, res, next) => {
+  const sq1 = `
+  SELECT	id,
+          title
+    FROM	mainSlide
+  `;
+
+  const sq2 = `
+  SELECT	A.MainSlideId,
+          A.ProductId,
+          B.thumbnail,
+          B.name 
+  FROM	mainSlideProduct	A
+  INNER
+  JOIN	product 			B
+    ON	A.ProductId = B.id
+  `;
+
+  try {
+    const list1 = await models.sequelize.query(sq1);
+    const list2 = await models.sequelize.query(sq2);
+
+    const result = consistOfArrayToArray(list1[0], list2[0], "MainSlideId");
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 로드할 수 없습니다.");
+  }
+});
+
 module.exports = router;

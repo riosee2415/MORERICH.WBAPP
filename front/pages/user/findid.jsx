@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form, message } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { SIGNUP_REQUEST } from "../../reducers/user";
+import { SIGNUP_REQUEST, USER_FIND_ID_REQUEST } from "../../reducers/user";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -25,12 +25,18 @@ import useWidth from "../../hooks/useWidth";
 
 const FindId = () => {
   ////// GLOBAL STATE //////
+  const {
+    findId,
+    //
+    st_userFindIdDone,
+    st_userFindIdError,
+  } = useSelector((state) => state.user);
 
   ////// HOOKS //////
   const width = useWidth();
 
   // CRUEET
-  const [currentTab, setCurrentTab] = useState(0); // 0:이메일,성함 / 1:인증번호 / 2:아이디결과
+  const [currentTab, setCurrentTab] = useState(0); // 0:이메일,성함 / 1:아이디결과
 
   // INPUT
   const nameInput = useInput(``);
@@ -41,11 +47,44 @@ const FindId = () => {
   const router = useRouter();
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_userFindIdDone) {
+      setCurrentTab(1);
+
+      return message.success("아이디를 찾았습니다.");
+    }
+
+    if (st_userFindIdError) {
+      return message.error(st_userFindIdError);
+    }
+  }, [st_userFindIdDone, st_userFindIdError]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
 
   // 아이디 찾기
-  const findIdHandler = useCallback(() => {}, []);
+  const findIdHandler = useCallback(() => {
+    if (currentTab === 1) {
+      return router.push(`/user/login`);
+    }
+
+    if (!nameInput.value) {
+      return message.error("이름을 입력해주세요.");
+    }
+
+    if (!emailInput.value) {
+      return message.error("이메일을 입력해주세요.");
+    }
+
+    dispatch({
+      type: USER_FIND_ID_REQUEST,
+      data: {
+        username: nameInput.value,
+        email: emailInput.value,
+      },
+    });
+  }, [nameInput, emailInput, currentTab]);
 
   ////// DATAVIEW //////
 
@@ -67,20 +106,36 @@ const FindId = () => {
               >
                 FIND ID
               </Text>
-              <TextInput
-                placeholder="성함"
-                width={`356px`}
-                height={`50px`}
-                margin={`0 0 8px`}
-                {...nameInput}
-              />
-              <TextInput
-                placeholder="이메일 주소"
-                width={`356px`}
-                height={`50px`}
-                margin={`0 0 11px`}
-                {...emailInput}
-              />
+              {currentTab === 0 && (
+                <>
+                  <TextInput
+                    placeholder="성함"
+                    width={`356px`}
+                    height={`50px`}
+                    margin={`0 0 8px`}
+                    {...nameInput}
+                  />
+                  <TextInput
+                    placeholder="이메일 주소"
+                    width={`356px`}
+                    height={`50px`}
+                    margin={`0 0 11px`}
+                    {...emailInput}
+                  />
+                </>
+              )}
+              {currentTab === 1 && (
+                <>
+                  <TextInput
+                    placeholder="성함"
+                    width={`356px`}
+                    height={`50px`}
+                    margin={`0 0 11px`}
+                    readOnly
+                    value={findId}
+                  />
+                </>
+              )}
               <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 12px`}>
                 <Text
                   color={Theme.grey_C}
@@ -104,8 +159,9 @@ const FindId = () => {
                 fontWeight={`600`}
                 height={`50px`}
                 margin={`0 0 8px`}
+                onClick={findIdHandler}
               >
-                아이디 찾기
+                {currentTab === 0 ? "아이디 찾기" : "로그인"}
               </CommonButton>
             </Wrapper>
           </RsWrapper>

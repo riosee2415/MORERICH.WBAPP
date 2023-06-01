@@ -403,7 +403,10 @@ router.post("/list/slide", async (req, res, next) => {
   SELECT	A.MainSlideId,
           A.ProductId,
           B.thumbnail,
-          B.name 
+          B.name,
+          B.subName,
+          B.price,
+          B.discount
   FROM	mainSlideProduct	A
   INNER
   JOIN	product 			B

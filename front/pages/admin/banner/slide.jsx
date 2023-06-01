@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Image, Popover, message } from "antd";
+import { Image, Modal, Popover, message, Form } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -21,13 +21,38 @@ import Theme from "../../../components/Theme";
 import { items } from "../../../components/AdminLayout";
 import { HomeOutlined, RightOutlined } from "@ant-design/icons";
 import { GET_SLIDE_REQUEST } from "../../../reducers/banner";
-import { ManageButton } from "../../../components/managementComponents";
+import {
+  ManageButton,
+  ManageInput,
+  ManagementForm,
+} from "../../../components/managementComponents";
 
+const DelX = styled.div`
+  width: 19px;
+  height: 19px;
+  background-color: ${(props) => props.theme.red_C};
+  color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.4s;
+  cursor: pointer;
+
+  &:hover {
+    border: 1px solid ${(props) => props.theme.red_C};
+    color: ${(props) => props.theme.red_C};
+    background-color: #fff;
+  }
+`;
 const Slide = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
   const { slides } = useSelector((state) => state.banner);
-
-  console.log(slides);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -36,6 +61,12 @@ const Slide = ({}) => {
   const [level1, setLevel1] = useState("배너관리");
   const [level2, setLevel2] = useState("");
   const [sameDepth, setSameDepth] = useState([]);
+
+  const [titleModal, setTitleModal] = useState(false);
+
+  const [crData, setCrData] = useState(null);
+
+  const [titleForm] = Form.useForm();
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -87,7 +118,21 @@ const Slide = ({}) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (crData) {
+      titleForm.setFieldsValue({
+        title: crData.title,
+      });
+    }
+  }, [crData]);
+
   ////// HANDLER //////
+
+  const titleModalToggle = useCallback((row) => {
+    setTitleModal((p) => !p);
+
+    setCrData(row);
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -149,7 +194,9 @@ const Slide = ({}) => {
                 <Text margin="0px 10px 0px 0px" fontSize="18px">
                   {item.title}
                 </Text>
-                <ManageButton>타이틀 수정</ManageButton>
+                <ManageButton onClick={() => titleModalToggle(item)}>
+                  타이틀 수정
+                </ManageButton>
               </Wrapper>
 
               <Wrapper
@@ -162,7 +209,12 @@ const Slide = ({}) => {
                 {/*  */}
                 {item.connectArray.map((inItem) => {
                   return (
-                    <Wrapper width="140px" height="160px" margin="3px">
+                    <Wrapper
+                      width="140px"
+                      height="160px"
+                      margin="3px"
+                      position="relative"
+                    >
                       <Image
                         src={inItem.thumbnail}
                         width="140px"
@@ -170,7 +222,13 @@ const Slide = ({}) => {
                         alt="image"
                         style={{ objectFit: "cover" }}
                       />
-                      <Wrapper height="20px">{inItem.name}</Wrapper>
+                      <Wrapper height="18px" margin="2px 0px 0px 0px">
+                        {inItem.name.length > 8
+                          ? inItem.name.substring(1, 7) + "..."
+                          : inItem.name}
+                      </Wrapper>
+
+                      <DelX>X</DelX>
                     </Wrapper>
                   );
                 })}
@@ -181,6 +239,35 @@ const Slide = ({}) => {
           );
         })}
       </Wrapper>
+
+      <Modal
+        visible={titleModal}
+        title="슬라이드 타이틀 수정"
+        footer={null}
+        width="550px"
+        onCancel={() => titleModalToggle(null)}
+      >
+        <ManagementForm
+          form={titleForm}
+          colon={false}
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
+        >
+          <ManagementForm.Item
+            name="title"
+            label="타이틀"
+            rules={[{ required: true, message: "필수 입력사항 입니다." }]}
+          >
+            <ManageInput />
+          </ManagementForm.Item>
+
+          <Wrapper dr="row" ju="flex-end">
+            <ManageButton type="primary" htmlType="submit">
+              적용
+            </ManageButton>
+          </Wrapper>
+        </ManagementForm>
+      </Modal>
     </AdminLayout>
   );
 };

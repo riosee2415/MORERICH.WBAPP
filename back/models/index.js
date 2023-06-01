@@ -24,6 +24,11 @@ const questionhistory = require("./questionhistory");
 const noticeHistory = require("./noticeHistory");
 const galleryImage = require("./galleryImage");
 const adminUserRightHistory = require("./adminUserRightHistory");
+const productType = require("./producttype");
+const productTypeHistory = require("./producttypehistory");
+const product = require("./product");
+const productImage = require("./productImage");
+const productOption = require("./productoption");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -56,6 +61,13 @@ db.KakaochHistory = kakaochHistory;
 db.MainBannerHistory = mainBannerHistory;
 db.PopupHistory = popupHistory;
 db.FaqType = faqType;
+
+db.ProductType = productType;
+db.ProductTypeHistory = productTypeHistory;
+db.Product = product;
+db.ProductImage = productImage;
+db.ProductOption = productOption;
+
 db.FaqHistory = faqhistory;
 db.QuestionHistory = questionhistory;
 db.NoticeHistory = noticeHistory;

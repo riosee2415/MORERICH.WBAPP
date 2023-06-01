@@ -54,6 +54,8 @@ import {
   DEL_DETAIL_REQUEST,
   NEW_PRODUCT_REQUEST,
   DEL_PRODUCT_REQUEST,
+  ADD_OPTION_REQUEST,
+  DEL_OPTION_REQUEST,
 } from "../../../reducers/store";
 import { numberWithCommas } from "../../../components/commonUtils";
 import BarChart from "../../../components/admin/BarChart";
@@ -117,6 +119,11 @@ const Product = ({}) => {
     //
     st_delProductDone,
     st_delProductError,
+    //
+    st_addOptionDone,
+    st_addOptionError,
+    st_delOptionDone,
+    st_delOptionError,
   } = useSelector((state) => state.store);
 
   const router = useRouter();
@@ -143,6 +150,7 @@ const Product = ({}) => {
   const [cModal, setCModal] = useState(false);
 
   const [infoForm] = Form.useForm();
+  const [optionForm] = Form.useForm();
 
   const thumbnailRef = useRef();
   const detailImageRef = useRef();
@@ -202,6 +210,46 @@ const Product = ({}) => {
       return message.error("데이터를 수정할 수 없습니다.");
     }
   }, [st_toggleProductDone, st_toggleProductError]);
+
+  useEffect(() => {
+    if (st_addOptionDone) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+
+      optionForm.resetFields();
+    }
+    if (st_addOptionError) {
+      return message.error(st_addOptionError);
+    }
+  }, [st_addOptionDone, st_addOptionError]);
+
+  useEffect(() => {
+    if (st_delOptionDone) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+
+      optionForm.resetFields();
+    }
+    if (st_delOptionError) {
+      return message.error(st_delOptionError);
+    }
+  }, [st_delOptionDone, st_delOptionError]);
 
   useEffect(() => {
     if (st_delProductDone) {
@@ -296,9 +344,26 @@ const Product = ({}) => {
     }
 
     if (st_delDetailImageDone && st_getProductDone) {
-      const targetData = products.find((item) => item.id === crData.id);
+      if (crData) {
+        const targetData = products.find((item) => item.id === crData.id);
 
-      setCrData(targetData);
+        setCrData(targetData);
+      }
+    }
+    if (st_addOptionDone && st_getProductDone) {
+      if (crData) {
+        const targetData = products.find((item) => item.id === crData.id);
+
+        setCrData(targetData);
+      }
+    }
+
+    if (st_delOptionDone && st_getProductDone) {
+      if (crData) {
+        const targetData = products.find((item) => item.id === crData.id);
+
+        setCrData(targetData);
+      }
     }
   }, [st_getProductDone]);
 
@@ -571,6 +636,28 @@ const Product = ({}) => {
     });
   }, [crData]);
 
+  const optionAddHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: ADD_OPTION_REQUEST,
+        data: {
+          ProductId: crData.id,
+          value: data.value,
+        },
+      });
+    },
+    [crData]
+  );
+
+  const deleteOptionHandler = useCallback((row) => {
+    dispatch({
+      type: DEL_OPTION_REQUEST,
+      data: {
+        id: row.id,
+      },
+    });
+  }, []);
+
   // FILE HANDLER
   const clickImageUpload = useCallback(() => {
     thumbnailRef.current.click();
@@ -741,6 +828,32 @@ const Product = ({}) => {
         <ManageButton onClick={() => optionDrToggle(row)}>
           상품옵션
         </ManageButton>
+      ),
+    },
+  ];
+
+  const column2 = [
+    {
+      title: "번호",
+      dataIndex: "num",
+      width: "10%",
+    },
+
+    {
+      title: "옵션명",
+      render: (row) => <Text color={Theme.subTheme3_C}>{row.value}</Text>,
+      sorter: (a, b) => a.value.localeCompare(b.value),
+    },
+    {
+      title: "삭제",
+      render: (row) => (
+        <Popconfirm
+          title="삭제한 옵션은 복구할 수 없습니다. 삭제하시겠습니까?"
+          onCancel={null}
+          onConfirm={() => deleteOptionHandler(row)}
+        >
+          <ManageDelButton>옵션삭제</ManageDelButton>
+        </Popconfirm>
       ),
     },
   ];
@@ -1221,10 +1334,47 @@ const Product = ({}) => {
 
       <Drawer
         visible={optionDr}
-        width="50%"
+        width="35%"
         title={`${crData && crData.name} _ 상품 옵션정보`}
         onClose={() => optionDrToggle(null)}
-      ></Drawer>
+      >
+        <GuideUl>
+          <GuideLi>상품옵션은 갯수에 재한없이 추가 가능합니다.</GuideLi>
+          <GuideLi isImpo={true}>
+            옵션은 옵션명을 기준 이름순 정렬되니, 등록 시 참고해주세요.
+          </GuideLi>
+          <GuideLi isImpo={true}>
+            옵션명을 변경할 경우, 배송중인 물품 또는 배송완료 된 물품조회에
+            혼선이 있을 수 있어 수정을 금지합니다.
+          </GuideLi>
+        </GuideUl>
+
+        <Wrapper dr="row" ju="flex-start">
+          <ManagementForm
+            form={optionForm}
+            layout="inline"
+            onFinish={optionAddHandler}
+          >
+            <ManagementForm.Item
+              name="value"
+              rules={[{ required: true, message: "옵션명은 필수 입니다." }]}
+            >
+              <ManageInput width="230px" placeholder="옵션명을 입력해주세요." />
+            </ManagementForm.Item>
+
+            <ManageButton type="primary" htmlType="submit">
+              등록
+            </ManageButton>
+          </ManagementForm>
+        </Wrapper>
+        <Wrapper padding="5px">
+          <ManagementTable
+            columns={column2}
+            dataSource={crData ? crData.options : []}
+            rowKey={"num"}
+          />
+        </Wrapper>
+      </Drawer>
     </AdminLayout>
   );
 };

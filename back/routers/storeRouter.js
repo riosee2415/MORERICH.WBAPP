@@ -1,0 +1,713 @@
+const express = require("express");
+const isAdminCheck = require("../middlewares/isAdminCheck");
+const models = require("../models");
+const multer = require("multer");
+const path = require("path");
+const AWS = require("aws-sdk");
+const multerS3 = require("multer-s3");
+
+const router = express.Router();
+
+AWS.config.update({
+  accessKeyId: process.env.S3_ACCESS_KEY_Id,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  region: "ap-northeast-2",
+});
+
+const upload = multer({
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: process.env.S3_BUCKET_NAME,
+    key(req, file, cb) {
+      cb(
+        null,
+        `${
+          process.env.S3_STORAGE_FOLDER_NAME
+        }/original/${Date.now()}_${path.basename(file.originalname)}`
+      );
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
+
+/**
+ * SUBJECT : 상품유형 가져오기
+ * PARAMETERS : -
+ * ORDER BY : 이름 순
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/list", async (req, res, next) => {
+  const selectQuery = `
+    SELECT	ROW_NUMBER() OVER(ORDER BY value ASC)           AS num,   
+            A.id,
+            A.value,
+            DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+            DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+            DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+            DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+            (
+                SELECT	COUNT(id)
+                    FROM	product
+                WHERE	ProductTypeId = A.id
+            )	AS	productCnt
+     FROM	productType	A
+    WHERE	1 = 1
+      AND	A.isDelete = 0
+    ORDER	BY value ASC
+    `;
+
+  try {
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json(list[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형 통계 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/list2", async (req, res, next) => {
+  const selectQuery = `
+  SELECT	A.value,
+            (
+                SELECT	COUNT(id)
+                    FROM	product
+                WHERE	ProductTypeId = A.id
+            )	AS	cnt
+     FROM	productType	A
+    WHERE	1 = 1
+     AND	A.isDelete = 0
+    `;
+
+  try {
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json(list[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형 수정하기
+ * PARAMETERS : {id, prevValue, nextValue}
+ * ORDER BY : SORT 기준
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/modify", isAdminCheck, async (req, res, next) => {
+  const { id, value } = req.body;
+
+  const exQ = `
+    SELECT  value
+      FROM  productType
+     WHERE  id = ${id}
+  `;
+
+  let prevValue = "";
+
+  try {
+    const ex = await models.sequelize.query(exQ);
+
+    prevValue = ex[0][0].value;
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("기존 데이터를 조회할 수 없습니다.");
+  }
+
+  const updateQuery = `
+    UPDATE	productType
+       SET	value = "${value}"
+     WHERE	id = ${id} 
+    `;
+
+  const insertQuery = `
+    INSERT INTO productTypeHistory (content, prevValue, nextValue, updator, createdAt, updatedAt) VALUES (
+        "유형수정", "${prevValue}", "${value}", ${req.user.id}, NOW(), NOW()
+        )
+    `;
+
+  try {
+    const result1 = await models.sequelize.query(updateQuery);
+    const result2 = await models.sequelize.query(insertQuery);
+
+    if (result1[0].affectedRows > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(400).send("수정 할 데이터를 찾을 수 없습니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형 추가하기
+ * PARAMETERS : { value }
+ * ORDER BY : SORT 기준
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/new", isAdminCheck, async (req, res, next) => {
+  const { value } = req.body;
+
+  const insertQuery1 = `
+    INSERT INTO productType (value, createdAt, updatedAt) VALUES 
+        ("${value}", NOW(), NOW())
+    `;
+
+  const insertQuery2 = `
+    INSERT INTO productTypeHistory (content, prevValue, nextValue, updator, createdAt, updatedAt) VALUES (
+        "유형추가", "${value}", "${value}", ${req.user.id}, NOW(), NOW()
+        )
+    `;
+
+  try {
+    const result1 = await models.sequelize.query(insertQuery1);
+    await models.sequelize.query(insertQuery2);
+
+    if (result1[1] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(400).send("데이터 추가에 실패했습니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("관리자에 문의해주세요.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형 삭제하기
+ * PARAMETERS : -
+ * ORDER BY : SORT 기준
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/delete", isAdminCheck, async (req, res, next) => {
+  const { id, value } = req.body;
+
+  const updateQuery = `
+    UPDATE	productType
+       SET	isDelete = 1,
+            deletedAt = NOW()
+     WHERE	id = ${id} 
+    `;
+
+  const insertQuery2 = `
+    INSERT INTO productTypeHistory (content, prevValue, nextValue, updator, createdAt, updatedAt) VALUES (
+        "유형삭제", "${value}", "${value}", ${req.user.id}, NOW(), NOW()
+        )
+    `;
+
+  try {
+    const result1 = await models.sequelize.query(updateQuery);
+    await models.sequelize.query(insertQuery2);
+
+    if (result1[0].affectedRows > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(400).send("삭제 할 데이터를 찾을 수 없습니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 삭제할 수 없습니다.");
+  }
+});
+
+const consistOfArrayToArray = (arr1, arr2, targetColumn) => {
+  arr1.map((item) => {
+    const tempArr = [];
+
+    arr2.map((inItem) => {
+      if (item.id === inItem[targetColumn]) {
+        tempArr.push(inItem);
+      }
+    });
+
+    item["connectArray"] = tempArr;
+  });
+
+  return arr1;
+};
+
+const consistOfArrayToArray2 = (arr1, arr2, targetColumn) => {
+  arr1.map((item) => {
+    const tempArr = [];
+
+    arr2.map((inItem) => {
+      if (item.id === inItem[targetColumn]) {
+        tempArr.push(inItem);
+      }
+    });
+
+    item["options"] = tempArr;
+  });
+
+  return arr1;
+};
+
+/**
+ * SUBJECT : 상품 가져오기
+ * PARAMETERS : {sName, isNew, isBest, isRecomm, ProductTypeId}
+ * ORDER BY : 등록일 기준
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/product/list", async (req, res, next) => {
+  const {
+    sName = "",
+    isNew = false,
+    isBest = false,
+    isRecomm = false,
+    ProductTypeId,
+  } = req.body;
+
+  const _ProductTypeId = ProductTypeId === 0 ? false : ProductTypeId;
+
+  const selectQ = `
+  SELECT	ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
+            A.id,
+            A.thumbnail,
+            A.name,
+            A.subName,
+            A.price,
+            CONCAT(FORMAT(A.price, 0), "원") 			AS viewPrice,
+            A.detail,
+            A.infoType,
+            A.infoConsist,
+            A.infoColor,
+            A.infoSize,
+            A.infoFrom,
+            A.discount,
+            A.isNew,
+            A.isBest,
+            A.isRecomm,
+            DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+            DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+            DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+            DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+            A.ProductTypeId,
+            B.value
+     FROM	product			A
+    INNER	
+     JOIN	productType		B
+       ON	A.ProductTypeId = B.id
+    WHERE	1 = 1
+      AND	A.isDelete = 0
+      AND	A.name LIKE "%${sName}%"
+      ${_ProductTypeId ? `AND  A.ProductTypeId = ${_ProductTypeId}` : ""}
+      ${isNew ? `AND	A.isNew = ${isNew}` : ""}
+      ${isBest ? `AND	A.isBest = ${isBest}` : ""}
+      ${isRecomm ? `AND	A.isRecomm = ${isRecomm}` : ""}
+    ORDER   BY  A.createdAt DESC
+  `;
+
+  const selectQ2 = `
+        SELECT	id,
+                filepath,
+                ProductId 
+          FROM	productImage
+         ORDER  BY  createdAt ASC
+`;
+
+  const selectQ3 = `
+  SELECT 	ROW_NUMBER() OVER(ORDER BY value ASC)        AS num,
+            id,
+            value,
+            ProductId
+    FROM	productOption
+   ORDER    BY  value ASC
+`;
+
+  try {
+    const list1 = await models.sequelize.query(selectQ);
+    const list2 = await models.sequelize.query(selectQ2);
+    const list3 = await models.sequelize.query(selectQ3);
+
+    const result = consistOfArrayToArray(list1[0], list2[0], "ProductId");
+    const result2 = consistOfArrayToArray2(result, list3[0], "ProductId");
+
+    return res.status(200).json(result2);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("상품데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 통계 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/product/list2", isAdminCheck, async (req, res, next) => {
+  const selectQ = `
+    SELECT	B.value,
+            COUNT(A.id)	AS cnt
+     FROM	product 	A
+    INNER
+     JOIN	productType B
+       ON	A.ProductTypeId = B.id
+    GROUP	BY	A.ProductTypeId
+    `;
+
+  try {
+    const list = await models.sequelize.query(selectQ);
+
+    return res.status(200).json(list[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("통계를 로드할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 토글
+ * PARAMETERS : {id, nextFlag, type}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/product/toggle", isAdminCheck, async (req, res, next) => {
+  const { id, nextFlag, type } = req.body;
+
+  const uq1 = `
+        UPDATE  product
+           SET  isNew = ${nextFlag},
+                updatedAt = NOW()
+         WHERE  id = ${id}
+    `;
+
+  const uq2 = `
+        UPDATE  product
+           SET  isBest = ${nextFlag},
+                updatedAt = NOW()
+         WHERE  id = ${id}`;
+
+  const uq3 = `
+        UPDATE  product
+           SET  isRecomm = ${nextFlag},
+                updatedAt = NOW()
+         WHERE  id = ${id}`;
+
+  try {
+    if (type === "new") await models.sequelize.query(uq1);
+    if (type === "best") await models.sequelize.query(uq2);
+    if (type === "recomm") await models.sequelize.query(uq3);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 수정할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 정보 업데이트 (썸네일 제외)
+ * PARAMETERS : {
+ *  ProductTypeId,
+    detail,
+    discount,
+    id,
+    infoColor,
+    infoConsist,
+    infoFrom,
+    infoSize,
+    infoType,
+    isBest,
+    isNew,
+    isRecomm,
+    name,
+    num,
+    price,
+    subName
+ * }
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+
+router.post("/product/update", isAdminCheck, async (req, res, next) => {
+  const {
+    ProductTypeId,
+    detail,
+    discount,
+    id,
+    infoColor,
+    infoConsist,
+    infoFrom,
+    infoSize,
+    infoType,
+    isBest,
+    isNew,
+    isRecomm,
+    name,
+    price,
+    subName,
+  } = req.body;
+
+  const updateQ = `
+    UPDATE  product
+       SET  ProductTypeId = ${ProductTypeId},
+            detail = "${detail}",
+            discount = ${discount},
+            infoColor = "${infoColor}",
+            infoConsist = "${infoConsist}",
+            infoFrom = "${infoFrom}",
+            infoSize = "${infoSize}",
+            infoType = "${infoType}",
+            isBest = ${isBest},
+            isNew = ${isNew},
+            isRecomm = ${isRecomm},
+            name = "${name}",
+            price = ${price},
+            subName = "${subName}",
+            updatedAt = NOW()
+     WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(updateQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("상품정보를 수정할 수 없습니다.");
+  }
+});
+
+router.post(
+  "/image",
+  isAdminCheck,
+  upload.single("image"),
+  async (req, res, next) => {
+    return res.json({ path: req.file.location });
+  }
+);
+
+/**
+ * SUBJECT : 상품 썸네일 적용
+ * PARAMETERS : {id,thumbnailPath}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/product/thup", isAdminCheck, async (req, res, next) => {
+  const { id, thumbnailPath } = req.body;
+
+  const updateQ = `
+        UPDATE  product
+           SET  thumbnail = "${thumbnailPath}",
+                updatedAt = NOW()
+         WHERE  id = ${id}
+    `;
+
+  try {
+    await models.sequelize.query(updateQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("썸네일을 업로드할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 상세이미지 추가
+ * PARAMETERS : {ProductId, filepath}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/product/detailImage", isAdminCheck, async (req, res, next) => {
+  const { ProductId, filepath } = req.body;
+
+  const insertQ = `
+    INSERT INTO productImage (filepath, createdAt, updatedAt, ProductId) VALUES (
+	"${filepath}", NOW(), NOW(), ${ProductId}
+        )
+    `;
+
+  try {
+    await models.sequelize.query(insertQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("이미지를 추가할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 상세이미지 삭제
+ * PARAMETERS : { id }
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/detail/delete", isAdminCheck, async (req, res, next) => {
+  const { id } = req.body;
+
+  const dq = `
+        DELETE FROM productImage
+         WHERE  id = ${id}
+    `;
+
+  try {
+    await models.sequelize.query(dq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("이미지를 삭제할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 상세이미지 생성
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/product/new", isAdminCheck, async (req, res, next) => {
+  const exQ = `
+    SELECT  id
+    FROM  productType
+  WHERE isDelete = 0
+    `;
+
+  let cateId = 1;
+
+  try {
+    const list = await models.sequelize.query(exQ);
+
+    cateId = list[0][0].id;
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("상품을 등록할 수 없습니다.");
+  }
+
+  const insertQ = `
+INSERT INTO product (name, thumbnail, subName, price, detail, infoType, infoSize, infoConsist, infoColor, infoFrom, createdAt, updatedAt, ProductTypeId) VALUES 
+("New Product", "https://via.placeholder.com/300x300?text=Upload Thumbnail", "상품 부제를 입력해주세요.", 0, "상품설명을 입력해주세요.", "상품 분류를 입력해주세요.", "상품 규격을 입력해주세요.", "상품 재질을 입력해주세요.", "색상정보를 입력해주세요.", "원산지를 입력해주세요.", NOW() ,NOW(), ${cateId});
+    `;
+
+  try {
+    await models.sequelize.query(insertQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("상품을 등록할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 삭제
+ * PARAMETERS : {id}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+
+router.post("/product/delete", isAdminCheck, async (req, res, next) => {
+  const { id } = req.body;
+
+  const uq = `
+        UPDATE  product
+           SET  isDelete = 1,
+                deletedAt = NOW()
+         WHERE  id = ${id}
+    `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("상품을 삭제할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 옵션 추가
+ * PARAMETERS : {ProductId, value}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/option/new", isAdminCheck, async (req, res, next) => {
+  const { value, ProductId } = req.body;
+
+  const insertQ = `
+INSERT INTO productOption (value, createdAt, updatedAt, ProductId) VALUES (
+	"${value}", NOW(), NOW(), ${ProductId}
+)
+    `;
+
+  try {
+    await models.sequelize.query(insertQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("옵션을 추가할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 옵션 삭제
+ * PARAMETERS : {id}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/option/delete", isAdminCheck, async (req, res, next) => {
+  const { id } = req.body;
+
+  const deleteQ = `
+        DELETE FROM productOption
+           WHERE id = ${id}
+    `;
+
+  try {
+    await models.sequelize.query(deleteQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("옵션을 삭제할 수 없습니다.");
+  }
+});
+
+module.exports = router;

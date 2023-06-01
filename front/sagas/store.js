@@ -64,6 +64,14 @@ import {
   DEL_PRODUCT_REQUEST,
   DEL_PRODUCT_SUCCESS,
   DEL_PRODUCT_FAILURE,
+  //
+  ADD_OPTION_REQUEST,
+  ADD_OPTION_SUCCESS,
+  ADD_OPTION_FAILURE,
+  //
+  DEL_OPTION_REQUEST,
+  DEL_OPTION_SUCCESS,
+  DEL_OPTION_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -497,6 +505,58 @@ function* delProduct(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function addOptionAPI(data) {
+  return await axios.post(`/api/store/option/new`, data);
+}
+
+function* addOption(action) {
+  try {
+    const result = yield call(addOptionAPI, action.data);
+
+    yield put({
+      type: ADD_OPTION_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADD_OPTION_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function delOptionAPI(data) {
+  return await axios.post(`/api/store/option/delete`, data);
+}
+
+function* delOption(action) {
+  try {
+    const result = yield call(delOptionAPI, action.data);
+
+    yield put({
+      type: DEL_OPTION_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: DEL_OPTION_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
@@ -547,6 +607,12 @@ function* watchNewProduct() {
 function* watchDelProduct() {
   yield takeLatest(DEL_PRODUCT_REQUEST, delProduct);
 }
+function* watchAddOption() {
+  yield takeLatest(ADD_OPTION_REQUEST, addOption);
+}
+function* watchDelOption() {
+  yield takeLatest(DEL_OPTION_REQUEST, delOption);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -567,6 +633,8 @@ export default function* storeSaga() {
     fork(watchDelDetailImage),
     fork(watchNewProduct),
     fork(watchDelProduct),
+    fork(watchAddOption),
+    fork(watchDelOption),
 
     //
   ]);

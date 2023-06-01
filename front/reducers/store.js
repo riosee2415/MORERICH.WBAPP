@@ -80,6 +80,16 @@ export const initailState = {
   st_delProductLoading: false,
   st_delProductDone: false,
   st_delProductError: null,
+
+  // 상품옵션 추가
+  st_addOptionLoading: false,
+  st_addOptionDone: false,
+  st_addOptionError: null,
+
+  // 상품옵션 삭제
+  st_delOptionLoading: false,
+  st_delOptionDone: false,
+  st_delOptionError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -145,6 +155,14 @@ export const NEW_PRODUCT_FAILURE = "NEW_PRODUCT_FAILURE";
 export const DEL_PRODUCT_REQUEST = "DEL_PRODUCT_REQUEST";
 export const DEL_PRODUCT_SUCCESS = "DEL_PRODUCT_SUCCESS";
 export const DEL_PRODUCT_FAILURE = "DEL_PRODUCT_FAILURE";
+
+export const ADD_OPTION_REQUEST = "ADD_OPTION_REQUEST";
+export const ADD_OPTION_SUCCESS = "ADD_OPTION_SUCCESS";
+export const ADD_OPTION_FAILURE = "ADD_OPTION_FAILURE";
+
+export const DEL_OPTION_REQUEST = "DEL_OPTION_REQUEST";
+export const DEL_OPTION_SUCCESS = "DEL_OPTION_SUCCESS";
+export const DEL_OPTION_FAILURE = "DEL_OPTION_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -529,6 +547,52 @@ const reducer = (state = initailState, action) =>
         draft.st_delProductLoading = false;
         draft.st_delProductDone = false;
         draft.st_delProductError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case ADD_OPTION_REQUEST: {
+        draft.st_addOptionLoading = true;
+        draft.st_addOptionDone = false;
+        draft.st_addOptionError = null;
+        break;
+      }
+
+      case ADD_OPTION_SUCCESS: {
+        draft.st_addOptionLoading = false;
+        draft.st_addOptionDone = true;
+        draft.st_addOptionError = null;
+        break;
+      }
+
+      case ADD_OPTION_FAILURE: {
+        draft.st_addOptionLoading = false;
+        draft.st_addOptionDone = false;
+        draft.st_addOptionError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case DEL_OPTION_REQUEST: {
+        draft.st_delOptionLoading = true;
+        draft.st_delOptionDone = false;
+        draft.st_delOptionError = null;
+        break;
+      }
+
+      case DEL_OPTION_SUCCESS: {
+        draft.st_delOptionLoading = false;
+        draft.st_delOptionDone = true;
+        draft.st_delOptionError = null;
+        break;
+      }
+
+      case DEL_OPTION_FAILURE: {
+        draft.st_delOptionLoading = false;
+        draft.st_delOptionDone = false;
+        draft.st_delOptionError = action.error;
         break;
       }
 

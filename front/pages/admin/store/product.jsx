@@ -138,6 +138,7 @@ const Product = ({}) => {
 
   const [graphView, setGraphView] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
+  const [optionDr, setOptionDr] = useState(false);
   const [crData, setCrData] = useState(null);
   const [cModal, setCModal] = useState(false);
 
@@ -288,9 +289,10 @@ const Product = ({}) => {
 
   useEffect(() => {
     if (st_addDetailImageDone && st_getProductDone) {
-      const targetData = products.find((item) => item.id === crData.id);
-
-      setCrData(targetData);
+      if (crData) {
+        const targetData = products.find((item) => item.id === crData.id);
+        setCrData(targetData);
+      }
     }
 
     if (st_delDetailImageDone && st_getProductDone) {
@@ -395,6 +397,14 @@ const Product = ({}) => {
       },
     });
   }, [crData, thumbnailPath]);
+
+  const optionDrToggle = useCallback((item) => {
+    setOptionDr((p) => !p);
+
+    if (item) {
+      setCrData(item);
+    }
+  }, []);
 
   const dtailDrToggle = useCallback((row) => {
     setDetailDr((p) => !p);
@@ -725,6 +735,14 @@ const Product = ({}) => {
         </ManageButton>
       ),
     },
+    {
+      title: "옵션정보",
+      render: (row) => (
+        <ManageButton onClick={() => optionDrToggle(row)}>
+          상품옵션
+        </ManageButton>
+      ),
+    },
   ];
 
   return (
@@ -883,11 +901,19 @@ const Product = ({}) => {
           colon={false}
           form={infoForm}
         >
-          <ManagementForm.Item label="상품명" name="name">
+          <ManagementForm.Item
+            label="상품명"
+            name="name"
+            rules={[{ required: true }]}
+          >
             <ManageInput />
           </ManagementForm.Item>
 
-          <ManagementForm.Item label="상품부제" name="subName">
+          <ManagementForm.Item
+            label="상품부제"
+            name="subName"
+            rules={[{ required: true }]}
+          >
             <ManageInput />
           </ManagementForm.Item>
 
@@ -908,7 +934,11 @@ const Product = ({}) => {
             </CustomSelect>
           </ManagementForm.Item>
 
-          <ManagementForm.Item label="상품상세설명" name="detail">
+          <ManagementForm.Item
+            label="상품상세설명"
+            name="detail"
+            rules={[{ required: true }]}
+          >
             <ManageInput.TextArea rows={5} />
           </ManagementForm.Item>
 
@@ -916,11 +946,13 @@ const Product = ({}) => {
             tooltip="단위는 원 입니다."
             label="판매금액"
             name="price"
+            rules={[{ required: true }]}
           >
             <ManageInput type="number" />
           </ManagementForm.Item>
 
           <ManagementForm.Item
+            rules={[{ required: true }]}
             tooltip="단위는 % 입니다."
             label="할인율"
             name="discount"
@@ -928,23 +960,43 @@ const Product = ({}) => {
             <ManageInput type="number" />
           </ManagementForm.Item>
 
-          <ManagementForm.Item label="색상" name="infoColor">
+          <ManagementForm.Item
+            label="색상"
+            name="infoColor"
+            rules={[{ required: true }]}
+          >
             <ManageInput />
           </ManagementForm.Item>
 
-          <ManagementForm.Item label="소재" name="infoConsist">
+          <ManagementForm.Item
+            label="소재"
+            name="infoConsist"
+            rules={[{ required: true }]}
+          >
             <ManageInput />
           </ManagementForm.Item>
 
-          <ManagementForm.Item label="사이즈" name="infoSize">
+          <ManagementForm.Item
+            label="사이즈"
+            name="infoSize"
+            rules={[{ required: true }]}
+          >
             <ManageInput />
           </ManagementForm.Item>
 
-          <ManagementForm.Item label="분류" name="infoType">
+          <ManagementForm.Item
+            label="분류"
+            name="infoType"
+            rules={[{ required: true }]}
+          >
             <ManageInput />
           </ManagementForm.Item>
 
-          <ManagementForm.Item label="제조국가" name="infoFrom">
+          <ManagementForm.Item
+            label="제조국가"
+            name="infoFrom"
+            rules={[{ required: true }]}
+          >
             <ManageInput />
           </ManagementForm.Item>
 
@@ -1166,6 +1218,13 @@ const Product = ({}) => {
           </Wrapper>
         </div>
       </Modal>
+
+      <Drawer
+        visible={optionDr}
+        width="50%"
+        title={`${crData && crData.name} _ 상품 옵션정보`}
+        onClose={() => optionDrToggle(null)}
+      ></Drawer>
     </AdminLayout>
   );
 };

@@ -116,7 +116,7 @@ const Wishchart = ({}) => {
         <RightOutlined />
         <Popover content={content}>
           <HomeText cur={true} margin={`3px 20px 0px 20px`}>
-            {level2}{" "}
+            {level2}
           </HomeText>
         </Popover>
       </Wrapper>
@@ -125,6 +125,10 @@ const Wishchart = ({}) => {
       <Wrapper margin={`10px 0px 0px 0px`}>
         <GuideUl>
           <GuideLi>위시리스트 통계 입니다.</GuideLi>
+          <GuideLi isImpo={true}>
+            그레프가 출력되지 않는 경우 "새로고침"을 해주세요. 데이터 통계 중
+            서버에 다른 신호가 들어올 경우 그레프가 보이지 않을 수 있습니다.
+          </GuideLi>
         </GuideUl>
       </Wrapper>
 

@@ -277,7 +277,13 @@ router.post("/product/list", async (req, res, next) => {
     isBest = false,
     isRecomm = false,
     ProductTypeId,
+
+    orderType = 1,
   } = req.body;
+
+  // orderType = 1 > 최신순 (디폴트)
+  // orderType = 2 > 가격 낮은 순
+  // orderType = 3 > 가격 높은 순
 
   const _ProductTypeId = ProductTypeId === 0 ? false : ProductTypeId;
 
@@ -289,6 +295,7 @@ router.post("/product/list", async (req, res, next) => {
             A.subName,
             A.price,
             CONCAT(FORMAT(A.price, 0), "원") 			AS viewPrice,
+            CONCAT(FORMAT(A.price - (A.discount / 100 * A.price), 0), "원")  AS viewCalcPrice,
             A.detail,
             A.infoType,
             A.infoConsist,
@@ -304,7 +311,20 @@ router.post("/product/list", async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
             DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
             A.ProductTypeId,
-            B.value
+            B.value,
+            ${
+              req.user
+                ? ` (
+                SELECT	id
+                  FROM	wish	Z
+                 WHERE	Z.UserId = ${req.user.id}
+                   AND	A.id = Z.ProductId 
+              )	AS exWish`
+                : `(
+                SELECT	null
+                  FROM	dual
+              )	AS exWish`
+            }
      FROM	product			A
     INNER	
      JOIN	productType		B
@@ -316,7 +336,11 @@ router.post("/product/list", async (req, res, next) => {
       ${isNew ? `AND	A.isNew = ${isNew}` : ""}
       ${isBest ? `AND	A.isBest = ${isBest}` : ""}
       ${isRecomm ? `AND	A.isRecomm = ${isRecomm}` : ""}
-    ORDER   BY  A.createdAt DESC
+
+      ${parseInt(orderType) === 1 ? `ORDER   BY  A.createdAt DESC` : ""}
+      ${parseInt(orderType) === 2 ? `ORDER   BY  A.price ASC` : ""}
+      ${parseInt(orderType) === 3 ? `ORDER   BY  A.price DESC` : ""}
+    
   `;
 
   const selectQ2 = `
@@ -707,6 +731,36 @@ router.post("/option/delete", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).send("옵션을 삭제할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 위시리스트 차트
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/wishchart", isAdminCheck, async (req, res, next) => {
+  const sq = `
+        SELECT	B.name			AS value,
+                COUNT(B.id)		AS cnt
+          FROM	wish	A
+          LEFT
+         OUTER
+          JOIN	product B
+            ON	A.ProductId = B.id
+         GROUP	BY	B.name
+    `;
+
+  try {
+    const list = await models.sequelize.query(sq);
+
+    return res.status(200).json(list[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 로드할 수 없습니다.");
   }
 });
 

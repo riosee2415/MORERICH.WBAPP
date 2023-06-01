@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Checkbox, message, Modal } from "antd";
 import useInput from "../../hooks/useInput";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SIGNUP_REQUEST } from "../../reducers/user";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
@@ -28,6 +28,7 @@ const style = {
 
 const SignUp = () => {
   ////// GLOBAL STATE //////
+  const { st_signUpDone, st_signUpError } = useSelector((state) => state.user);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -54,6 +55,18 @@ const SignUp = () => {
   const router = useRouter();
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_signUpDone) {
+      router.push(`/user/login`);
+
+      return message.success("회원가입되었습니다.");
+    }
+
+    if (st_signUpError) {
+      return message.error(st_signUpError);
+    }
+  }, [st_signUpDone, st_signUpError]);
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -136,6 +149,7 @@ const SignUp = () => {
                 height={`50px`}
                 margin={`0 0 8px`}
                 {...pwInput}
+                type="password"
               />
               <TextInput
                 placeholder="비밀번호 재확인"
@@ -143,6 +157,7 @@ const SignUp = () => {
                 height={`50px`}
                 margin={`0 0 27px`}
                 {...pwCheckInput}
+                type="password"
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 *성함

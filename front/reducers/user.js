@@ -66,10 +66,22 @@ export const initailState = {
   st_upJoinSetLoading: false,
   st_upJoinSetDone: false,
   st_upJoinSetError: null,
-  //
+  // 아이디찾기
   st_userFindIdLoading: false,
   st_userFindIdDone: false,
   st_userFindIdError: null,
+  // 비밀번호찾기
+  st_userFindPwLoading: false,
+  st_userFindPwDone: false,
+  st_userFindPwError: null,
+  // 인증번호
+  st_checkSecretLoading: false,
+  st_checkSecretDone: false,
+  st_checkSecretError: null,
+  // 비밀번호 재설정
+  st_userModfiyUpdateLoading: false,
+  st_userModfiyUpdateDone: false,
+  st_userModfiyUpdateError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -135,6 +147,18 @@ export const UP_JOIN_SET_FAILURE = "UP_JOIN_SET_FAILURE";
 export const USER_FIND_ID_REQUEST = "USER_FIND_ID_REQUEST";
 export const USER_FIND_ID_SUCCESS = "USER_FIND_ID_SUCCESS";
 export const USER_FIND_ID_FAILURE = "USER_FIND_ID_FAILURE";
+
+export const USER_FIND_PW_REQUEST = "USER_FIND_PW_REQUEST";
+export const USER_FIND_PW_SUCCESS = "USER_FIND_PW_SUCCESS";
+export const USER_FIND_PW_FAILURE = "USER_FIND_PW_FAILURE";
+
+export const CHECK_SECRET_REQUEST = "CHECK_SECRET_REQUEST";
+export const CHECK_SECRET_SUCCESS = "CHECK_SECRET_SUCCESS";
+export const CHECK_SECRET_FAILURE = "CHECK_SECRET_FAILURE";
+
+export const USER_MODIFY_UPDATE_REQUEST = "USER_MODIFY_UPDATE_REQUEST";
+export const USER_MODIFY_UPDATE_SUCCESS = "USER_MODIFY_UPDATE_SUCCESS";
+export const USER_MODIFY_UPDATE_FAILURE = "USER_MODIFY_UPDATE_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -469,13 +493,73 @@ const reducer = (state = initailState, action) =>
         draft.st_userFindIdLoading = false;
         draft.st_userFindIdDone = true;
         draft.st_userFindIdError = null;
-        draft.findId = action.data;
+        draft.findId = action.data.userId;
         break;
       }
       case USER_FIND_ID_FAILURE: {
         draft.st_userFindIdLoading = false;
         draft.st_userFindIdDone = false;
         draft.st_userFindIdError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case USER_FIND_PW_REQUEST: {
+        draft.st_userFindPwLoading = true;
+        draft.st_userFindPwDone = false;
+        draft.st_userFindPwError = null;
+        break;
+      }
+      case USER_FIND_PW_SUCCESS: {
+        draft.st_userFindPwLoading = false;
+        draft.st_userFindPwDone = true;
+        draft.st_userFindPwError = null;
+        break;
+      }
+      case USER_FIND_PW_FAILURE: {
+        draft.st_userFindPwLoading = false;
+        draft.st_userFindPwDone = false;
+        draft.st_userFindPwError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case CHECK_SECRET_REQUEST: {
+        draft.st_checkSecretLoading = true;
+        draft.st_checkSecretDone = false;
+        draft.st_checkSecretError = null;
+        break;
+      }
+      case CHECK_SECRET_SUCCESS: {
+        draft.st_checkSecretLoading = false;
+        draft.st_checkSecretDone = true;
+        draft.st_checkSecretError = null;
+        break;
+      }
+      case CHECK_SECRET_FAILURE: {
+        draft.st_checkSecretLoading = false;
+        draft.st_checkSecretDone = false;
+        draft.st_checkSecretError = action.error;
+        break;
+      }
+      ///////////////////////////////////////////////////////
+
+      case USER_MODIFY_UPDATE_REQUEST: {
+        draft.st_userModifyUpdateLoading = true;
+        draft.st_userModifyUpdateDone = false;
+        draft.st_userModifyUpdateError = null;
+        break;
+      }
+      case USER_MODIFY_UPDATE_SUCCESS: {
+        draft.st_userModifyUpdateLoading = false;
+        draft.st_userModifyUpdateDone = true;
+        draft.st_userModifyUpdateError = null;
+        break;
+      }
+      case USER_MODIFY_UPDATE_FAILURE: {
+        draft.st_userModifyUpdateLoading = false;
+        draft.st_userModifyUpdateDone = false;
+        draft.st_userModifyUpdateError = action.error;
         break;
       }
       //////////////////////////////////////////////

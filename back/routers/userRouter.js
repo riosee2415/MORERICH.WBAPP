@@ -501,10 +501,18 @@ router.post("/signup", async (req, res, next) => {
 
   try {
     const exUser = await User.findOne({
-      where: { email: email },
+      where: { userId: userId },
     });
 
     if (exUser) {
+      return res.status(401).send("이미 가입된 아이디 입니다.");
+    }
+
+    const exUserEmail = await User.findOne({
+      where: { email: email },
+    });
+
+    if (exUserEmail) {
       return res.status(401).send("이미 가입된 이메일 입니다.");
     }
 
@@ -518,6 +526,8 @@ router.post("/signup", async (req, res, next) => {
       mobile,
       terms,
       password: hashedPassword,
+      point: 0,
+      pointPer: 0,
     });
 
     res.status(201).send("SUCCESS");
@@ -582,7 +592,7 @@ router.post("/findId", async (req, res, next) => {
   }
 });
 
-router.post("/modifypass", isLoggedIn, async (req, res, next) => {
+router.post("/modifypass", async (req, res, next) => {
   const { email, userId } = req.body;
 
   const findUserQuery = `
@@ -612,7 +622,7 @@ router.post("/modifypass", isLoggedIn, async (req, res, next) => {
 
     await sendSecretMail(
       email,
-      `🔐 [보안 인증코드 입니다.] BMM에서 비밀번호 변경을 위한 보안인증 코드를 발송했습니다.`,
+      `🔐 [보안 인증코드 입니다.] MoreRich에서 비밀번호 변경을 위한 보안인증 코드를 발송했습니다.`,
       `
           <div>
             <h3>BMM</h3>
@@ -635,7 +645,7 @@ router.post("/modifypass", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.patch("/checkSecret", isLoggedIn, async (req, res, next) => {
+router.post("/checkSecret", async (req, res, next) => {
   const { secret } = req.body;
 
   const findUser = `
@@ -658,7 +668,7 @@ router.patch("/checkSecret", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.patch("/modifypass/update", isLoggedIn, async (req, res, next) => {
+router.post("/modifypass/update", async (req, res, next) => {
   const { userId, password } = req.body;
 
   const findUser = `

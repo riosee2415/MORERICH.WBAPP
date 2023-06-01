@@ -25,6 +25,7 @@ import useWidth from "../../hooks/useWidth";
 
 const Login = () => {
   ////// GLOBAL STATE //////
+  const { st_loginDone, st_loginError } = useSelector((state) => state.user);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -37,6 +38,19 @@ const Login = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_loginDone) {
+      router.push(`/`);
+
+      return message.success("로그인되었습니다.");
+    }
+
+    if (st_loginError) {
+      return message.error(st_loginError);
+    }
+  }, [st_loginDone, st_loginError]);
+
   ////// TOGGLE //////
   ////// HANDLER ///////
 
@@ -52,7 +66,7 @@ const Login = () => {
     dispatch({
       type: LOGIN_REQUEST,
       data: {
-        id: idInput.value,
+        userId: idInput.value,
         password: pwInput.value,
       },
     });
@@ -91,6 +105,7 @@ const Login = () => {
                 height={`50px`}
                 margin={`0 0 11px`}
                 {...pwInput}
+                type="password"
               />
               <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 12px`}>
                 <Text color={Theme.grey_C} isHover>

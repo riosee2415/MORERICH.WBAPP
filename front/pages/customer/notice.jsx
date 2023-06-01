@@ -22,6 +22,7 @@ import Link from "next/dist/client/link";
 import { useDispatch, useSelector } from "react-redux";
 import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
 import useInput from "../../hooks/useInput";
+import { FAQ_LIST_REQUEST } from "../../reducers/faq";
 
 const NoticeList = styled(Wrapper)`
   flex-direction: row;
@@ -61,11 +62,13 @@ const List = styled(Wrapper)`
 const Notice = () => {
   ////// GLOBAL STATE //////
   const { notices, lastPage, noticeLen } = useSelector((state) => state.notice);
+  const { faqList, page } = useSelector((state) => state.faq);
 
   const [currentTab, setCurrentTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleId, setVisibleId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [nextPage, setNextPage] = useState(1);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -84,16 +87,32 @@ const Notice = () => {
     });
   }, [searchTitle.value, currentPage]);
 
+  useEffect(() => {
+    dispatch({
+      type: FAQ_LIST_REQUEST,
+      data: {
+        page: nextPage,
+      },
+    });
+  }, [nextPage]);
+
   ////// TOGGLE //////
-  const faqToggle = useCallback(() => {
-    if (visibleId !== null) {
-      setIsVisible(false);
-      setVisibleId(null);
-    } else {
-      setIsVisible(true);
-      setVisibleId();
-    }
-  }, [isVisible, visibleId]);
+  const faqToggle = useCallback(
+    (data) => {
+      if (data.id === visibleId) {
+        setIsVisible(false);
+        setVisibleId(null);
+
+        return;
+      }
+
+      if (data) {
+        setVisibleId(data.id);
+        setIsVisible(true);
+      }
+    },
+    [isVisible, visibleId]
+  );
 
   ////// HANDLER //////
   // 페이지네이션
@@ -104,6 +123,12 @@ const Notice = () => {
     [currentPage]
   );
 
+  const nextPageCall = useCallback(
+    (changePage) => {
+      setNextPage(changePage);
+    },
+    [nextPage]
+  );
   ////// DATAVIEW //////
 
   return (
@@ -314,55 +339,70 @@ const Notice = () => {
                     FAQ
                   </Text>
                 </Wrapper>
-                <ListWrapper>
-                  <List onClick={() => faqToggle()}>
-                    <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-                      <Text
-                        fontSize={width < 900 ? `15px` : `18px`}
-                        fontWeight={`600`}
-                        color={Theme.black_C}
-                      >
-                        Q
-                      </Text>
-                      <Text
-                        maxWidth={`calc(100% - 32px - 30px)`}
-                        fontSize={width < 900 ? `16px` : `20px`}
-                        color={Theme.black_C}
-                        margin={`0 12px`}
-                      >
-                        질문이 들어올 곳입니다.
-                      </Text>
-                    </Wrapper>
-                    {visibleId && isVisible ? (
-                      <Image
-                        alt="icon"
-                        width={`18px`}
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_top.png`}
-                      />
-                    ) : (
-                      <Image
-                        alt="icon"
-                        width={`18px`}
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_select-box.png`}
-                      />
-                    )}
-                  </List>
-                  {isVisible && (
-                    <Wrapper
-                      padding={width < 900 ? `15px` : `24px`}
-                      al={`flex-start`}
-                      bgColor={Theme.lightGrey2_C}
-                      fontSize={`16px`}
-                      color={Theme.darkGrey_C}
-                    >
-                      답변이 들어올 곳입니다. 더 길어질 경우,,.,
-                    </Wrapper>
-                  )}
-                </ListWrapper>
               </Wrapper>
+              {faqList && faqList.length === 0 ? (
+                <Wrapper padding={`50px 0`}>
+                  <Empty description="조회된 자주 묻는 질문이 없습니다." />
+                </Wrapper>
+              ) : (
+                faqList.map((data) => {
+                  <ListWrapper key={data.id}>
+                    <List onClick={() => faqToggle(data)}>
+                      <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
+                        <Text
+                          fontSize={width < 900 ? `15px` : `18px`}
+                          fontWeight={`600`}
+                          color={Theme.black_C}
+                        >
+                          Q
+                        </Text>
+                        <Text
+                          maxWidth={`calc(100% - 32px - 30px)`}
+                          fontSize={width < 900 ? `16px` : `20px`}
+                          color={Theme.black_C}
+                          margin={`0 12px`}
+                        >
+                          {data.question}
+                        </Text>
+                      </Wrapper>
+                      {visibleId === data.id && isVisible ? (
+                        <Image
+                          alt="icon"
+                          width={`18px`}
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_top.png`}
+                        />
+                      ) : (
+                        <Image
+                          alt="icon"
+                          width={`18px`}
+                          src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_select-box.png`}
+                        />
+                      )}
+                    </List>
+                    {visibleId === data.id && isVisible && (
+                      <Wrapper
+                        padding={width < 900 ? `15px` : `24px`}
+                        al={`flex-start`}
+                        bgColor={Theme.lightGrey2_C}
+                        fontSize={`16px`}
+                        color={Theme.darkGrey_C}
+                      >
+                        {data.answer}
+                      </Wrapper>
+                    )}
+                  </ListWrapper>;
+                })
+              )}
             </>
           )}
-          <CustomPage margin={`60px 0 100px`} />
+          <CustomPage
+            margin={`60px 0 100px`}
+            defaultCurrent={1}
+            current={parseInt(nextPage)}
+            total={page * 10}
+            pageSize={10}
+            onChange={(page) => nextPageCall(page)}
+          />
         </WholeWrapper>
       </ClientLayout>
     </>
@@ -386,6 +426,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: NOTICE_LIST_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: FAQ_LIST_REQUEST,
     });
 
     // 구현부 종료

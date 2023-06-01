@@ -166,8 +166,8 @@ const reducer = (state = initailState, action) =>
         draft.st_faqListLoading = false;
         draft.st_faqListDone = true;
         draft.st_faqListError = null;
-        draft.faqList = action.data.faq;
-        draft.page = action.data.lastPage;
+        draft.faqList = action.data.faqS;
+        draft.page = action.data.lastpage;
         break;
       }
       case FAQ_LIST_FAILURE: {

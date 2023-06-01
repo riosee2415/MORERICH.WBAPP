@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Router from "next/router";
-import { Input, Button, Form, Checkbox } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import { useRouter } from "next/router";
+import { Checkbox, message, Modal } from "antd";
 import useInput from "../../hooks/useInput";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { SIGNUP_REQUEST } from "../../reducers/user";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
@@ -13,7 +12,6 @@ import axios from "axios";
 import { END } from "redux-saga";
 import {
   CommonButton,
-  Image,
   RsWrapper,
   Text,
   TextInput,
@@ -22,18 +20,93 @@ import {
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import useWidth from "../../hooks/useWidth";
+import DaumPostcode from "react-daum-postcode";
+
+const style = {
+  overflow: "hidden",
+};
 
 const SignUp = () => {
   ////// GLOBAL STATE //////
 
   ////// HOOKS //////
   const width = useWidth();
+
+  // INPUT
+  const idInput = useInput(``);
+  const pwInput = useInput(``);
+  const pwCheckInput = useInput(``);
+  const nameInput = useInput(``);
+  const mobileInput = useInput(``);
+  const emailInput = useInput(``);
+  const addressInput = useInput(``);
+  const postcodeInput = useInput(``);
+  const detailAddressInput = useInput(``);
+
+  // BOOLEAN
+  const [isTerms, setIsTerms] = useState(false);
+
+  // MODAL
+  const [isAddressModal, setIsAddressModal] = useState(false);
+
   ////// REDUX //////
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   ////// USEEFFECT //////
-
   ////// TOGGLE //////
-  ////// HANDLER //////\
+  ////// HANDLER //////
+
+  // 회원가입
+  const signUpHandler = useCallback(() => {
+    if (!idInput.value) {
+      return message.error("아이디를 입력해주세요.");
+    }
+    if (!pwInput.value) {
+      return message.error("비밀번호를 입력해주세요.");
+    }
+    if (!pwCheckInput.value) {
+      return message.error("비밀번호 재확인을 입력해주세요.");
+    }
+    if (pwInput.value !== pwCheckInput.value) {
+      return message.error("비밀번호가 일치하지 않습니다.");
+    }
+    if (!nameInput.value) {
+      return message.error("성함을 입력해주세요.");
+    }
+    if (!mobileInput.value) {
+      return message.error("전화번호를 입력해주세요.");
+    }
+    if (!emailInput.value) {
+      return message.error("이메일을 입력해주세요.");
+    }
+    if (!isTerms) {
+      return message.error("개인정보 처리방침에 동의해주세요.");
+    }
+
+    dispatch({
+      type: SIGNUP_REQUEST,
+      data: {
+        id: idInput.value,
+        password: pwInput.value,
+        username: nameInput.value,
+        mobile: mobileInput.value,
+        email: emailInput.value,
+        address: addressInput.value,
+        postcode: postcodeInput.value,
+        detailAddress: detailAddressInput.value,
+      },
+    });
+  }, [
+    idInput,
+    pwInput,
+    nameInput,
+    mobileInput,
+    emailInput,
+    addressInput,
+    postcodeInput,
+    detailAddressInput,
+  ]);
 
   ////// DATAVIEW //////
 
@@ -63,6 +136,7 @@ const SignUp = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
+                {...idInput}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 *비밀번호
@@ -72,12 +146,14 @@ const SignUp = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 8px`}
+                {...pwInput}
               />
               <TextInput
                 placeholder="비밀번호 재확인"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
+                {...pwCheckInput}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 *성함
@@ -87,6 +163,7 @@ const SignUp = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
+                {...nameInput}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 연락처
@@ -96,6 +173,7 @@ const SignUp = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
+                {...mobileInput}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 *이메일
@@ -105,6 +183,7 @@ const SignUp = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
+                {...emailInput}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 주소
@@ -119,11 +198,14 @@ const SignUp = () => {
                   placeholder="(선택사항)"
                   width={`228px`}
                   height={`50px`}
+                  readOnly
+                  {...postcodeInput}
                 />
                 <CommonButton
                   width={`calc(100% - 228px - 8px)`}
                   height={`50px`}
                   fontSize={`16px`}
+                  onClick={() => setIsAddressModal(true)}
                 >
                   주소검색
                 </CommonButton>
@@ -133,12 +215,15 @@ const SignUp = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 8px`}
+                readOnly
+                {...addressInput}
               />
               <TextInput
                 placeholder="상세주소"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
+                {...detailAddressInput}
               />
               <Wrapper
                 al={`flex-start`}
@@ -146,7 +231,12 @@ const SignUp = () => {
                 bgColor={Theme.lightGrey2_C}
                 margin={`0 0 8px`}
               >
-                <Checkbox>개인정보 처리방침에 동의합니다.</Checkbox>
+                <Checkbox
+                  onChange={() => setIsTerms(!isTerms)}
+                  checked={isTerms}
+                >
+                  개인정보 처리방침에 동의합니다.
+                </Checkbox>
               </Wrapper>
               <CommonButton
                 width={`356px`}
@@ -158,6 +248,28 @@ const SignUp = () => {
               </CommonButton>
             </Wrapper>
           </RsWrapper>
+
+          <Modal
+            width={`500px`}
+            style={{ top: 200 }}
+            footer={null}
+            visible={isAddressModal}
+            onCancel={() => setIsAddressModal(false)}
+          >
+            <DaumPostcode
+              onComplete={(data) => {
+                postcodeInput.setValue(data.zonecode);
+                addressInput.setValue(data.address);
+
+                setIsAddressModal(false);
+              }}
+              width={`600px`}
+              height={`500px`}
+              autoClose
+              animation
+              style={style}
+            />
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

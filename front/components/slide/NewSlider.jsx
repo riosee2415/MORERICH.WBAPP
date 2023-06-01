@@ -75,67 +75,17 @@ const SliderWrapper = styled(Carousel)`
   overflow: hidden;
 
   & .slick-list {
+    height: 487px;
     width: auto;
   }
 `;
 
-const NewSlider = () => {
+const NewSlider = ({ datum }) => {
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
 
   const { me } = useSelector((state) => state.user);
-
-  const bannerData = [
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod2.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod3.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod4.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-  ];
 
   return (
     <NewSliderWrapper>
@@ -150,12 +100,13 @@ const NewSlider = () => {
         dots={false}
         arrows={true}
       >
-        {bannerData && bannerData.length === 0 ? (
+        {datum && datum.length === 0 ? (
           <Wrapper padding={`100px 0`}>
             <Empty description="조회된 내역이 없습니다." />
           </Wrapper>
         ) : (
-          bannerData.map((data, idx) => {
+          datum &&
+          datum.map((data, idx) => {
             return (
               <Wrapper
                 key={idx}
@@ -163,10 +114,11 @@ const NewSlider = () => {
                 display={`flex !important`}
                 padding={`0 15px`}
                 cursor={`pointer`}
+                onClick={() => router.push(`/product/${data.ProductId}`)}
               >
                 <Wrapper al={`flex-start`}>
                   <SquareBox>
-                    <Image alt="thumbnail" src={data.imgUrl} />
+                    <Image alt="thumbnail" src={data.thumbnail} />
                   </SquareBox>
 
                   <Text
@@ -174,11 +126,11 @@ const NewSlider = () => {
                     fontWeight={`600`}
                     margin={`23px 0 12px`}
                   >
-                    {data.title}
+                    {data.name}
                   </Text>
 
                   <Text fontSize={width < 900 ? `15px` : `17px`}>
-                    {data.name}
+                    {data.subName}
                   </Text>
                   <Wrapper
                     dr={`row`}
@@ -186,14 +138,16 @@ const NewSlider = () => {
                     margin={`16px 0 20px`}
                     fontSize={width < 900 ? `15px` : `20px`}
                   >
-                    <Text
-                      color={Theme.grey_C}
-                      className="line"
-                      margin={`0 12px 0 0`}
-                    >
-                      {data.price}
-                    </Text>
-                    <Text>{data.price}</Text>
+                    {data.discount !== 0 && (
+                      <Text
+                        color={Theme.grey_C}
+                        className="line"
+                        margin={`0 12px 0 0`}
+                      >
+                        {data.viewPrice}
+                      </Text>
+                    )}
+                    <Text>{data.viewCalcPrice}</Text>
                   </Wrapper>
                   <Wrapper dr={`row`} ju={`flex-start`}>
                     <Image

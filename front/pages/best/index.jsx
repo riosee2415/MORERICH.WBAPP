@@ -26,8 +26,6 @@ const Index = () => {
   ////// GLOBAL STATE //////
   const { products } = useSelector((state) => state.store);
 
-  console.log(products);
-
   ////// HOOKS //////
   const width = useWidth();
   ////// REDUX //////
@@ -92,11 +90,11 @@ const Index = () => {
                             fontWeight={`600`}
                             margin={`23px 0 12px`}
                           >
-                            {data.title}
+                            {data.name}
                           </Text>
 
                           <Text fontSize={width < 900 ? `13px` : `17px`}>
-                            {data.name}
+                            {data.subName}
                           </Text>
                           <Wrapper
                             dr={`row`}

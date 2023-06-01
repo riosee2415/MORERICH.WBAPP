@@ -97,6 +97,11 @@ export const items = {
       link: "/admin/user/joinManage",
       useYn: true,
     },
+    {
+      name: "회원배송지관리",
+      link: "/admin/user/address",
+      useYn: true,
+    },
   ],
   고객지원관리: [
     {

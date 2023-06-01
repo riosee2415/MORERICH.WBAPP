@@ -52,6 +52,14 @@ import {
   ADMINUSER_EXITFALSE_REQUEST,
   ADMINUSER_EXITFALSE_SUCCESS,
   ADMINUSER_EXITFALSE_FAILURE,
+  //
+  GET_JOIN_SET_REQUEST,
+  GET_JOIN_SET_SUCCESS,
+  GET_JOIN_SET_FAILURE,
+  //
+  UP_JOIN_SET_REQUEST,
+  UP_JOIN_SET_SUCCESS,
+  UP_JOIN_SET_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -400,6 +408,60 @@ function* adminUserExitFalse(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function joinSetAPI(data) {
+  return await axios.post(`/api/user/getJoinSet`, data);
+}
+
+function* joinSet(action) {
+  try {
+    const result = yield call(joinSetAPI, action.data);
+
+    yield put({
+      type: GET_JOIN_SET_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: GET_JOIN_SET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function upJoinSetAPI(data) {
+  return await axios.post(`/api/user/upJoinSet`, data);
+}
+
+function* upJoinSet(action) {
+  try {
+    const result = yield call(upJoinSetAPI, action.data);
+
+    yield put({
+      type: UP_JOIN_SET_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: UP_JOIN_SET_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -454,6 +516,14 @@ function* watchAdminUserExitFalse() {
   yield takeLatest(ADMINUSER_EXITFALSE_REQUEST, adminUserExitFalse);
 }
 
+function* watchJoinSet() {
+  yield takeLatest(GET_JOIN_SET_REQUEST, joinSet);
+}
+
+function* watchUpJoinSet() {
+  yield takeLatest(UP_JOIN_SET_REQUEST, upJoinSet);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -470,6 +540,8 @@ export default function* userSaga() {
     fork(watchAdminUserRightHistoryList),
     fork(watchAdminUserExitTrue),
     fork(watchAdminUserExitFalse),
+    fork(watchJoinSet),
+    fork(watchUpJoinSet),
     //
   ]);
 }

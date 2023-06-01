@@ -29,6 +29,7 @@ const productTypeHistory = require("./producttypehistory");
 const product = require("./product");
 const productImage = require("./productImage");
 const productOption = require("./productoption");
+const joinset = require("./joinset");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -61,6 +62,7 @@ db.KakaochHistory = kakaochHistory;
 db.MainBannerHistory = mainBannerHistory;
 db.PopupHistory = popupHistory;
 db.FaqType = faqType;
+db.JoinSet = joinset;
 
 db.ProductType = productType;
 db.ProductTypeHistory = productTypeHistory;

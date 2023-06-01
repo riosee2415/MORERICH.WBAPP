@@ -771,4 +771,43 @@ router.get("/logout", function (req, res) {
   });
 });
 
+router.post("/getJoinSet", async (req, res, next) => {
+  const sq = `
+  SELECT  id,
+          point,
+          pointPer,
+          DATE_FORMAT(updatedAt, '%Y. %m. %d')			AS viewUpdatedAt
+    FROM joinSet
+  `;
+
+  try {
+    const list = await models.sequelize.query(sq);
+
+    return res.status(200).json(list[0][0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터 로드 실패");
+  }
+});
+
+router.post("/upJoinSet", async (req, res, next) => {
+  const { id, point, pointPer } = req.body;
+
+  const up = `
+  UPDATE  joinSet
+     SET  point = ${point},
+          pointPer = ${pointPer}
+   WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(up);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터 로드 실패");
+  }
+});
+
 module.exports = router;

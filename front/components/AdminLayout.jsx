@@ -88,7 +88,7 @@ export const items = {
       useYn: true,
     },
     {
-      name: "가입관리",
+      name: "신규가입관리",
       link: "/admin/user/joinManage",
       useYn: true,
     },

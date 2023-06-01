@@ -29,6 +29,7 @@ import {
   ManageInput,
   ManagementForm,
 } from "../../../components/managementComponents";
+import { GET_PRODUCT_REQUEST } from "../../../reducers/store";
 
 const DelX = styled.div`
   width: 19px;
@@ -61,6 +62,9 @@ const Slide = ({}) => {
     st_updateSlideBannerDone,
     st_updateSlideBannerError,
   } = useSelector((state) => state.banner);
+  const { products } = useSelector((state) => state.store);
+
+  console.log(products);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -345,6 +349,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: GET_SLIDE_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_PRODUCT_REQUEST,
     });
 
     // 구현부 종료

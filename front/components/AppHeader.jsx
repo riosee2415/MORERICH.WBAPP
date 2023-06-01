@@ -172,7 +172,7 @@ const AppHeader = ({}) => {
                         color={Theme.black_C}
                         isHover
                       >
-                        <Link href={`/`}>
+                        <Link href={`/customer/notice`}>
                           <a>공지사항</a>
                         </Link>
                       </Text>

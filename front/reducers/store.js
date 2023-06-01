@@ -7,6 +7,7 @@ export const initailState = {
   thumbnailPath: null,
   detailImagePath: null,
   wishChart: [],
+  boughtlist: [],
   // 상품
   products: [],
   products2: [],
@@ -96,6 +97,11 @@ export const initailState = {
   st_wishChartLoading: false,
   st_wishChartDone: false,
   st_wishChartError: null,
+
+  // 구매내역 리스트
+  st_getBoughtListLoading: false,
+  st_getBoughtListDone: false,
+  st_getBoughtListError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -173,6 +179,10 @@ export const DEL_OPTION_FAILURE = "DEL_OPTION_FAILURE";
 export const WISH_CHART_REQUEST = "WISH_CHART_REQUEST";
 export const WISH_CHART_SUCCESS = "WISH_CHART_SUCCESS";
 export const WISH_CHART_FAILURE = "WISH_CHART_FAILURE";
+
+export const GET_BOUGHTLIST_REQUEST = "GET_BOUGHTLIST_REQUEST";
+export const GET_BOUGHTLIST_SUCCESS = "GET_BOUGHTLIST_SUCCESS";
+export const GET_BOUGHTLIST_FAILURE = "GET_BOUGHTLIST_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -627,6 +637,30 @@ const reducer = (state = initailState, action) =>
         draft.st_wishChartLoading = false;
         draft.st_wishChartDone = false;
         draft.st_wishChartError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case GET_BOUGHTLIST_REQUEST: {
+        draft.st_getBoughtListLoading = true;
+        draft.st_getBoughtListDone = false;
+        draft.st_getBoughtListError = null;
+        break;
+      }
+
+      case GET_BOUGHTLIST_SUCCESS: {
+        draft.st_getBoughtListLoading = false;
+        draft.st_getBoughtListDone = true;
+        draft.st_getBoughtListError = null;
+        draft.boughtlist = action.data;
+        break;
+      }
+
+      case GET_BOUGHTLIST_FAILURE: {
+        draft.st_getBoughtListLoading = false;
+        draft.st_getBoughtListDone = false;
+        draft.st_getBoughtListError = action.error;
         break;
       }
 

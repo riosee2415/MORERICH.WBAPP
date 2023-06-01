@@ -76,6 +76,10 @@ import {
   WISH_CHART_REQUEST,
   WISH_CHART_SUCCESS,
   WISH_CHART_FAILURE,
+  //
+  GET_BOUGHTLIST_REQUEST,
+  GET_BOUGHTLIST_SUCCESS,
+  GET_BOUGHTLIST_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -587,6 +591,32 @@ function* wishChart(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function boughtListAPI(data) {
+  return await axios.post(`/api/store/boughtlist`, data);
+}
+
+function* boughtList(action) {
+  try {
+    const result = yield call(boughtListAPI, action.data);
+
+    yield put({
+      type: GET_BOUGHTLIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: GET_BOUGHTLIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
@@ -646,6 +676,9 @@ function* watchDelOption() {
 function* watchWishChart() {
   yield takeLatest(WISH_CHART_REQUEST, wishChart);
 }
+function* watchGetBoughtList() {
+  yield takeLatest(GET_BOUGHTLIST_REQUEST, boughtList);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -669,6 +702,7 @@ export default function* storeSaga() {
     fork(watchAddOption),
     fork(watchDelOption),
     fork(watchWishChart),
+    fork(watchGetBoughtList),
 
     //
   ]);

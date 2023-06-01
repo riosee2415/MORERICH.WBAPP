@@ -27,9 +27,13 @@ import {
   ManagementForm,
   ManagementTable,
 } from "../../../components/managementComponents";
+import { GET_BOUGHTLIST_REQUEST } from "../../../reducers/store";
 
 const Bought = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
+  const { boughtlist } = useSelector((state) => state.store);
+
+  console.log(boughtlist);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -95,6 +99,58 @@ const Bought = ({}) => {
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
+  const column = [
+    {
+      title: "번호",
+      dataIndex: "num",
+      width: "3%",
+    },
+
+    {
+      title: "구매자정보",
+      dataIndex: "userId",
+    },
+
+    {
+      title: "구매일",
+      dataIndex: "viewCreatedAt",
+    },
+
+    {
+      title: "구매금액",
+      dataIndex: "allPrice",
+    },
+
+    {
+      title: "구매상품 수",
+      dataIndex: "productCnt",
+    },
+
+    {
+      title: "처리상태",
+      dataIndex: "productCnt",
+    },
+
+    {
+      title: "배송회사",
+      dataIndex: "productCnt",
+    },
+
+    {
+      title: "송장번호",
+      dataIndex: "productCnt",
+    },
+
+    {
+      title: "취소/환불처리",
+      dataIndex: "productCnt",
+    },
+
+    {
+      title: "구매상품 상세",
+      dataIndex: "productCnt",
+    },
+  ];
 
   return (
     <AdminLayout>
@@ -148,8 +204,15 @@ const Bought = ({}) => {
             <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
               <ManageInput
                 width="220px"
-                placeholder="구매자 아이디로 검색"
+                placeholder="구매자 아이디"
                 value={""}
+                onKeyDown={null}
+              />
+              <ManageInput
+                width="220px"
+                placeholder="날짜"
+                value={"2023-05-03"}
+                type="date"
                 onKeyDown={null}
               />
               <ManageButton type="primary" onClick={null}>
@@ -160,13 +223,49 @@ const Bought = ({}) => {
             <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
               <ManageButton
                 type={stat === 0 ? "primary" : "default"}
-                onClick={null}
+                onClick={() => setStat(0)}
               >
                 상품 준비중
+              </ManageButton>
+
+              <ManageButton
+                type={stat === 1 ? "primary" : "default"}
+                onClick={() => setStat(1)}
+              >
+                배송 준비중
+              </ManageButton>
+
+              <ManageButton
+                type={stat === 2 ? "primary" : "default"}
+                onClick={() => setStat(2)}
+              >
+                배송중
+              </ManageButton>
+
+              <ManageButton
+                type={stat === 3 ? "primary" : "default"}
+                onClick={() => setStat(3)}
+              >
+                배송완료
+              </ManageButton>
+
+              <ManageButton
+                type={stat === 4 ? "primary" : "default"}
+                onClick={() => setStat(4)}
+              >
+                취소/환불
               </ManageButton>
             </Wrapper>
           </Wrapper>
         </Wrapper>
+
+        {/*  */}
+
+        <ManagementTable
+          columns={column}
+          dataSource={boughtlist}
+          rowKey={"num"}
+        />
       </Wrapper>
     </AdminLayout>
   );
@@ -185,6 +284,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: GET_BOUGHTLIST_REQUEST,
     });
 
     // 구현부 종료

@@ -764,4 +764,67 @@ router.post("/wishchart", isAdminCheck, async (req, res, next) => {
   }
 });
 
+/**
+ * SUBJECT : 구매내역 조회
+ * PARAMETERS : { searchId, searchDate, stat }
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
+  const { searchId = "", searchDate = false, stat = 0 } = req.body;
+
+  const selectQ1 = `
+  SELECT	A.id,
+          A.deliveryCompany,
+          A.deliveryNo,
+          A.UserId,
+          A.status,
+          DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+          DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+          DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+          DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+          B.userId,
+          B.username,
+          B.email,
+          B.mobile,
+          B.point
+    FROM	boughtHistory	A
+   INNER
+    JOIN	users 			B
+      ON	A.UserId = B.id
+   WHERE  1 = 1
+     AND  B.userId LIKE "%${searchId}%"
+     AND  A.status = ${stat}
+     ${
+       searchDate
+         ? `AND  DATE_FORMAT(A.createdAt, "%Y-%m-%d") = "${searchDate}"`
+         : ""
+     }
+  `;
+
+  const selectQ2 = `
+  SELECT	id,
+          productName,
+          price,
+          'option',
+          thumbnail,
+          BoughtHistoryId 
+    FROM	boughtList
+  `;
+
+  try {
+    const list1 = await models.sequelize.query(selectQ1);
+    const list2 = await models.sequelize.query(selectQ2);
+
+    const result = consistOfArrayToArray(list1[0], list2[0], "BoughtHistoryId");
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 로드할 수 없습니다.");
+  }
+});
+
 module.exports = router;

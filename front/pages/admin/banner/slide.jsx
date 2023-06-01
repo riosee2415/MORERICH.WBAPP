@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Image, Modal, Popover, message, Form } from "antd";
+import { Image, Modal, Popover, message, Form, Drawer } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -71,6 +71,7 @@ const Slide = ({}) => {
   const [sameDepth, setSameDepth] = useState([]);
 
   const [titleModal, setTitleModal] = useState(false);
+  const [listDr, setListDr] = useState(false);
 
   const [crData, setCrData] = useState(null);
 
@@ -150,6 +151,12 @@ const Slide = ({}) => {
   }, [crData]);
 
   ////// HANDLER //////
+
+  const listDrToggle = useCallback((row) => {
+    setListDr((p) => !p);
+
+    setCrData(row);
+  }, []);
 
   const titleModalToggle = useCallback((row) => {
     setTitleModal((p) => !p);
@@ -234,7 +241,9 @@ const Slide = ({}) => {
                   타이틀 수정
                 </ManageButton>
 
-                <ManageButton type="primary">상품추가</ManageButton>
+                <ManageButton type="primary" onClick={() => listDrToggle(item)}>
+                  상품추가
+                </ManageButton>
               </Wrapper>
 
               <Wrapper
@@ -308,6 +317,13 @@ const Slide = ({}) => {
           </Wrapper>
         </ManagementForm>
       </Modal>
+
+      <Drawer
+        visible={listDr}
+        onClose={() => listDrToggle(null)}
+        width="500px"
+        title="상품리스트"
+      ></Drawer>
     </AdminLayout>
   );
 };

@@ -13,6 +13,7 @@ import {
   Spin,
   Select,
   Form,
+  Modal,
 } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
@@ -38,7 +39,6 @@ import {
   ManagementTable,
   ManageDelButton,
   ManagementForm,
-  ManagementSelect,
 } from "../../../components/managementComponents";
 import {
   GET_PRODUCT2_REQUEST,
@@ -51,6 +51,9 @@ import {
   SAVE_THUMBNAIL_REQUEST,
   UPLOAD_DETAIL_REQUEST,
   ADD_DETAIL_REQUEST,
+  DEL_DETAIL_REQUEST,
+  NEW_PRODUCT_REQUEST,
+  DEL_PRODUCT_REQUEST,
 } from "../../../reducers/store";
 import { numberWithCommas } from "../../../components/commonUtils";
 import BarChart from "../../../components/admin/BarChart";
@@ -105,6 +108,15 @@ const Product = ({}) => {
     //
     st_addDetailImageDone,
     st_addDetailImageError,
+    //
+    st_delDetailImageDone,
+    st_delDetailImageError,
+    //
+    st_newProductDone,
+    st_newProductError,
+    //
+    st_delProductDone,
+    st_delProductError,
   } = useSelector((state) => state.store);
 
   const router = useRouter();
@@ -127,6 +139,7 @@ const Product = ({}) => {
   const [graphView, setGraphView] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
   const [crData, setCrData] = useState(null);
+  const [cModal, setCModal] = useState(false);
 
   const [infoForm] = Form.useForm();
 
@@ -190,6 +203,66 @@ const Product = ({}) => {
   }, [st_toggleProductDone, st_toggleProductError]);
 
   useEffect(() => {
+    if (st_delProductDone) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+
+      dtailDrToggle(null);
+      setCrData(null);
+    }
+
+    if (st_delProductError) {
+      return message.error(st_delProductError);
+    }
+  }, [st_delProductDone, st_delProductError]);
+
+  useEffect(() => {
+    if (st_newProductDone) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+    }
+
+    if (st_newProductError) {
+      return message.error(st_newProductError);
+    }
+  }, [st_newProductDone, st_newProductError]);
+
+  useEffect(() => {
+    if (st_delDetailImageDone) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+    }
+
+    if (st_delDetailImageError) {
+      return message.error("데이터를 수정할 수 없습니다.");
+    }
+  }, [st_delDetailImageDone, st_delDetailImageError]);
+
+  useEffect(() => {
     if (st_saveThumbnailDone) {
       dispatch({
         type: GET_PRODUCT_REQUEST,
@@ -215,6 +288,12 @@ const Product = ({}) => {
 
   useEffect(() => {
     if (st_addDetailImageDone && st_getProductDone) {
+      const targetData = products.find((item) => item.id === crData.id);
+
+      setCrData(targetData);
+    }
+
+    if (st_delDetailImageDone && st_getProductDone) {
       const targetData = products.find((item) => item.id === crData.id);
 
       setCrData(targetData);
@@ -451,6 +530,36 @@ const Product = ({}) => {
     },
     [crData]
   );
+
+  const detailImageDelete = useCallback((item) => {
+    dispatch({
+      type: DEL_DETAIL_REQUEST,
+      data: {
+        id: item.id,
+      },
+    });
+  }, []);
+
+  const createGuideModal = useCallback(() => {
+    setCModal((p) => !p);
+  }, []);
+
+  const createAction = useCallback(() => {
+    dispatch({
+      type: NEW_PRODUCT_REQUEST,
+    });
+
+    createGuideModal();
+  }, []);
+
+  const deleteProductHandler = useCallback(() => {
+    dispatch({
+      type: DEL_PRODUCT_REQUEST,
+      data: {
+        id: crData.id,
+      },
+    });
+  }, [crData]);
 
   // FILE HANDLER
   const clickImageUpload = useCallback(() => {
@@ -723,7 +832,9 @@ const Product = ({}) => {
           ju="flex-end"
           padding="0px 10px"
         >
-          <ManageButton type="primary">신규상품 +</ManageButton>
+          <ManageButton type="primary" onClick={createGuideModal}>
+            신규상품 +
+          </ManageButton>
           <ManageButton type="primary" onClick={() => graphToggle()}>
             상품통계
           </ManageButton>
@@ -874,6 +985,15 @@ const Product = ({}) => {
               정보저장
             </ManageButton>
           </Wrapper>
+          <Wrapper al="flex-end">
+            <Popconfirm
+              title="삭제한 상품은 복원할 수 없습니다. 정말 삭제하시겠습니까?"
+              onCancel={null}
+              onConfirm={deleteProductHandler}
+            >
+              <ManageDelButton>상품삭제</ManageDelButton>
+            </Popconfirm>
+          </Wrapper>
         </ManagementForm>
 
         <Wrapper
@@ -1002,7 +1122,13 @@ const Product = ({}) => {
                         }}
                         src={item.filepath}
                       />
-                      <DelX>X</DelX>
+                      <Popconfirm
+                        title="이미지를 삭제하시겠습니까? 삭제한 이미지는 복구할 수 없습니다."
+                        onCancel={null}
+                        onConfirm={() => detailImageDelete(item)}
+                      >
+                        <DelX>X</DelX>
+                      </Popconfirm>
                     </Wrapper>
                   );
                 })}
@@ -1010,9 +1136,40 @@ const Product = ({}) => {
           </Wrapper>
         </Wrapper>
       </Drawer>
+
+      <Modal
+        footer={null}
+        title="신규상품 생성"
+        visible={cModal}
+        width="500px"
+        onCancel={createGuideModal}
+      >
+        <div>
+          <GuideUl>
+            <GuideLi isImpo={true}>
+              신규상품 생성 시, 생성된 상품의 "상세정보"를 통해 상품정보를
+              입력해야 합니다. 카테고리는 랜덤으로 부여되니 필수적으로 수정이
+              필요합니다.
+            </GuideLi>
+            <GuideLi isImpo={true}>
+              상품생성 즉시 판매상품으로 적용되니, 무분별한 상품 등록을
+              삼가해주세요.
+            </GuideLi>
+            <GuideLi>상품을 생성하시려면 생성 버튼을 눌러주세요.</GuideLi>
+          </GuideUl>
+
+          <Wrapper dr="row">
+            <ManageDelButton onClick={createGuideModal}>취소</ManageDelButton>
+            <ManageButton type="primary" onClick={createAction}>
+              상품생성
+            </ManageButton>
+          </Wrapper>
+        </div>
+      </Modal>
     </AdminLayout>
   );
 };
+// https://via.placeholder.com/300x300?text=Upload Thumbnail
 
 export const getServerSideProps = wrapper.getServerSideProps(
   async (context) => {

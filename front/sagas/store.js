@@ -52,6 +52,18 @@ import {
   ADD_DETAIL_REQUEST,
   ADD_DETAIL_SUCCESS,
   ADD_DETAIL_FAILURE,
+  //
+  DEL_DETAIL_REQUEST,
+  DEL_DETAIL_SUCCESS,
+  DEL_DETAIL_FAILURE,
+  //
+  NEW_PRODUCT_REQUEST,
+  NEW_PRODUCT_SUCCESS,
+  NEW_PRODUCT_FAILURE,
+  //
+  DEL_PRODUCT_REQUEST,
+  DEL_PRODUCT_SUCCESS,
+  DEL_PRODUCT_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -405,6 +417,87 @@ function* addDetailImage(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function delDetailImageAPI(data) {
+  return await axios.post(`/api/store/detail/delete`, data);
+}
+
+function* delDetailImage(action) {
+  try {
+    const result = yield call(delDetailImageAPI, action.data);
+
+    yield put({
+      type: DEL_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: DEL_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function newProductAPI(data) {
+  return await axios.post(`/api/store/product/new`, data);
+}
+
+function* newProduct(action) {
+  try {
+    const result = yield call(newProductAPI, action.data);
+
+    yield put({
+      type: NEW_PRODUCT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NEW_PRODUCT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function delProductAPI(data) {
+  return await axios.post(`/api/store/product/delete`, data);
+}
+
+function* delProduct(action) {
+  try {
+    const result = yield call(delProductAPI, action.data);
+
+    yield put({
+      type: DEL_PRODUCT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: DEL_PRODUCT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
   yield takeLatest(GET_PRODUCTTYPE_REQUEST, getProductType);
@@ -445,6 +538,15 @@ function* watchUploadDetailImage() {
 function* watchAddDetailImage() {
   yield takeLatest(ADD_DETAIL_REQUEST, addDetailImage);
 }
+function* watchDelDetailImage() {
+  yield takeLatest(DEL_DETAIL_REQUEST, delDetailImage);
+}
+function* watchNewProduct() {
+  yield takeLatest(NEW_PRODUCT_REQUEST, newProduct);
+}
+function* watchDelProduct() {
+  yield takeLatest(DEL_PRODUCT_REQUEST, delProduct);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -462,6 +564,9 @@ export default function* storeSaga() {
     fork(watchSaveThumbnail),
     fork(watchUploadDetailImage),
     fork(watchAddDetailImage),
+    fork(watchDelDetailImage),
+    fork(watchNewProduct),
+    fork(watchDelProduct),
 
     //
   ]);

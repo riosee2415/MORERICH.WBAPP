@@ -65,6 +65,21 @@ export const initailState = {
   st_addDetailImageLoading: false,
   st_addDetailImageDone: false,
   st_addDetailImageError: null,
+
+  // 상품데이터 상세이미지 삭제
+  st_delDetailImageLoading: false,
+  st_delDetailImageDone: false,
+  st_delDetailImageError: null,
+
+  // 상품데이터 생성
+  st_newProductLoading: false,
+  st_newProductDone: false,
+  st_newProductError: null,
+
+  // 상품데이터 삭제
+  st_delProductLoading: false,
+  st_delProductDone: false,
+  st_delProductError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -118,6 +133,18 @@ export const UPLOAD_DETAIL_FAILURE = "UPLOAD_DETAIL_FAILURE";
 export const ADD_DETAIL_REQUEST = "ADD_DETAIL_REQUEST";
 export const ADD_DETAIL_SUCCESS = "ADD_DETAIL_SUCCESS";
 export const ADD_DETAIL_FAILURE = "ADD_DETAIL_FAILURE";
+
+export const DEL_DETAIL_REQUEST = "DEL_DETAIL_REQUEST";
+export const DEL_DETAIL_SUCCESS = "DEL_DETAIL_SUCCESS";
+export const DEL_DETAIL_FAILURE = "DEL_DETAIL_FAILURE";
+
+export const NEW_PRODUCT_REQUEST = "NEW_PRODUCT_REQUEST";
+export const NEW_PRODUCT_SUCCESS = "NEW_PRODUCT_SUCCESS";
+export const NEW_PRODUCT_FAILURE = "NEW_PRODUCT_FAILURE";
+
+export const DEL_PRODUCT_REQUEST = "DEL_PRODUCT_REQUEST";
+export const DEL_PRODUCT_SUCCESS = "DEL_PRODUCT_SUCCESS";
+export const DEL_PRODUCT_FAILURE = "DEL_PRODUCT_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -433,6 +460,75 @@ const reducer = (state = initailState, action) =>
         draft.st_addDetailImageLoading = false;
         draft.st_addDetailImageDone = false;
         draft.st_addDetailImageError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case DEL_DETAIL_REQUEST: {
+        draft.st_delDetailImageLoading = true;
+        draft.st_delDetailImageDone = false;
+        draft.st_delDetailImageError = null;
+        break;
+      }
+
+      case DEL_DETAIL_SUCCESS: {
+        draft.st_delDetailImageLoading = false;
+        draft.st_delDetailImageDone = true;
+        draft.st_delDetailImageError = null;
+        break;
+      }
+
+      case DEL_DETAIL_FAILURE: {
+        draft.st_delDetailImageLoading = false;
+        draft.st_delDetailImageDone = false;
+        draft.st_delDetailImageError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case NEW_PRODUCT_REQUEST: {
+        draft.st_newProductLoading = true;
+        draft.st_newProductDone = false;
+        draft.st_newProductError = null;
+        break;
+      }
+
+      case NEW_PRODUCT_SUCCESS: {
+        draft.st_newProductLoading = false;
+        draft.st_newProductDone = true;
+        draft.st_newProductError = null;
+        break;
+      }
+
+      case NEW_PRODUCT_FAILURE: {
+        draft.st_newProductLoading = false;
+        draft.st_newProductDone = false;
+        draft.st_newProductError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case DEL_PRODUCT_REQUEST: {
+        draft.st_delProductLoading = true;
+        draft.st_delProductDone = false;
+        draft.st_delProductError = null;
+        break;
+      }
+
+      case DEL_PRODUCT_SUCCESS: {
+        draft.st_delProductLoading = false;
+        draft.st_delProductDone = true;
+        draft.st_delProductError = null;
+        break;
+      }
+
+      case DEL_PRODUCT_FAILURE: {
+        draft.st_delProductLoading = false;
+        draft.st_delProductDone = false;
+        draft.st_delProductError = action.error;
         break;
       }
 

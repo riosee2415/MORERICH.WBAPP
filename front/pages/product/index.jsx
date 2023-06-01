@@ -15,7 +15,6 @@ import {
   WholeWrapper,
   Wrapper,
   Image,
-  CustomPage,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { Empty, Select } from "antd";
@@ -25,6 +24,7 @@ import {
   GET_PRODUCTTYPE_REQUEST,
   GET_PRODUCT_REQUEST,
 } from "../../reducers/store";
+import { useRouter } from "next/router";
 
 const CateBtn = styled(Wrapper)`
   padding: 0 14px;
@@ -48,10 +48,11 @@ const Index = () => {
   const { products, productTypes } = useSelector((state) => state.store);
 
   const [type, setType] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [orderType, setOrderType] = useState(1); // 순서
 
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
   const dispatch = useDispatch();
 
   ////// REDUX //////
@@ -61,19 +62,32 @@ const Index = () => {
       type: GET_PRODUCT_REQUEST,
       data: {
         ProductTypeId: type,
-        page: currentPage,
+        orderType: orderType,
       },
     });
-  }, [type, currentPage]);
+  }, [type, orderType]);
 
   ////// TOGGLE //////
   ////// HANDLER //////
   const typeHandler = useCallback(
     (data) => {
-      setCurrentPage(1);
+      setType(data);
     },
-    [type, currentPage]
+    [type]
   );
+
+  // 순서
+  const orderTypeHandler = useCallback(
+    (data) => {
+      setOrderType(data);
+    },
+    [orderType]
+  );
+
+  const movelinkHandler = useCallback((link) => {
+    router.push(link);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -94,6 +108,9 @@ const Index = () => {
               PRODUCT
             </Text>
             <Wrapper dr={`row`} margin={`18px 0 0`}>
+              <CateBtn onClick={() => typeHandler(0)} isActive={0 === type}>
+                전체
+              </CateBtn>
               {productTypes && productTypes.length === 0 ? (
                 <Wrapper fontSize={`16px`} color={Theme.grey_C}>
                   조회된 카테고리가 없습니다.
@@ -115,14 +132,21 @@ const Index = () => {
           </Wrapper>
           <RsWrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 20px`}>
-              <Text color={Theme.grey_C}>000개의 상품이 존재합니다.</Text>
+              <Text color={Theme.grey_C}>
+                {products && products.length}개의 상품이 존재합니다.
+              </Text>
               <CustomSelect
                 width={width < 900 ? `160px` : `225px`}
                 height={`40px`}
               >
-                <Select placeholder="선택해주세요">
-                  <Select.Option>조회순</Select.Option>
-                  <Select.Option>최신순</Select.Option>
+                <Select
+                  placeholder="선택해주세요"
+                  value={orderType}
+                  onChange={orderTypeHandler}
+                >
+                  <Select.Option value={1}>조회순</Select.Option>
+                  <Select.Option value={2}>가격낮은순</Select.Option>
+                  <Select.Option value={3}>가격높은순</Select.Option>
                 </Select>
               </CustomSelect>
             </Wrapper>
@@ -134,7 +158,10 @@ const Index = () => {
               ) : (
                 products.map((data, idx) => {
                   return (
-                    <ProductWrapper key={idx}>
+                    <ProductWrapper
+                      key={idx}
+                      onClick={() => movelinkHandler(`/product/${data.id}`)}
+                    >
                       <SquareBox>
                         <Image alt="thumbnail" src={data.thumbnail} />
                       </SquareBox>
@@ -165,7 +192,7 @@ const Index = () => {
                             className="line"
                             margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
                           >
-                            {data.price}
+                            {data.viewCalcPrice}
                           </Text>
                           <Text>{data.viewPrice}</Text>
                         </Wrapper>
@@ -188,8 +215,6 @@ const Index = () => {
                 })
               )}
             </Wrapper>
-
-            <CustomPage />
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>

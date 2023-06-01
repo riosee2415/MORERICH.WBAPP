@@ -22,6 +22,7 @@ import {
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import useWidth from "../../hooks/useWidth";
+import Link from "next/dist/client/link";
 
 const Login = () => {
   ////// GLOBAL STATE //////
@@ -79,7 +80,7 @@ const Login = () => {
                 Login
               </Text>
               <TextInput
-                placeholder="ExampleID"
+                placeholder="ID"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 8px`}
@@ -93,9 +94,13 @@ const Login = () => {
                 {...pwInput}
               />
               <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 12px`}>
-                <Text color={Theme.grey_C} isHover>
-                  ID찾기
-                </Text>
+                <Link href={`/user/findid`}>
+                  <a>
+                    <Text color={Theme.grey_C} isHover>
+                      ID찾기
+                    </Text>
+                  </a>
+                </Link>
                 <Text color={Theme.grey_C} isHover td={`underline`}>
                   PW재설정
                 </Text>

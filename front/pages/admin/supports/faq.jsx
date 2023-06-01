@@ -11,6 +11,8 @@ import {
   Input,
   Popconfirm,
   message,
+  Select,
+  Switch,
 } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
@@ -34,11 +36,16 @@ import {
   RightOutlined,
   EyeOutlined,
   AlertOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import {
   FAQTYPE_DELETE_REQUEST,
   FAQTYPE_LIST_REQUEST,
   FAQTYPE_ADD_REQUEST,
+  FAQ_DELETE_REQUEST,
+  FAQ_CREATE_REQUEST,
+  FAQ_UPDATE_REQUEST,
+  FAQ_ADMIN_LIST_REQUEST,
 } from "../../../reducers/faq";
 
 const Faqbtn = styled(Button)`
@@ -56,14 +63,40 @@ const TypeTable = styled(Table)`
   margin: 5px !important;
 `;
 
+const InfoTitle = styled.div`
+  font-size: 19px;
+  margin: 15px 0px 5px 0px;
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  padding-left: 15px;
+  color: ${(props) => props.theme.subTheme5_C};
+`;
+
 const Logo = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
   const {
     typeList,
-    st_faqTypeDeleteDone,
-    st_faqTypeDeleteError,
+    faqAdminList,
+
     st_faqTypeAddDone,
     st_faqTypeAddError,
+
+    st_faqTypeDeleteDone,
+    st_faqTypeDeleteError,
+
+    st_faqCreateDone,
+    st_faqCreateError,
+
+    st_faqUpdateDone,
+    st_faqUpdateError,
+
+    st_faqDeleteDone,
+    st_faqDeleteError,
   } = useSelector((state) => state.faq);
 
   const router = useRouter();
@@ -74,11 +107,6 @@ const Logo = ({}) => {
   const [level2, setLevel2] = useState("");
   const [currentData, setCurrentData] = useState(null);
   const [sameDepth, setSameDepth] = useState([]);
-
-  const [createModal, setCreateModal] = useState(false);
-  const [createForm] = Form.useForm();
-
-  const [tab, setTab] = useState(-1);
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -102,45 +130,16 @@ const Logo = ({}) => {
   /////////////////////////////////////////////////////////////////////////
 
   ////// HOOKS //////
+  const [typeForm] = Form.useForm();
+  const [infoForm] = Form.useForm();
+  const [createForm] = Form.useForm();
+
+  const [typeModal, setTypeModal] = useState(false); //유형 모달
+  const [cModal, setCModal] = useState(false); // 생성 모달
+
+  const [tab, setTab] = useState(false); //유형아이디
 
   ////// USEEFFECT //////
-
-  // *************** FAQ TYPE DELETE 후처리 ***************
-
-  //modal 유형데이터 관리
-  useEffect(() => {
-    if (st_faqTypeAddDone) {
-      message.info("자주묻는질문 유형데이터가 추가되었습니다.");
-
-      dispatch({
-        type: FAQTYPE_LIST_REQUEST,
-      });
-    }
-  }, [st_faqTypeAddDone]);
-
-  useEffect(() => {
-    if (st_faqTypeAddError) {
-      return message.error(st_faqTypeAddError);
-    }
-  }, [st_faqTypeAddError]);
-
-  useEffect(() => {
-    if (st_faqTypeDeleteDone) {
-      message.info("자주묻는질문 유형데이터가 삭제되었습니다.");
-
-      dispatch({
-        type: FAQTYPE_LIST_REQUEST,
-      });
-    }
-  }, [st_faqTypeDeleteDone]);
-
-  // 유형데이터 삭제
-  useEffect(() => {
-    if (st_faqTypeDeleteError) {
-      return message.error(st_faqTypeDeleteError);
-    }
-  }, [st_faqTypeDeleteError]);
-
   useEffect(() => {
     if (st_loadMyInfoDone) {
       if (!me || parseInt(me.level) < 3) {
@@ -166,7 +165,134 @@ const Logo = ({}) => {
     });
   }, []);
 
+  useEffect(() => {
+    dispatch({
+      type: FAQ_ADMIN_LIST_REQUEST,
+      data: {
+        FaqTypeId: tab,
+      },
+    });
+  }, [tab]);
+
+  // *************** FAQ TYPE 생성 후처리 ***************
+
+  useEffect(() => {
+    if (st_faqTypeAddDone) {
+      dispatch({
+        type: FAQTYPE_LIST_REQUEST,
+      });
+
+      return message.success("자주묻는질문 유형데이터가 추가되었습니다.");
+    }
+    if (st_faqTypeAddError) {
+      return message.error(st_faqTypeAddError);
+    }
+  }, [st_faqTypeAddDone, st_faqTypeAddError]);
+
+  // *************** FAQ TYPE 삭제 후처리 ***************
+  useEffect(() => {
+    if (st_faqTypeDeleteDone) {
+      dispatch({
+        type: FAQTYPE_LIST_REQUEST,
+      });
+      typeForm.resetFields();
+
+      return message.success("자주묻는질문 유형데이터가 삭제되었습니다.");
+    }
+    if (st_faqTypeDeleteError) {
+      return message.error(st_faqTypeDeleteError);
+    }
+  }, [st_faqTypeDeleteDone, st_faqTypeDeleteError]);
+
+  // *************** FAQ 생성 후처리 ***************
+  useEffect(() => {
+    if (st_faqCreateDone) {
+      dispatch({
+        type: FAQ_ADMIN_LIST_REQUEST,
+        data: {
+          FaqTypeId: tab,
+        },
+      });
+
+      createForm.resetFields();
+      createToggleHandler();
+
+      return message.success("자주묻는질문이 생성되었습니다.");
+    }
+    if (st_faqCreateError) {
+      return message.error(st_faqCreateError);
+    }
+  }, [st_faqCreateDone, st_faqCreateError]);
+
+  // *************** FAQ 수정 후처리 ***************
+  useEffect(() => {
+    if (st_faqUpdateDone) {
+      dispatch({
+        type: FAQ_ADMIN_LIST_REQUEST,
+        data: {
+          FaqTypeId: tab,
+        },
+      });
+
+      return message.success("자주묻는질문이 수정되었습니다.");
+    }
+    if (st_faqUpdateError) {
+      return message.error(st_faqUpdateError);
+    }
+  }, [st_faqUpdateDone, st_faqUpdateError]);
+
+  // *************** FAQ 삭제 후처리 ***************
+  useEffect(() => {
+    if (st_faqDeleteDone) {
+      dispatch({
+        type: FAQ_ADMIN_LIST_REQUEST,
+        data: {
+          FaqTypeId: tab,
+        },
+      });
+
+      setCurrentData(null);
+
+      return message.success("자주묻는질문이 삭제되었습니다.");
+    }
+    if (st_faqDeleteError) {
+      return message.error(st_faqDeleteError);
+    }
+  }, [st_faqDeleteDone, st_faqDeleteError]);
+
+  //////// TOGGLE //////////
+  const typeModalToggleHandler = useCallback(() => {
+    setTypeModal((prev) => !prev);
+  }, [typeModal]);
+
+  const createToggleHandler = useCallback(() => {
+    setCModal((prev) => !prev);
+  }, [cModal]);
+
   ////// HANDLER //////
+
+  const tabClickHandler = useCallback(
+    (data) => {
+      setTab(data);
+    },
+    [tab]
+  );
+
+  const beforeSetDataHandler = useCallback(
+    (record) => {
+      setCurrentData(record);
+
+      infoForm.setFieldsValue({
+        type: record.FaqTypeId,
+        question: record.question,
+        answer: record.answer,
+        createdAt: record.viewCreatedAt,
+        updatedAt: record.viewUpdatedAt,
+      });
+    },
+    [currentData, infoForm]
+  );
+
   const typeListAddHandler = useCallback((data) => {
     dispatch({
       type: FAQTYPE_ADD_REQUEST,
@@ -176,23 +302,46 @@ const Logo = ({}) => {
     });
   }, []);
 
-  const tabClickHandler = useCallback(
-    (v) => {
-      setTab(v);
-    },
-    [tab]
-  );
-
-  const createModalToggleHandler = useCallback(() => {
-    setCreateModal((prev) => !prev);
-  }, [createModal]);
-
   const typeDeleteClickHandler = useCallback((data) => {
     dispatch({
       type: FAQTYPE_DELETE_REQUEST,
       data: {
         value: data.value,
-        faqTypeId: data.id,
+        id: data.id,
+      },
+    });
+  }, []);
+
+  const createHandler = useCallback((data) => {
+    dispatch({
+      type: FAQ_CREATE_REQUEST,
+      data: {
+        FaqTypeId: data.type,
+      },
+    });
+  }, []);
+
+  const updateHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: FAQ_UPDATE_REQUEST,
+        data: {
+          id: currentData.id,
+          question: data.question,
+          answer: data.answer,
+          FaqTypeId: data.type,
+        },
+      });
+    },
+    [currentData]
+  );
+
+  const deleteHandler = useCallback((data) => {
+    dispatch({
+      type: FAQ_DELETE_REQUEST,
+      data: {
+        id: data.id,
+        question: data.question,
       },
     });
   }, []);
@@ -234,7 +383,7 @@ const Logo = ({}) => {
           title={"정말 삭제하시겠습니까?"}
           okText="삭제"
           cancelText="취소"
-          onConfirm={() => typeDeleteClickHandler(data)}
+          onConfirm={() => deleteHandler(data)}
         >
           <DelBtn />
         </Popconfirm>
@@ -254,10 +403,6 @@ const Logo = ({}) => {
     {
       title: "생성일",
       dataIndex: "viewCreatedAt",
-    },
-    {
-      title: "업데이터",
-      dataIndex: "username",
     },
     {
       title: "삭제",
@@ -318,17 +463,26 @@ const Logo = ({}) => {
 
       {/* CONTENT */}
 
-      <Wrapper dr="row" padding="0px 50px" al="flex-start">
+      <Wrapper
+        dr={`row`}
+        padding={`0 20px`}
+        al={`flex-start`}
+        ju={`space-between`}
+      >
         <Wrapper
           width="50%"
           padding="0px 10px"
           shadow={`3px 3px 6px ${Theme.lightGrey_C}`}
         >
-          <Wrapper al={`flex-end`} margin={`0px 0px 5px 0px`}>
+          <Wrapper dr={`row`} ju={`flex-end`} margin={`0px 0px 5px 0px`}>
+            <Button size="small" type="primary" onClick={createToggleHandler}>
+              자주묻는질문 생성
+            </Button>
             <Button
               size="small"
               type="primary"
-              onClick={() => createModalToggleHandler()}
+              style={{ marginLeft: `5px` }}
+              onClick={() => typeModalToggleHandler()}
             >
               유형관리
             </Button>
@@ -337,41 +491,36 @@ const Logo = ({}) => {
           <Wrapper dr={`row`} ju={`flex-start`} margin={`0px 0px 10px 0px`}>
             <Faqbtn
               size="small"
-              onClick={() => tabClickHandler(-1)}
-              type={tab === -1 ? "primary" : "default"}
+              onClick={() => tabClickHandler(false)}
+              type={tab === false ? "primary" : "default"}
             >
               전체
             </Faqbtn>
-
-            <Faqbtn
-              size="small"
-              onClick={() => tabClickHandler(0)}
-              type={tab === 0 ? "primary" : "default"}
-            >
-              유형1
-            </Faqbtn>
-            <Faqbtn
-              size="small"
-              onClick={() => tabClickHandler(1)}
-              type={tab === 1 ? "primary" : "default"}
-            >
-              유형2
-            </Faqbtn>
-            <Faqbtn
-              size="small"
-              onClick={() => tabClickHandler(2)}
-              type={tab === 2 ? "primary" : "default"}
-            >
-              유형3
-            </Faqbtn>
+            {typeList &&
+              typeList.map((data) => {
+                return (
+                  <Faqbtn
+                    size="small"
+                    onClick={() => tabClickHandler(data.id)}
+                    type={tab === data.id ? "primary" : "default"}
+                  >
+                    {data.value}
+                  </Faqbtn>
+                );
+              })}
           </Wrapper>
 
           <Table
             size="small"
-            rowKey="id"
+            rowKey="num"
             columns={col}
             style={{ width: "100%" }}
-            dataSource={typeList}
+            dataSource={faqAdminList}
+            onRow={(record) => {
+              return {
+                onClick: (e) => beforeSetDataHandler(record),
+              };
+            }}
           />
         </Wrapper>
 
@@ -380,16 +529,111 @@ const Logo = ({}) => {
           padding="0px 10px"
           shadow={`3px 3px 6px ${Theme.lightGrey_C}`}
         >
-          <Wrapper padding={`50px 0px`} dr="row">
-            <AlertOutlined
-              style={{
-                fontSize: "20px",
-                color: Theme.red_C,
-                marginRight: "5px",
-              }}
-            />
-            좌측 데이터를 선택하여 상세정보를 확인하세요.
-          </Wrapper>
+          {currentData ? (
+            <Wrapper>
+              <Wrapper margin={`0px 0px 5px 0px`}>
+                <InfoTitle>
+                  <CheckOutlined />
+                  자주묻는질문 기본정보
+                </InfoTitle>
+              </Wrapper>
+
+              <Form
+                form={infoForm}
+                style={{ width: `100%` }}
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 22 }}
+                onFinish={updateHandler}
+              >
+                <Form.Item
+                  label="유형"
+                  name="type"
+                  rules={[
+                    { required: true, message: "유형은 선택은 필수입니다." },
+                  ]}
+                >
+                  <Select size="small">
+                    {typeList &&
+                      typeList.map((data) => {
+                        return (
+                          <Select.Option key={data.id} value={data.id}>
+                            {data.value}
+                          </Select.Option>
+                        );
+                      })}
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  label="질문"
+                  name="question"
+                  rules={[
+                    { required: true, message: "질문은 필수 입력사항 입니다." },
+                  ]}
+                >
+                  <Input size="small" />
+                </Form.Item>
+
+                <Form.Item
+                  label="답변"
+                  name="answer"
+                  rules={[
+                    { required: true, message: "답변은 필수 입력사항 입니다." },
+                  ]}
+                >
+                  <Input.TextArea rows={10} />
+                </Form.Item>
+
+                <Form.Item label="작성일" name="createdAt">
+                  <Input
+                    size="small"
+                    style={{ background: Theme.lightGrey_C, border: "none" }}
+                    readOnly
+                  />
+                </Form.Item>
+
+                <Form.Item label="수정일" name="updatedAt">
+                  <Input
+                    size="small"
+                    style={{ background: Theme.lightGrey_C, border: "none" }}
+                    readOnly
+                  />
+                </Form.Item>
+
+                <Form.Item label="최근작업자" name="updator">
+                  <Input
+                    size="small"
+                    style={{ background: Theme.lightGrey_C, border: "none" }}
+                    readOnly
+                  />
+                </Form.Item>
+
+                <Wrapper al="flex-end">
+                  <Button type="primary" size="small" htmlType="submit">
+                    정보 업데이트
+                  </Button>
+                </Wrapper>
+              </Form>
+
+              <Wrapper
+                width="100%"
+                height="1px"
+                bgColor={Theme.lightGrey_C}
+                margin={`30px 0px`}
+              ></Wrapper>
+            </Wrapper>
+          ) : (
+            <Wrapper padding={`50px 0px`} dr="row">
+              <AlertOutlined
+                style={{
+                  fontSize: "20px",
+                  color: Theme.red_C,
+                  marginRight: "5px",
+                }}
+              />
+              좌측 데이터를 선택하여 상세정보를 확인하세요.
+            </Wrapper>
+          )}
         </Wrapper>
       </Wrapper>
 
@@ -399,15 +643,15 @@ const Logo = ({}) => {
         width={`680px`}
         footer={null}
         title={`유형관리`}
-        visible={createModal}
-        onCancel={() => createModalToggleHandler()}
+        visible={typeModal}
+        onCancel={() => typeModalToggleHandler()}
       >
         <GuideUl>
-          <GuideLi>가이드 멘트</GuideLi>
+          <GuideLi>자주묻는질문의 유형을 추가 / 삭제 할 수 있습니다.</GuideLi>
         </GuideUl>
 
         <Form
-          form={createForm}
+          form={typeForm}
           wrapperCol={{ span: 21 }}
           labelCol={{ span: 3 }}
           onFinish={typeListAddHandler}
@@ -434,6 +678,48 @@ const Logo = ({}) => {
           style={{ width: "100%", margin: "0px" }}
           dataSource={typeList}
         />
+      </Modal>
+
+      <Modal
+        footer={null}
+        visible={cModal}
+        width={`500px`}
+        title={"자주묻는질문 생성"}
+        onCancel={createToggleHandler}
+      >
+        <GuideUl>
+          <GuideLi>자주묻는질문을 추가 할 수 있습니다.</GuideLi>
+        </GuideUl>
+
+        <Form
+          form={createForm}
+          wrapperCol={{ span: 21 }}
+          labelCol={{ span: 3 }}
+          onFinish={createHandler}
+        >
+          <Form.Item
+            label="유형"
+            name="type"
+            rules={[{ required: true, message: "유형은 선택은 필수입니다." }]}
+          >
+            <Select size="small">
+              {typeList &&
+                typeList.map((data) => {
+                  return (
+                    <Select.Option key={data.id} value={data.id}>
+                      {data.value}
+                    </Select.Option>
+                  );
+                })}
+            </Select>
+          </Form.Item>
+
+          <Wrapper dr={`row`} ju={`flex-end`}>
+            <Button size="small" type="primary" htmlType="submit">
+              생성
+            </Button>
+          </Wrapper>
+        </Form>
       </Modal>
     </AdminLayout>
   );

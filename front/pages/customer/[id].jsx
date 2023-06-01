@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -7,31 +7,42 @@ import axios from "axios";
 import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
 import {
-  CustomSelect,
-  ProductWrapper,
-  RsWrapper,
-  SquareBox,
   Text,
   WholeWrapper,
   Wrapper,
   Image,
-  CustomPage,
   TextInput,
   ATag,
   CommonButton,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Select } from "antd";
-import styled from "styled-components";
 import Link from "next/dist/client/link";
+import { useRouter } from "next/router";
+import { NOTICE_DETAIL_REQUEST } from "../../reducers/notice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Detail = () => {
   ////// GLOBAL STATE //////
+  const { noticeDetail } = useSelector((state) => state.notice);
+
   const [currentTab, setCurrentTab] = useState(0);
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (router) {
+      dispatch({
+        type: NOTICE_DETAIL_REQUEST,
+        data: {
+          id: router.query.id,
+        },
+      });
+    }
+  }, [router]);
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
@@ -86,44 +97,7 @@ const Detail = () => {
                 공지사항
               </Text>
             </Wrapper>
-            <Wrapper
-              dr={`row`}
-              ju={`space-between`}
-              margin={width < 900 ? `0 0 10px` : `0 0 20px`}
-            >
-              <Wrapper
-                width={`auto`}
-                color={Theme.grey_C}
-                margin={width < 900 ? `0 0 10px` : `0`}
-              >
-                000개의 게시글이 존재합니다.
-              </Wrapper>
-              <Wrapper
-                width={width < 900 ? `100%` : `315px`}
-                position={`relative`}
-              >
-                <TextInput
-                  type={`text`}
-                  width={width < 900 ? `100%` : `315px`}
-                  height={`40px`}
-                  placeholder={`검색어를 입력해주세요.`}
-                  padding={`0 40px 0 20px`}
-                />
-                <Wrapper
-                  width={`auto`}
-                  position={`absolute`}
-                  top={`0`}
-                  right={`15px`}
-                  height={`100%`}
-                >
-                  <Image
-                    width={`24px`}
-                    alt="icon"
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cs-center/icon_search.png`}
-                  />
-                </Wrapper>
-              </Wrapper>
-            </Wrapper>
+
             <Wrapper
               dr={`row`}
               ju={`flex-start`}
@@ -131,7 +105,7 @@ const Detail = () => {
               padding={width < 900 ? `20px 14px` : `30px 24PX`}
               fontSize={width < 900 ? `15px` : `19px`}
             >
-              제목을 입력해주세요.
+              {noticeDetail && noticeDetail.title}
             </Wrapper>
             <Wrapper
               padding={`11px 24px`}
@@ -150,12 +124,12 @@ const Detail = () => {
                   fontSize={width < 900 ? `13px` : `14px`}
                   margin={`0 55px 0 0`}
                 >
-                  23.05.25
+                  {noticeDetail && noticeDetail.viewCreatedAt}
                 </Text>
                 <Text color={Theme.grey_C} margin={`0 10px 0 0`}>
                   조회수
                 </Text>
-                <Text>100,000</Text>
+                <Text> {noticeDetail && noticeDetail.hit}</Text>
               </Wrapper>
             </Wrapper>
             <Wrapper
@@ -168,12 +142,12 @@ const Detail = () => {
                 fontSize={width < 900 ? `13px` : `14px`}
                 margin={`0 0 42px`}
               >
-                내용이 들어올 곳입니다. 더욱 길어지게 된다면....
+                {noticeDetail && noticeDetail.content}
               </Text>
               <Image
                 width={`60%`}
                 alt="notice"
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img6.png`}
+                src={noticeDetail && noticeDetail.imagePath}
               />
             </Wrapper>
             <Wrapper borderTop={`1px solid ${Theme.grey3_C}`}>

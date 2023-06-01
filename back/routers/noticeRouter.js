@@ -117,7 +117,6 @@ router.post("/list", async (req, res, next) => {
           A.createdAt,
           A.updatedAt,
           DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
-          DATE_FORMAT(A.createdAt, "%Y.%m.%d") 		    AS viewFrontCreatedAt,
           DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
           B.username 										              AS updator 
     FROM	notice		A
@@ -165,6 +164,7 @@ router.post("/list", async (req, res, next) => {
     return res.status(200).json({
       notice: notice[0],
       lastPage: parseInt(lastPage),
+      noticeLen: parseInt(noticeLen),
     });
   } catch (error) {
     console.error(error);

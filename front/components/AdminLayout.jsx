@@ -195,8 +195,8 @@ const AdminLayout = ({ children }) => {
           />
 
           <Image
-            width={`170px`}
-            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/4LEAFSOFTWARE/assets/images/LOGO/logo4.png`}
+            width={`70px`}
+            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/logo/logo_w.png`}
           />
 
           <Wrapper margin={`20px 0px 0px 0px`}>

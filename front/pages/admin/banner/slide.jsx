@@ -134,6 +134,14 @@ const Slide = ({}) => {
     setCrData(row);
   }, []);
 
+  const updateTitleHandler = useCallback(
+    (data) => {
+      console.log(data);
+      console.log(crData.id);
+    },
+    [crData]
+  );
+
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
@@ -252,6 +260,7 @@ const Slide = ({}) => {
           colon={false}
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 19 }}
+          onFinish={updateTitleHandler}
         >
           <ManagementForm.Item
             name="title"

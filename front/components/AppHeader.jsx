@@ -145,53 +145,50 @@ const AppHeader = ({}) => {
               </ATag>
             </Wrapper>
             <Wrapper dr={`row`} width={`auto`}>
-              <Link href={`/`}>
+              <Link href={`/new`}>
                 <a>
-                  <Menu isActive={router.pathname === `/`}>NEW</Menu>
+                  <Menu isActive={router.pathname === `/new`}>NEW</Menu>
                 </a>
               </Link>
-              <Link href={`/`}>
+              <Link href={`/best`}>
                 <a>
-                  <Menu isActive={router.pathname === `/`}>BEST</Menu>
+                  <Menu isActive={router.pathname === `/best`}>BEST</Menu>
                 </a>
               </Link>
-              <Link href={`/`}>
+              <Link href={`/product`}>
                 <a>
-                  <Menu isActive={router.pathname === `/`}>PRODUCT</Menu>
+                  <Menu isActive={router.pathname === `/product`}>PRODUCT</Menu>
                 </a>
               </Link>
-              <Link href={`/`}>
-                <a>
-                  <Menu isActive={router.pathname === `/`}>
-                    고객센터
-                    <SubMenu>
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/customer/notice`}>
-                          <a>공지사항</a>
-                        </Link>
-                      </Text>
 
-                      <Text
-                        fontSize={`16px`}
-                        lineHeight={`1`}
-                        fontWeight={`bold`}
-                        color={Theme.black_C}
-                        isHover
-                      >
-                        <Link href={`/`}>
-                          <a>FAQ</a>
-                        </Link>
-                      </Text>
-                    </SubMenu>
-                  </Menu>
-                </a>
-              </Link>
+              <Menu isActive={router.pathname === `/`}>
+                고객센터
+                <SubMenu>
+                  <Text
+                    fontSize={`16px`}
+                    lineHeight={`1`}
+                    fontWeight={`bold`}
+                    color={Theme.black_C}
+                    isHover
+                  >
+                    <Link href={`/customer/notice`}>
+                      <a>공지사항</a>
+                    </Link>
+                  </Text>
+
+                  <Text
+                    fontSize={`16px`}
+                    lineHeight={`1`}
+                    fontWeight={`bold`}
+                    color={Theme.black_C}
+                    isHover
+                  >
+                    <Link href={`/`}>
+                      <a>FAQ</a>
+                    </Link>
+                  </Text>
+                </SubMenu>
+              </Menu>
             </Wrapper>
           </Wrapper>
           <Wrapper dr={`row`} width={`auto`}>

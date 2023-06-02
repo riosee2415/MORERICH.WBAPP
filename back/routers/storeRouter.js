@@ -308,7 +308,9 @@ router.post("/product/detail", async (req, res, next) => {
   `;
 
   const sq3 = `
-  SELECT	value,
+  SELECT	
+  id,
+      value,
         ProductId
   FROM 	productOption
  WHERE	ProductId = ${id}

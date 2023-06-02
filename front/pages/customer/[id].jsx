@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -20,12 +20,30 @@ import Link from "next/dist/client/link";
 import { useRouter } from "next/router";
 import { NOTICE_DETAIL_REQUEST } from "../../reducers/notice";
 import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
+const CateBtn = styled(Wrapper)`
+  padding: 0 14px;
+  width: auto;
+  height: 30px;
+  border-radius: 30px;
+  font-size: 16px;
+  border: ${(props) =>
+    props.isActive ? `1px solid ${Theme.black_C}` : `none`};
+  color: ${(props) => (props.isActive ? Theme.black_C : Theme.grey2_C)};
+  margin: 0 6px 5px;
+
+  &:hover {
+    cursor: pointer;
+    color: ${Theme.grey_C};
+  }
+`;
 
 const Detail = () => {
   ////// GLOBAL STATE //////
   const { noticeDetail } = useSelector((state) => state.notice);
 
-  const [currentTab, setCurrentTab] = useState(0);
+  const [type, setType] = useState(0);
+
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -45,6 +63,15 @@ const Detail = () => {
   }, [router]);
   ////// TOGGLE //////
   ////// HANDLER //////
+  const typeHandler = useCallback(
+    (data) => {
+      setType(data);
+    },
+    [type]
+  );
+
+  ////// TOGGLE //////
+  ////// HANDLER //////
   ////// DATAVIEW //////
 
   return (
@@ -56,38 +83,25 @@ const Detail = () => {
       <ClientLayout>
         <WholeWrapper>
           <Wrapper
-            padding={`48px 0 70px 0`}
             bgColor={Theme.lightGrey2_C}
+            padding={`50px 0`}
             margin={`0 0 50px`}
           >
-            <Text fontSize={`34px`} fontWeight={`bold`}>
+            <Text fontSize={width < 900 ? `22px` : `34px`} fontWeight={`600`}>
               고객센터
             </Text>
-            <Wrapper dr={`row`}>
-              <Wrapper
-                width={`auto`}
-                radius={`17px`}
-                border={`1px solid ${Theme.black_C}`}
-                padding={`6px 14px`}
-                fontSize={`16px`}
-                isActive={currentTab === 0}
-                onClick={() => setCurrentTab(0)}
-                margin={`0 26px 0 0`}
-              >
+            <Wrapper dr={`row`} margin={`18px 0 0`}>
+              <CateBtn onClick={() => typeHandler(0)} isActive={0 === type}>
                 공지사항
-              </Wrapper>
-              <Wrapper
-                cursor={`pointer`}
-                width={`auto`}
-                fontSize={`16px`}
-                color={Theme.grey2_C}
-                isActive={currentTab === 1}
-                onClick={() => setCurrentTab(1)}
-              >
-                FAQ
-              </Wrapper>
+              </CateBtn>
+              <Link href={`/customer/faq`}>
+                <a>
+                  <CateBtn onClick={() => typeHandler(1)}>FAQ</CateBtn>
+                </a>
+              </Link>
             </Wrapper>
           </Wrapper>
+
           <Wrapper width={width < 900 ? `90%` : `75%`} margin={`0 0 100px`}>
             <Wrapper al={`flex-start`} margin={`0 0 20px`}>
               <Text
@@ -102,13 +116,13 @@ const Detail = () => {
               dr={`row`}
               ju={`flex-start`}
               borderTop={`1px solid ${Theme.black_C}`}
-              padding={width < 900 ? `20px 14px` : `30px 24PX`}
+              padding={width < 900 ? `14px` : `30px 24PX`}
               fontSize={width < 900 ? `15px` : `19px`}
             >
               {noticeDetail && noticeDetail.title}
             </Wrapper>
             <Wrapper
-              padding={`11px 24px`}
+              padding={width < 900 ? `10px` : `11px 24px`}
               bgColor={Theme.lightGrey2_C}
               margin={`0 0 30px`}
             >
@@ -126,26 +140,32 @@ const Detail = () => {
                 >
                   {noticeDetail && noticeDetail.viewCreatedAt}
                 </Text>
-                <Text color={Theme.grey_C} margin={`0 10px 0 0`}>
+                <Text
+                  fontSize={width < 900 ? `13px` : `14px`}
+                  color={Theme.grey_C}
+                  margin={`0 10px 0 0`}
+                >
                   조회수
                 </Text>
-                <Text> {noticeDetail && noticeDetail.hit}</Text>
+                <Text fontSize={width < 900 ? `13px` : `14px`}>
+                  {noticeDetail && noticeDetail.hit}
+                </Text>
               </Wrapper>
             </Wrapper>
             <Wrapper
               al={`flex-start`}
-              padding={`0 0 0 24px`}
+              padding={width < 900 ? `0` : `0 0 0 24px`}
               fontSize={`16px`}
               margin={`0 0 70px`}
             >
               <Text
                 fontSize={width < 900 ? `13px` : `14px`}
-                margin={`0 0 42px`}
+                margin={width < 900 ? `0 0 20px` : `0 0 42px`}
               >
                 {noticeDetail && noticeDetail.content}
               </Text>
               <Image
-                width={`60%`}
+                width={width < 900 ? `100%` : `60%`}
                 alt="notice"
                 src={noticeDetail && noticeDetail.imagePath}
               />

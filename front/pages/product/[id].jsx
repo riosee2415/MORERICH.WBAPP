@@ -27,7 +27,6 @@ import { useSelector } from "react-redux";
 const Index = () => {
   ////// GLOBAL STATE //////
   const { productDetail } = useSelector((s) => s.store);
-  console.log(productDetail);
   ////// HOOKS //////
   const width = useWidth();
 
@@ -36,6 +35,8 @@ const Index = () => {
 
   // DATA
   const [currentDatum, setcurrentDatum] = useState([]); // 상품 선택
+  const [optionData, setOptionData] = useState(null); // 옵션 데이터
+  const [totalPrice, setTotalPrice] = useState(0); // 상품금액
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
@@ -44,17 +45,51 @@ const Index = () => {
   }, [cartModal]);
   ////// HANDLER //////
 
-  // 옵션 선택
-  const optionCreateHandler = useCallback((data) => {
-    let arr = currentDatum ? currentDatum.map((data) => data) : [];
-    const currentId = arr.findIndex((value) => value.id === data.id);
+  // 수량 증가
+  const optionQunUpdateHandler = useCallback(
+    (data, num) => {
+      const arr = currentDatum ? currentDatum.map((data) => data) : [];
+      const currentId = arr.findIndex((value) => value.id === data.id);
 
-    if (currentId === -1) {
-      arr.push(data);
-    } else {
-      arr.splice(currentId, 1);
-    }
-  }, []);
+      if (arr[currentId].qun + num <= 0) {
+        arr[currentId].qun = 1;
+      } else {
+        arr[currentId].qun = arr[currentId].qun + num;
+        setTotalPrice(
+          totalPrice + num * (productDetail && productDetail.calcPrice)
+        );
+      }
+
+      setcurrentDatum(arr);
+    },
+    [currentDatum, totalPrice, productDetail]
+  );
+
+  // 옵션 선택
+  const optionCreateHandler = useCallback(
+    (data) => {
+      setOptionData(data);
+
+      setTotalPrice(totalPrice + (productDetail && productDetail.calcPrice));
+
+      let arr = currentDatum ? currentDatum.map((data) => data) : [];
+      const currentId = arr.findIndex((value) => value.id === data[0]);
+
+      if (currentId === -1) {
+        arr.push({
+          id: data[0],
+          value: data[1],
+          qun: 1,
+        });
+      } else {
+        arr[currentId].qun = arr[currentId].qun + 1;
+      }
+
+      setcurrentDatum(arr);
+    },
+    [currentDatum, productDetail, totalPrice]
+  );
+  console.log(productDetail);
   ////// DATAVIEW //////
 
   return (
@@ -189,82 +224,98 @@ const Index = () => {
               >
                 <Select
                   placeholder="옵션을 선택해주세요."
+                  value={optionData && optionData[1]}
                   onChange={optionCreateHandler}
                 >
                   {productDetail &&
                     productDetail.options &&
                     productDetail.options.map((data, idx) => {
                       return (
-                        <Select.Option key={idx} value={data}>
+                        <Select.Option key={idx} value={[data.id, data.value]}>
                           {data.value}
                         </Select.Option>
                       );
                     })}
                 </Select>
               </CustomSelect>
-              <Wrapper
-                bgColor={Theme.lightGrey2_C}
-                padding={width < 800 ? `20px 15px` : `30px 20px`}
-                al={`flex-start`}
-                margin={`0 0 32px`}
-              >
-                <Text fontSize={width < 800 ? `14px` : `16px`}>
-                  {productDetail && productDetail.name} -{" "}
-                  {productDetail && productDetail.name}
-                </Text>
-                <Wrapper dr={`row`} ju={`space-between`} margin={`12px 0 0`}>
+
+              {currentDatum.map((data) => {
+                return (
                   <Wrapper
-                    width={`auto`}
-                    dr={`row`}
-                    border={`1px solid ${Theme.grey3_C}`}
-                    bgColor={Theme.white_C}
-                    color={Theme.grey_C}
+                    key={data.id}
+                    bgColor={Theme.lightGrey2_C}
+                    padding={width < 800 ? `20px 15px` : `30px 20px`}
+                    al={`flex-start`}
+                    margin={`0 0 32px`}
                   >
+                    <Text fontSize={width < 800 ? `14px` : `16px`}>
+                      {productDetail && productDetail.name} - {data.value}
+                    </Text>
                     <Wrapper
-                      width={`30px`}
-                      cursor={`pointer`}
-                      height={`30px`}
-                      fontSize={`12px`}
+                      dr={`row`}
+                      ju={`space-between`}
+                      margin={`12px 0 0`}
                     >
-                      <Text isHover>
-                        <MinusOutlined />
-                      </Text>
-                    </Wrapper>
-                    <Wrapper
-                      width={`50px`}
-                      height={`30px`}
-                      fontWeight={`600`}
-                      borderLeft={`1px solid ${Theme.grey3_C}`}
-                      borderRight={`1px solid ${Theme.grey3_C}`}
-                    >
-                      1
-                    </Wrapper>
-                    <Wrapper
-                      width={`30px`}
-                      cursor={`pointer`}
-                      height={`30px`}
-                      fontSize={`12px`}
-                    >
-                      <Text isHover>
-                        <PlusOutlined />
+                      <Wrapper
+                        width={`auto`}
+                        dr={`row`}
+                        border={`1px solid ${Theme.grey3_C}`}
+                        bgColor={Theme.white_C}
+                        color={Theme.grey_C}
+                      >
+                        <Wrapper
+                          width={`30px`}
+                          cursor={`pointer`}
+                          height={`30px`}
+                          fontSize={`12px`}
+                          onClick={() => optionQunUpdateHandler(data, -1)}
+                        >
+                          <Text isHover>
+                            <MinusOutlined />
+                          </Text>
+                        </Wrapper>
+                        <Wrapper
+                          width={`50px`}
+                          height={`30px`}
+                          fontWeight={`600`}
+                          borderLeft={`1px solid ${Theme.grey3_C}`}
+                          borderRight={`1px solid ${Theme.grey3_C}`}
+                        >
+                          {data.qun}
+                        </Wrapper>
+                        <Wrapper
+                          width={`30px`}
+                          cursor={`pointer`}
+                          height={`30px`}
+                          fontSize={`12px`}
+                          onClick={() => optionQunUpdateHandler(data, +1)}
+                        >
+                          <Text isHover>
+                            <PlusOutlined />
+                          </Text>
+                        </Wrapper>
+                      </Wrapper>
+                      <Text
+                        fontSize={width < 800 ? `14px` : `18px`}
+                        fontWeight={`600`}
+                      >
+                        {String(
+                          data.qun * (productDetail && productDetail.calcPrice)
+                        ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </Text>
                     </Wrapper>
                   </Wrapper>
-                  <Text
-                    fontSize={width < 800 ? `14px` : `18px`}
-                    fontWeight={`600`}
-                  >
-                    000,000원
-                  </Text>
-                </Wrapper>
-              </Wrapper>
+                );
+              })}
               <Wrapper dr={`row`} ju={`space-between`}>
                 <Text fontSize={width < 800 ? `14px` : `20px`}>Total</Text>
                 <Text
                   fontSize={width < 800 ? `16px` : `28px`}
                   fontWeight={`bold`}
                 >
-                  {productDetail && productDetail.viewCalcPrice}
+                  {currentDatum.length === 0
+                    ? productDetail && productDetail.viewCalcPrice
+                    : String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </Text>
               </Wrapper>
               <CommonButton

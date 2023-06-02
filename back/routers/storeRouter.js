@@ -263,6 +263,73 @@ const consistOfArrayToArray2 = (arr1, arr2, targetColumn) => {
 };
 
 /**
+ * SUBJECT : 상품 상세 가져오기
+ * PARAMETERS : {id}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/02
+ */
+router.post("/product/detail", async (req, res, next) => {
+  const { id } = req.body;
+
+  const sq1 = `
+  SELECT	A.id,
+          A.thumbnail,
+          A.name,
+          A.subName,
+          A.price,
+          CONCAT(FORMAT(A.price, 0), "원") 			AS viewPrice,
+          CONCAT(FORMAT(A.price - (A.discount / 100 * A.price), 0), "원")  AS viewCalcPrice,
+          A.detail,
+          A.infoType,
+          A.infoConsist,
+          A.infoColor,
+          A.infoSize,
+          A.infoFrom,
+          A.discount,
+          A.isNew,
+          A.isBest,
+          A.isRecomm,
+          DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+          DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+          DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+          DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt
+    FROM	product		A
+   WHERE	A.isDelete = 0
+     AND  A.id = ${id}
+  `;
+
+  const sq2 = `
+  SELECT	ProductId,
+          filepath 
+    FROM	productImage
+   WHERE  ProductId = ${id}
+  `;
+
+  const sq3 = `
+  SELECT	value,
+        ProductId
+  FROM 	productOption
+ WHERE	ProductId = ${id}
+  `;
+
+  try {
+    const list1 = await models.sequelize.query(sq1);
+    const list2 = await models.sequelize.query(sq2);
+    const list3 = await models.sequelize.query(sq3);
+
+    const result = await consistOfArrayToArray(list1[0], list2[0], "ProductId");
+    const result2 = await consistOfArrayToArray2(result, list3[0], "ProductId");
+
+    return res.status(200).json(result2);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("상품데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
  * SUBJECT : 상품 가져오기
  * PARAMETERS : {sName, isNew, isBest, isRecomm, ProductTypeId}
  * ORDER BY : 등록일 기준
@@ -789,7 +856,10 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           B.username,
           B.email,
           B.mobile,
-          B.point
+          B.point,
+          A.post,
+          A.adrs,
+          A.dadrs
     FROM	boughtHistory	A
    INNER
     JOIN	users 			B

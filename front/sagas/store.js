@@ -88,6 +88,10 @@ import {
   DELI_BOUGHTLIST_REQUEST,
   DELI_BOUGHTLIST_SUCCESS,
   DELI_BOUGHTLIST_FAILURE,
+  //
+  PRODUCT_DETAIL_REQUEST,
+  PRODUCT_DETAIL_SUCCESS,
+  PRODUCT_DETAIL_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -679,6 +683,33 @@ function* deliBoughtList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function productDetailAPI(data) {
+  return await axios.post(`/api/store/product/detail`, data);
+}
+
+function* productDetail(action) {
+  try {
+    const result = yield call(productDetailAPI, action.data);
+
+    yield put({
+      type: PRODUCT_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PRODUCT_DETAIL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
   yield takeLatest(GET_PRODUCTTYPE_REQUEST, getProductType);
@@ -746,6 +777,9 @@ function* watchStatusBoughtList() {
 function* watchDeliBoughtList() {
   yield takeLatest(DELI_BOUGHTLIST_REQUEST, deliBoughtList);
 }
+function* watchProductDetail() {
+  yield takeLatest(PRODUCT_DETAIL_REQUEST, productDetail);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -772,6 +806,7 @@ export default function* storeSaga() {
     fork(watchGetBoughtList),
     fork(watchStatusBoughtList),
     fork(watchDeliBoughtList),
+    fork(watchProductDetail),
 
     //
   ]);

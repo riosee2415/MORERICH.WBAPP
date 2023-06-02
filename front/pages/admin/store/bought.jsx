@@ -65,6 +65,7 @@ const Bought = ({}) => {
 
   const [deliModal, setDeliModal] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
+  const [adrs, setAdrs] = useState(false);
 
   const [crData, setCrData] = useState(null);
 
@@ -170,6 +171,12 @@ const Bought = ({}) => {
 
   ////// HANDLER //////
 
+  const adrsModalToggle = useCallback((row) => {
+    setAdrs((p) => !p);
+
+    setCrData(row);
+  }, []);
+
   const deliModalToggle = useCallback((row) => {
     setDeliModal((p) => !p);
 
@@ -269,6 +276,11 @@ const Bought = ({}) => {
     {
       title: "구매자정보",
       dataIndex: "userId",
+    },
+
+    {
+      title: "연락처",
+      dataIndex: "mobile",
     },
 
     {
@@ -391,6 +403,15 @@ const Bought = ({}) => {
       render: (row) => (
         <ManageButton onClick={() => detailDrToggle(row)} type="primary">
           상세보기
+        </ManageButton>
+      ),
+    },
+
+    {
+      title: "회원배송지",
+      render: (row) => (
+        <ManageButton onClick={() => adrsModalToggle(row)} type="link">
+          배송지보기
         </ManageButton>
       ),
     },
@@ -571,6 +592,23 @@ const Bought = ({}) => {
           rowKey={"id"}
         />
       </Drawer>
+
+      <Modal
+        visible={adrs}
+        width="500px"
+        title="주문배송지"
+        footer={null}
+        onCancel={() => adrsModalToggle(null)}
+      >
+        <Wrapper
+          bgColor={Theme.adminLightGrey_C}
+          padding="10px"
+          radius="5px"
+          al="flex-start"
+        >
+          {crData && `(${crData.post}) ${crData.adrs} ${crData.dadrs}`}
+        </Wrapper>
+      </Modal>
     </AdminLayout>
   );
 };

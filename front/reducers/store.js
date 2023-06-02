@@ -8,6 +8,7 @@ export const initailState = {
   detailImagePath: null,
   wishChart: [],
   boughtlist: [],
+  productDetail: [], // 상품상세가져오기
   // 상품
   products: [],
   products2: [],
@@ -112,6 +113,11 @@ export const initailState = {
   st_deliBoughtListLoading: false,
   st_deliBoughtListDone: false,
   st_deliBoughtListError: null,
+
+  // 상품상세가져오기
+  st_productDetialLoading: false,
+  st_productDetialDone: false,
+  st_productDetialError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -201,6 +207,10 @@ export const STATUS_BOUGHTLIST_FAILURE = "STATUS_BOUGHTLIST_FAILURE";
 export const DELI_BOUGHTLIST_REQUEST = "DELI_BOUGHTLIST_REQUEST";
 export const DELI_BOUGHTLIST_SUCCESS = "DELI_BOUGHTLIST_SUCCESS";
 export const DELI_BOUGHTLIST_FAILURE = "DELI_BOUGHTLIST_FAILURE";
+
+export const PRODUCT_DETAIL_REQUEST = "PRODUCT_DETAIL_REQUEST";
+export const PRODUCT_DETAIL_SUCCESS = "PRODUCT_DETAIL_SUCCESS";
+export const PRODUCT_DETAIL_FAILURE = "PRODUCT_DETAIL_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -727,6 +737,31 @@ const reducer = (state = initailState, action) =>
         draft.st_deliBoughtListLoading = false;
         draft.st_deliBoughtListDone = false;
         draft.st_deliBoughtListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case PRODUCT_DETAIL_REQUEST: {
+        draft.st_productDetailLoading = true;
+        draft.st_productDetailDone = false;
+        draft.st_productDetailError = null;
+        break;
+      }
+
+      case PRODUCT_DETAIL_SUCCESS: {
+        draft.st_productDetailLoading = false;
+        draft.st_productDetailDone = true;
+        draft.st_productDetailError = null;
+        draft.productDetail = action.data;
+        break;
+      }
+
+      case PRODUCT_DETAIL_FAILURE: {
+        draft.st_productDetailLoading = false;
+        draft.st_productDetailDone = false;
+        draft.st_productDetailError = action.error;
         break;
       }
 

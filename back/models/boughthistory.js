@@ -5,6 +5,22 @@ module.exports = class BoughtHistory extends Model {
   static init(sequelize) {
     return super.init(
       {
+        post: {
+          type: DataTypes.STRING(10),
+          allowNull: false, // 필수
+          defaultValue: "-",
+        },
+        adrs: {
+          type: DataTypes.STRING(200),
+          allowNull: false, // 필수
+          defaultValue: "-",
+        },
+        dadrs: {
+          type: DataTypes.STRING(200),
+          allowNull: false, // 필수
+          defaultValue: "-",
+        },
+
         deliveryCompany: {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수

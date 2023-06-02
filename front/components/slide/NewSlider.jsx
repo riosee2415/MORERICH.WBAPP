@@ -156,11 +156,11 @@ const NewSlider = ({ datum }) => {
                       width={`22px`}
                       margin={`0 18px 0 0`}
                     />
-                    <Image
+                    {/* <Image
                       alt="cart icon"
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
                       width={`22px`}
-                    />
+                    /> */}
                   </Wrapper>
                 </Wrapper>
               </Wrapper>

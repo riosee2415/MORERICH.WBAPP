@@ -5,9 +5,10 @@ module.exports = class Cart extends Model {
   static init(sequelize) {
     return super.init(
       {
-        temp: {
-          type: DataTypes.STRING(100),
-          allowNull: true,
+        qun: {
+          type: DataTypes.INTEGER, // 수량
+          defaultValue: 1,
+          allowNull: false,
         },
       },
       {

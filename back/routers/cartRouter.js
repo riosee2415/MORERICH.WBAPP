@@ -245,7 +245,7 @@ router.post("/delete", isLoggedIn, async (req, res, next) => {
   // cartIds : [1, 2, 3];
 
   if (!Array.isArray(cartIds)) {
-    return res.status(401).send("잘못된 요청입니다.");
+    return res.status(400).send("잘못된 요청입니다.");
   }
 
   try {

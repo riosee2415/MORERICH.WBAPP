@@ -98,13 +98,13 @@ const AppFooter = () => {
           {companys && (
             <Wrapper al={`flex-start`}>
               <Wrapper dr={`row`} ju={`flex-start`}>
-                <SpanText margin={`0 6px 0 0`} color={Theme.grey_C}>
-                  대표자
-                </SpanText>
                 {companys[0] && (
-                  <Text
-                    margin={`0 24px 0 0`}
-                  >{`${companys[0].name} ${companys[0].value}`}</Text>
+                  <Text margin={`0 24px 0 0`}>
+                    <SpanText margin={`0 6px 0 0`} color={Theme.grey_C}>
+                      {companys[0].name}
+                    </SpanText>
+                    {companys[0].value}
+                  </Text>
                 )}
                 <SpanText margin={`0 6px 0 0`} color={Theme.grey_C}>
                   사업자등록번호

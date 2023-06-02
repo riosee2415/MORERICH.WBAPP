@@ -11,7 +11,7 @@ import {
 } from "./commonComponents";
 import styled from "styled-components";
 import Theme from "./Theme";
-import { AlignRightOutlined } from "@ant-design/icons";
+import { MenuOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,64 +22,37 @@ import useWidth from "../hooks/useWidth";
 const MobileRow = styled(RowWrapper)`
   display: none;
 
-  background: transparent;
+  background: ${Theme.white_C};
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10000;
+  z-index: 100;
   transition: 0.5s;
-  padding: 10px 0;
+  padding: 0 20px;
 
-  &.background {
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-  }
-
-  @media (max-width: 600px) {
+  @media (max-width: 800px) {
     display: flex;
   }
 `;
 
-const SubMenu = styled(Wrapper)`
-  width: 140px;
-  position: absolute;
-  top: 100px;
-  left: 0;
-  background: ${(props) => props.theme.white_C};
-  box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.1);
-  padding: 30px 0;
-  opacity: 0;
-  visibility: hidden;
-
-  & ${Text} {
-    margin-bottom: 16px;
-  }
-
-  & ${Text}:last-child {
-    margin-bottom: 0;
-  }
-`;
-
 const Menu = styled.h2`
-  height: 100px;
-  line-height: 90px;
   font-size: 17px;
   font-weight: 600;
-  width: 140px;
   text-align: center;
   position: relative;
-  margin: 0;
+  margin: ${(props) => props.margin || `0 44px 0 0`};
+  text-decoration: ${(props) => (props.isActive ? `underline` : ``)};
 
   &:hover {
     cursor: pointer;
     transition: 0.3s;
 
     text-decoration: underline;
+  }
 
-    & ${SubMenu} {
-      opacity: 1;
-      visibility: visible;
-    }
+  @media (max-width: 800px) {
+    font-size: 16px;
+    margin: 0;
   }
 `;
 
@@ -97,6 +70,7 @@ const AppHeader = ({}) => {
   const [subMenu, setSubMenu] = useState(``);
 
   const { logos } = useSelector((state) => state.logo);
+  const { me } = useSelector((state) => state.user);
 
   ///////////// - EVENT HANDLER- ////////////
 
@@ -130,21 +104,22 @@ const AppHeader = ({}) => {
         top={`0`}
         left={`0`}
         zIndex={`99`}
-        bgColor={headerScroll === true && Theme.black_C}
-        color={headerScroll === true && Theme.white_C}
+        height={`120px`}
+        display={width < 800 ? `none` : `flex`}
+        bgColor={Theme.white_C}
       >
         <RsWrapper dr={`row`} ju={`space-between`}>
           <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
-            <Wrapper width={`auto`}>
-              <ATag href="/" width={`155px`}>
+            <ATag href="/" width={`70px`}>
+              {logos && logos.find((data) => data.typeOf === "H") && (
                 <Image
                   width={`70px`}
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/logo/logo.svg`}
+                  src={logos.find((data) => data.typeOf === "H").imageURL}
                   alt="logo"
                 />
-              </ATag>
-            </Wrapper>
-            <Wrapper dr={`row`} width={`auto`}>
+              )}
+            </ATag>
+            <Wrapper dr={`row`} width={`auto`} margin={`0 0 0 56px`}>
               <Link href={`/new`}>
                 <a>
                   <Menu isActive={router.pathname === `/new`}>NEW</Menu>
@@ -161,68 +136,55 @@ const AppHeader = ({}) => {
                 </a>
               </Link>
 
-              <Menu isActive={router.pathname === `/`}>
-                고객센터
-                <SubMenu>
-                  <Text
-                    fontSize={`16px`}
-                    lineHeight={`1`}
-                    fontWeight={`bold`}
-                    color={Theme.black_C}
-                    isHover
+              <Link href={`/customer/notice`}>
+                <a>
+                  <Menu
+                    isActive={router.pathname.includes(`/customer`)}
+                    margin={`0`}
                   >
-                    <Link href={`/customer/notice`}>
-                      <a>공지사항</a>
-                    </Link>
-                  </Text>
-
-                  <Text
-                    fontSize={`16px`}
-                    lineHeight={`1`}
-                    fontWeight={`bold`}
-                    color={Theme.black_C}
-                    isHover
-                  >
-                    <Link href={`/`}>
-                      <a>FAQ</a>
-                    </Link>
-                  </Text>
-                </SubMenu>
-              </Menu>
+                    고객센터
+                  </Menu>
+                </a>
+              </Link>
             </Wrapper>
           </Wrapper>
-          <Wrapper dr={`row`} width={`auto`}>
-            <Link href={`/user/login`}>
-              <a>
-                <Wrapper fontSize={`15px`}>
-                  <Text margin={`0 24px 0 0`} isHover>
-                    로그인
-                  </Text>
-                </Wrapper>
-              </a>
-            </Link>
-            <Link href={`/mypage`}>
-              <a>
-                <Wrapper fontSize={`15px`}>
+          <Wrapper
+            dr={`row`}
+            width={`auto`}
+            fontSize={`15px`}
+            color={Theme.grey_C}
+          >
+            {me ? (
+              <Link href={`/mypage`}>
+                <a>
                   <Text margin={`0 24px 0 0`} isHover>
                     마이페이지
                   </Text>
-                </Wrapper>
-              </a>
-            </Link>
+                </a>
+              </Link>
+            ) : (
+              <Link href={`/user/login`}>
+                <a>
+                  <Text margin={`0 24px 0 0`} isHover>
+                    로그인
+                  </Text>
+                </a>
+              </Link>
+            )}
+
             <Link href={`/cart`}>
               <a>
-                <Wrapper margin={`0 5px 0 0`}>
-                  <Text fontSize={`15px`} isHover>
-                    카트
-                  </Text>
-                </Wrapper>
+                <Text margin={`0 5px 0 0`} isHover>
+                  카트
+                </Text>
               </a>
             </Link>
             <Wrapper
-              width={`16px`}
-              height={`16px`}
+              width={`auto`}
+              minWidth={`22px`}
+              padding={`2px 4px`}
               radius={`100%`}
+              fontSize={`12px`}
               bgColor={Theme.black_C}
               color={Theme.white_C}
             >
@@ -233,29 +195,168 @@ const AppHeader = ({}) => {
       </WholeWrapper>
 
       {/* mobile */}
-      <MobileRow justify={`center`} className={headerScroll && "background"}>
-        <ColWrapper span={11} al={`flex-start`}>
-          <ATag href="/" width={`128px`}>
-            <Image
-              width={`128px`}
-              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/logo/logo_m.png`}
-              alt="logo"
-            />
+      <MobileRow justify={`center`}>
+        <Wrapper
+          dr={`row`}
+          ju={`space-between`}
+          borderBottom={`1px solid ${Theme.lightGrey_C}`}
+          padding={`14px 0`}
+        >
+          <ATag href="/" width={`45px`}>
+            {logos && logos.find((data) => data.typeOf === "F") && (
+              <Image
+                width={`45px`}
+                src={logos.find((data) => data.typeOf === "F").imageURL}
+                alt="logo"
+              />
+            )}
           </ATag>
-        </ColWrapper>
-        <ColWrapper span={11} al={`flex-end`} fontSize={`2rem`}>
-          <AlignRightOutlined onClick={drawarToggle} />
-        </ColWrapper>
 
-        {drawar && (
-          <Drawer
-            placement="right"
-            closable={true}
-            onClose={drawarToggle}
-            visible={drawarToggle}
-            getContainer={false}
-          ></Drawer>
-        )}
+          <Wrapper width={`auto`} dr={`row`} ju={`flex-end`} fontSize={`20px`}>
+            <Link href={`/cart`}>
+              <a>
+                <Image
+                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_cart.png`}
+                  width={`20px`}
+                  margin={`0 20px 0 0`}
+                  alt="cart icon"
+                />
+              </a>
+            </Link>
+            <MenuOutlined onClick={drawarToggle} />
+          </Wrapper>
+        </Wrapper>
+        <Wrapper dr={`row`} ju={`space-between`} padding={`20px 0`}>
+          <Link href={`/new`}>
+            <a>
+              <Menu isActive={router.pathname === `/new`}>NEW</Menu>
+            </a>
+          </Link>
+          <Link href={`/best`}>
+            <a>
+              <Menu isActive={router.pathname === `/best`}>BEST</Menu>
+            </a>
+          </Link>
+          <Link href={`/product`}>
+            <a>
+              <Menu isActive={router.pathname === `/product`}>PRODUCT</Menu>
+            </a>
+          </Link>
+          <Link href={`/customer/notice`}>
+            <a>
+              <Menu isActive={router.pathname.includes(`/customer`)}>
+                고객센터
+              </Menu>
+            </a>
+          </Link>
+        </Wrapper>
+        <Drawer
+          placement="right"
+          onClose={drawarToggle}
+          visible={drawar}
+          width={`100%`}
+          closable={false}
+        >
+          <Wrapper
+            dr={`row`}
+            ju={`space-between`}
+            borderBottom={`1px solid ${Theme.black_C}`}
+            padding={`0 0 14px`}
+          >
+            <ATag href="/" width={`45px`}>
+              {logos && logos.find((data) => data.typeOf === "F") && (
+                <Image
+                  width={`45px`}
+                  src={logos.find((data) => data.typeOf === "F").imageURL}
+                  alt="logo"
+                />
+              )}
+            </ATag>
+            <Wrapper dr={`row`} width={`auto`}>
+              <Link href={me ? `/mypage/order` : `/user/login`}>
+                <a>
+                  <Image
+                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_login_m.png`}
+                    width={`20px`}
+                    margin={`0 30px 0 0`}
+                    alt="login icon"
+                  />
+                </a>
+              </Link>
+
+              <Image
+                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_close_m.png`}
+                width={`20px`}
+                alt="close icon"
+                onClick={drawarToggle}
+              />
+            </Wrapper>
+          </Wrapper>
+
+          <Wrapper al={`flex-start`} padding={`55px 0`}>
+            <Link href={`/new`}>
+              <ATag height={`70px`} ju={`flex-start`}>
+                <Menu
+                  onClick={drawarToggle}
+                  isActive={router.pathname === `/new`}
+                >
+                  NEW
+                </Menu>
+              </ATag>
+            </Link>
+            <Link href={`/best`}>
+              <ATag height={`70px`} ju={`flex-start`}>
+                <Menu
+                  onClick={drawarToggle}
+                  isActive={router.pathname === `/best`}
+                >
+                  BEST
+                </Menu>
+              </ATag>
+            </Link>
+            <Link href={`/product`}>
+              <ATag height={`70px`} ju={`flex-start`}>
+                <Menu
+                  onClick={drawarToggle}
+                  isActive={router.pathname === `/product`}
+                >
+                  PRODUCT
+                </Menu>
+              </ATag>
+            </Link>
+            <Link href={`/customer/notice`}>
+              <ATag height={`70px`} ju={`flex-start`}>
+                <Menu
+                  onClick={drawarToggle}
+                  isActive={router.pathname.includes(`/customer`)}
+                >
+                  고객센터
+                </Menu>
+              </ATag>
+            </Link>
+            <Wrapper
+              padding={`28px 20px`}
+              bgColor={Theme.lightGrey2_C}
+              al={`flex-start`}
+              fontSize={`16px`}
+              color={Theme.darkGrey_C}
+              fontWeight={`600`}
+            >
+              <Link href={`/customer/notice`}>
+                <a>
+                  <Text onClick={drawarToggle} margin={`0 0 20px`}>
+                    공지사항
+                  </Text>
+                </a>
+              </Link>
+              <Link href={`/customer/faq`}>
+                <a>
+                  <Text onClick={drawarToggle}>FAQ</Text>
+                </a>
+              </Link>
+            </Wrapper>
+          </Wrapper>
+        </Drawer>
       </MobileRow>
     </>
   );

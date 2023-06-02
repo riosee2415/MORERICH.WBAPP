@@ -194,7 +194,7 @@ const Notice = () => {
                           fontSize={`16px`}
                           color={Theme.darkGrey_C}
                         >
-                          {data.answer}
+                          <Text>{data.answer}</Text>
                         </Wrapper>
                       )}
                     </>

@@ -42,6 +42,10 @@ module.exports = class BoughtHistory extends Model {
           allowNull: false, // 필수
           defaultValue: 0,
         },
+        reason: {
+          type: DataTypes.STRING(1000),
+          allowNull: true, // 필수
+        },
       },
       {
         modelName: "BoughtHistory",

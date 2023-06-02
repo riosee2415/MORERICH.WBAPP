@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Popover, message, Modal, Form, Drawer, Image } from "antd";
+import { Popover, message, Modal, Form, Drawer, Image, Popconfirm } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -64,12 +64,14 @@ const Bought = ({}) => {
   const [stat, setStat] = useState(0);
 
   const [deliModal, setDeliModal] = useState(false);
+  const [canModal, setCanModal] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
   const [adrs, setAdrs] = useState(false);
 
   const [crData, setCrData] = useState(null);
 
   const [deliForm] = Form.useForm();
+  const [canForm] = Form.useForm();
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -171,6 +173,12 @@ const Bought = ({}) => {
 
   ////// HANDLER //////
 
+  const canModalToggle = useCallback((row) => {
+    setCanModal((p) => !p);
+
+    setCrData(row);
+  }, []);
+
   const adrsModalToggle = useCallback((row) => {
     setAdrs((p) => !p);
 
@@ -250,17 +258,14 @@ const Bought = ({}) => {
         />
       ),
     },
-
     {
       title: "상품명",
       dataIndex: "productName",
     },
-
     {
       title: "선택옵션",
       dataIndex: "option",
     },
-
     {
       title: "금액",
       dataIndex: "viewPrice",
@@ -414,6 +419,25 @@ const Bought = ({}) => {
           배송지보기
         </ManageButton>
       ),
+    },
+
+    {
+      title: "취소/환불",
+      render: (row) => {
+        if (row.status === 4) {
+          return <ManageDelButton>사유확인</ManageDelButton>;
+        } else {
+          return (
+            <Popconfirm
+              title="취소/환불 처리 하시겠습니까?"
+              onCancel={null}
+              onConfirm={() => canModalToggle(row)}
+            >
+              <ManageDelButton>취소/환불</ManageDelButton>
+            </Popconfirm>
+          );
+        }
+      },
     },
   ];
 
@@ -608,6 +632,33 @@ const Bought = ({}) => {
         >
           {crData && `(${crData.post}) ${crData.adrs} ${crData.dadrs}`}
         </Wrapper>
+      </Modal>
+
+      <Modal
+        title="취소/환불 처리하기"
+        footer={null}
+        width="650px"
+        visible={canModal}
+        onCancel={() => canModalToggle(null)}
+      >
+        <ManagementForm
+          form={canForm}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}
+          colon={false}
+        >
+          <ManagementForm.Item
+            label="취소/환불 사유"
+            name="reason"
+            rules={[{ required: true, message: "필수입력사항 입니다." }]}
+          >
+            <ManageInput />
+          </ManagementForm.Item>
+
+          <Wrapper dr="row" ju="flex-end">
+            <ManageDelButton>취소/환불 등록</ManageDelButton>
+          </Wrapper>
+        </ManagementForm>
       </Modal>
     </AdminLayout>
   );

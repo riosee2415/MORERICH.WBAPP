@@ -11,6 +11,7 @@ import editSaga from "./editor";
 import logoSaga from "./logo";
 import faqSaga from "./faq";
 import storeSaga from "./store";
+import cartSaga from "./cart";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -32,6 +33,7 @@ export default function* rootSaga() {
     fork(logoSaga),
     fork(faqSaga),
     fork(storeSaga),
+    fork(cartSaga),
     //
   ]);
 }

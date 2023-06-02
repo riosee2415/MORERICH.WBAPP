@@ -660,7 +660,6 @@ INSERT INTO product (name, thumbnail, subName, price, detail, infoType, infoSize
  * DEVELOPMENT : CTO 윤상호
  * DEV DATE : 2023/06/01
  */
-
 router.post("/product/delete", isAdminCheck, async (req, res, next) => {
   const { id } = req.body;
 
@@ -776,7 +775,8 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
   const { searchId = "", searchDate = false, stat = 0 } = req.body;
 
   const selectQ1 = `
-  SELECT	A.id,
+  SELECT	ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
+          A.id,
           A.deliveryCompany,
           A.deliveryNo,
           A.UserId,
@@ -808,7 +808,8 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
   SELECT	id,
           productName,
           price,
-          'option',
+          CONCAT(FORMAT(price, 0), "원") 			AS viewPrice,
+          \`option\`,
           thumbnail,
           BoughtHistoryId 
     FROM	boughtList
@@ -824,6 +825,63 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).send("데이터를 로드할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 주문내역 상태 변환
+ * PARAMETERS : {id, stat}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/02
+ */
+router.post("/bought/stat/update", isAdminCheck, async (req, res, next) => {
+  const { id, stat } = req.body;
+
+  const uq = `
+    UPDATE  boughtHistory
+       SET  status = ${stat},
+            updatedAt = NOW()
+     WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("주문상태를 변경할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 주문내역 배송지 수정
+ * PARAMETERS : { id, deliveryCompany, deliveryNo }
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/02
+ */
+router.post("/bought/stat/update2", isAdminCheck, async (req, res, next) => {
+  const { id, deliveryCompany, deliveryNo } = req.body;
+
+  const uq = `
+    UPDATE  boughtHistory
+       SET  deliveryCompany = "${deliveryCompany}",
+            deliveryNo = "${deliveryNo}",
+            updatedAt = NOW()
+     WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("배송정보를 변경할 수 없습니다.");
   }
 });
 

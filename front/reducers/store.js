@@ -102,6 +102,16 @@ export const initailState = {
   st_getBoughtListLoading: false,
   st_getBoughtListDone: false,
   st_getBoughtListError: null,
+
+  // 주문현황 변경
+  st_statusBoughtListLoading: false,
+  st_statusBoughtListDone: false,
+  st_statusBoughtListError: null,
+
+  // 배송지 변경
+  st_deliBoughtListLoading: false,
+  st_deliBoughtListDone: false,
+  st_deliBoughtListError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -183,6 +193,14 @@ export const WISH_CHART_FAILURE = "WISH_CHART_FAILURE";
 export const GET_BOUGHTLIST_REQUEST = "GET_BOUGHTLIST_REQUEST";
 export const GET_BOUGHTLIST_SUCCESS = "GET_BOUGHTLIST_SUCCESS";
 export const GET_BOUGHTLIST_FAILURE = "GET_BOUGHTLIST_FAILURE";
+
+export const STATUS_BOUGHTLIST_REQUEST = "STATUS_BOUGHTLIST_REQUEST";
+export const STATUS_BOUGHTLIST_SUCCESS = "STATUS_BOUGHTLIST_SUCCESS";
+export const STATUS_BOUGHTLIST_FAILURE = "STATUS_BOUGHTLIST_FAILURE";
+
+export const DELI_BOUGHTLIST_REQUEST = "DELI_BOUGHTLIST_REQUEST";
+export const DELI_BOUGHTLIST_SUCCESS = "DELI_BOUGHTLIST_SUCCESS";
+export const DELI_BOUGHTLIST_FAILURE = "DELI_BOUGHTLIST_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -661,6 +679,54 @@ const reducer = (state = initailState, action) =>
         draft.st_getBoughtListLoading = false;
         draft.st_getBoughtListDone = false;
         draft.st_getBoughtListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case STATUS_BOUGHTLIST_REQUEST: {
+        draft.st_statusBoughtListLoading = true;
+        draft.st_statusBoughtListDone = false;
+        draft.st_statusBoughtListError = null;
+        break;
+      }
+
+      case STATUS_BOUGHTLIST_SUCCESS: {
+        draft.st_statusBoughtListLoading = false;
+        draft.st_statusBoughtListDone = true;
+        draft.st_statusBoughtListError = null;
+        break;
+      }
+
+      case STATUS_BOUGHTLIST_FAILURE: {
+        draft.st_statusBoughtListLoading = false;
+        draft.st_statusBoughtListDone = false;
+        draft.st_statusBoughtListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case DELI_BOUGHTLIST_REQUEST: {
+        draft.st_deliBoughtListLoading = true;
+        draft.st_deliBoughtListDone = false;
+        draft.st_deliBoughtListError = null;
+        break;
+      }
+
+      case DELI_BOUGHTLIST_SUCCESS: {
+        draft.st_deliBoughtListLoading = false;
+        draft.st_deliBoughtListDone = true;
+        draft.st_deliBoughtListError = null;
+        break;
+      }
+
+      case DELI_BOUGHTLIST_FAILURE: {
+        draft.st_deliBoughtListLoading = false;
+        draft.st_deliBoughtListDone = false;
+        draft.st_deliBoughtListError = action.error;
         break;
       }
 

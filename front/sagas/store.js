@@ -80,6 +80,14 @@ import {
   GET_BOUGHTLIST_REQUEST,
   GET_BOUGHTLIST_SUCCESS,
   GET_BOUGHTLIST_FAILURE,
+  //
+  STATUS_BOUGHTLIST_REQUEST,
+  STATUS_BOUGHTLIST_SUCCESS,
+  STATUS_BOUGHTLIST_FAILURE,
+  //
+  DELI_BOUGHTLIST_REQUEST,
+  DELI_BOUGHTLIST_SUCCESS,
+  DELI_BOUGHTLIST_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -617,6 +625,59 @@ function* boughtList(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function statusBoughtListAPI(data) {
+  return await axios.post(`/api/store/bought/stat/update`, data);
+}
+
+function* statusBoughtList(action) {
+  try {
+    const result = yield call(statusBoughtListAPI, action.data);
+
+    yield put({
+      type: STATUS_BOUGHTLIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: STATUS_BOUGHTLIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function deliBoughtListAPI(data) {
+  return await axios.post(`/api/store/bought/stat/update2`, data);
+}
+
+function* deliBoughtList(action) {
+  try {
+    const result = yield call(deliBoughtListAPI, action.data);
+
+    yield put({
+      type: DELI_BOUGHTLIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: DELI_BOUGHTLIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
@@ -679,6 +740,12 @@ function* watchWishChart() {
 function* watchGetBoughtList() {
   yield takeLatest(GET_BOUGHTLIST_REQUEST, boughtList);
 }
+function* watchStatusBoughtList() {
+  yield takeLatest(STATUS_BOUGHTLIST_REQUEST, statusBoughtList);
+}
+function* watchDeliBoughtList() {
+  yield takeLatest(DELI_BOUGHTLIST_REQUEST, deliBoughtList);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -703,6 +770,8 @@ export default function* storeSaga() {
     fork(watchDelOption),
     fork(watchWishChart),
     fork(watchGetBoughtList),
+    fork(watchStatusBoughtList),
+    fork(watchDeliBoughtList),
 
     //
   ]);

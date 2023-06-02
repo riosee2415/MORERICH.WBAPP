@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Popover, message } from "antd";
+import { Popover, message, Modal, Form, Drawer } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -27,11 +27,24 @@ import {
   ManagementForm,
   ManagementTable,
 } from "../../../components/managementComponents";
-import { GET_BOUGHTLIST_REQUEST } from "../../../reducers/store";
+import {
+  GET_BOUGHTLIST_REQUEST,
+  STATUS_BOUGHTLIST_REQUEST,
+  DELI_BOUGHTLIST_REQUEST,
+} from "../../../reducers/store";
+import { numberWithCommas } from "../../../components/commonUtils";
 
 const Bought = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
-  const { boughtlist } = useSelector((state) => state.store);
+  const {
+    boughtlist,
+    //
+    st_statusBoughtListDone,
+    st_statusBoughtListError,
+    //
+    st_deliBoughtListDone,
+    st_deliBoughtListError,
+  } = useSelector((state) => state.store);
 
   console.log(boughtlist);
 
@@ -43,7 +56,20 @@ const Bought = ({}) => {
   const [level2, setLevel2] = useState("");
   const [sameDepth, setSameDepth] = useState([]);
 
+  const [searchDate, setSearchDate] = useState(
+    new Date().toISOString().substring(0, 10)
+  );
+  const [searchId, setSearchId] = useState("");
+  const [_searchId, set_SearchId] = useState("");
   const [stat, setStat] = useState(0);
+
+  const [deliModal, setDeliModal] = useState(false);
+  const [detailDr, setDetailDr] = useState(false);
+
+  const [crData, setCrData] = useState(null);
+
+  const [deliForm] = Form.useForm();
+
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
   }, []);
@@ -70,6 +96,43 @@ const Bought = ({}) => {
   ////// USEEFFECT //////
 
   useEffect(() => {
+    if (st_statusBoughtListDone) {
+      dispatch({
+        type: GET_BOUGHTLIST_REQUEST,
+        data: {
+          searchDate: searchDate,
+          searchId: _searchId,
+          stat: stat,
+        },
+      });
+    }
+
+    if (st_statusBoughtListError) {
+      return message.error(st_statusBoughtListError);
+    }
+  }, [st_statusBoughtListDone, st_statusBoughtListError]);
+
+  useEffect(() => {
+    if (st_deliBoughtListDone) {
+      dispatch({
+        type: GET_BOUGHTLIST_REQUEST,
+        data: {
+          searchDate: searchDate,
+          searchId: _searchId,
+          stat: stat,
+        },
+      });
+
+      deliModalToggle();
+      deliForm.resetFields();
+    }
+
+    if (st_deliBoughtListError) {
+      return message.error(st_deliBoughtListError);
+    }
+  }, [st_deliBoughtListDone, st_deliBoughtListError]);
+
+  useEffect(() => {
     if (st_loadMyInfoDone) {
       if (!me || parseInt(me.level) < 3) {
         moveLinkHandler(`/admin`);
@@ -94,7 +157,71 @@ const Bought = ({}) => {
     });
   }, []);
 
+  useEffect(() => {
+    dispatch({
+      type: GET_BOUGHTLIST_REQUEST,
+      data: {
+        searchDate: searchDate,
+        searchId: _searchId,
+        stat: stat,
+      },
+    });
+  }, [searchDate, _searchId, stat]);
+
   ////// HANDLER //////
+
+  const deliModalToggle = useCallback((row) => {
+    setDeliModal((p) => !p);
+
+    setCrData(row);
+  }, []);
+
+  const detailDrToggle = useCallback((row) => {
+    setDetailDr((p) => !p);
+
+    setCrData(row);
+  }, []);
+
+  const saveSearchId = useCallback(() => {
+    set_SearchId(searchId);
+  }, [searchId]);
+
+  const dateChangeHandler = useCallback((e) => {
+    setSearchDate(e.target.value);
+  }, []);
+
+  const searchEnter = useCallback(
+    (e) => {
+      if (e.keyCode === 13) {
+        saveSearchId();
+      }
+    },
+    [searchId]
+  );
+
+  const changeStatusHandler = useCallback((id, stat) => {
+    dispatch({
+      type: STATUS_BOUGHTLIST_REQUEST,
+      data: {
+        id,
+        stat,
+      },
+    });
+  }, []);
+
+  const deliFinish = useCallback(
+    ({ deliveryCompany, deliveryNo }) => {
+      dispatch({
+        type: DELI_BOUGHTLIST_REQUEST,
+        data: {
+          id: crData.id,
+          deliveryCompany,
+          deliveryNo,
+        },
+      });
+    },
+    [crData]
+  );
 
   ////// DATAVIEW //////
 
@@ -118,37 +245,121 @@ const Bought = ({}) => {
 
     {
       title: "구매금액",
-      dataIndex: "allPrice",
+      render: (row) => (
+        <Text>
+          {numberWithCommas(
+            row.connectArray.reduce((sum, currValue) => {
+              return sum + currValue.price;
+            }, 0)
+          )}
+          원
+        </Text>
+      ),
     },
 
     {
       title: "구매상품 수",
-      dataIndex: "productCnt",
+      render: (row) => <div>{row.connectArray.length}개</div>,
     },
 
     {
       title: "처리상태",
-      dataIndex: "productCnt",
+      render: (row) => {
+        if (row.status === 0) {
+          return <Text color={Theme.red_C}>상품 준비중</Text>;
+        }
+
+        if (row.status === 1) {
+          return <Text color={Theme.subTheme2_C}>배송 준비중</Text>;
+        }
+
+        if (row.status === 2) {
+          return <Text color={Theme.subTheme3_C}>배송중</Text>;
+        }
+
+        if (row.status === 3) {
+          return <Text color={Theme.naver_C}>배송완료</Text>;
+        }
+
+        if (row.status === 4) {
+          return <Text color={Theme.red_C}>취소/환불</Text>;
+        }
+      },
+    },
+
+    {
+      title: "상태변경",
+      render: (row) => {
+        if (row.status === 0) {
+          return (
+            <ManageButton
+              type="dashed"
+              onClick={() => changeStatusHandler(row.id, 1)}
+            >{`-> 배송 준비중`}</ManageButton>
+          );
+        }
+
+        if (row.status === 1) {
+          return (
+            <ManageButton
+              type="dashed"
+              onClick={() => changeStatusHandler(row.id, 2)}
+            >{`-> 배송중`}</ManageButton>
+          );
+        }
+
+        if (row.status === 2) {
+          return (
+            <ManageButton
+              type="dashed"
+              onClick={() => changeStatusHandler(row.id, 3)}
+            >{`-> 배송완료`}</ManageButton>
+          );
+        }
+
+        if (row.status === 3) {
+          return <Text>-</Text>;
+        }
+      },
     },
 
     {
       title: "배송회사",
-      dataIndex: "productCnt",
+      dataIndex: "deliveryCompany",
     },
 
     {
       title: "송장번호",
-      dataIndex: "productCnt",
+      dataIndex: "deliveryNo",
     },
 
     {
-      title: "취소/환불처리",
-      dataIndex: "productCnt",
+      title: "정보입력",
+      render: (row) => {
+        if (row.status > 1) {
+          return <Text>정보입력불가</Text>;
+        } else {
+          return (
+            <ManageButton onClick={() => deliModalToggle(row)} type="primary">
+              배송정보 입력
+            </ManageButton>
+          );
+        }
+      },
+    },
+
+    {
+      title: "최근수정일",
+      dataIndex: "viewUpdatedAt",
     },
 
     {
       title: "구매상품 상세",
-      dataIndex: "productCnt",
+      render: (row) => (
+        <ManageButton onClick={() => detailDrToggle(row)} type="primary">
+          상세보기
+        </ManageButton>
+      ),
     },
   ];
 
@@ -205,17 +416,18 @@ const Bought = ({}) => {
               <ManageInput
                 width="220px"
                 placeholder="구매자 아이디"
-                value={""}
-                onKeyDown={null}
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value)}
+                onKeyDown={searchEnter}
               />
               <ManageInput
                 width="220px"
                 placeholder="날짜"
-                value={"2023-05-03"}
+                value={searchDate}
                 type="date"
-                onKeyDown={null}
+                onChange={dateChangeHandler}
               />
-              <ManageButton type="primary" onClick={null}>
+              <ManageButton type="primary" onClick={saveSearchId}>
                 검색
               </ManageButton>
             </Wrapper>
@@ -267,6 +479,65 @@ const Bought = ({}) => {
           rowKey={"num"}
         />
       </Wrapper>
+
+      <Modal
+        visible={deliModal}
+        width="650px"
+        title="배송정보 입력"
+        footer={null}
+        onCancel={() => deliModalToggle(null)}
+      >
+        <GuideUl>
+          <GuideLi>배송지정보는 구매자에게 제공되는 데이터 입니다.</GuideLi>
+          <GuideLi isImpo={true}>
+            기존 배송정보와 상관없이 새로운 정보를 덮어씌우게 됩니다. 정확한
+            데이터를 입력해주세요.
+          </GuideLi>
+        </GuideUl>
+
+        <ManagementForm
+          form={deliForm}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}
+          colon={false}
+          onFinish={deliFinish}
+        >
+          <ManagementForm.Item
+            name="deliveryCompany"
+            label="배송회사"
+            rules={[{ required: true, message: "필수입니다." }]}
+          >
+            <ManageInput />
+          </ManagementForm.Item>
+
+          <ManagementForm.Item
+            name="deliveryNo"
+            label="송장번호"
+            rules={[{ required: true, message: "필수입니다." }]}
+          >
+            <ManageInput />
+          </ManagementForm.Item>
+
+          <Wrapper dr="row" ju="flex-end">
+            <ManageButton htmlType="submit" type="primary">
+              저장
+            </ManageButton>
+          </Wrapper>
+        </ManagementForm>
+      </Modal>
+
+      <Drawer
+        visible={detailDr}
+        width="40%"
+        title={`${crData && crData.num}번의 구매 상세목록`}
+        onClose={() => detailDrToggle(null)}
+      >
+        <ManagementTable
+          columns={[]}
+          dataSource={crData ? crData.connectArray : []}
+          rowKey={"id"}
+        />
+      </Drawer>
     </AdminLayout>
   );
 };
@@ -288,6 +559,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: GET_BOUGHTLIST_REQUEST,
+      data: {
+        searchDate: new Date().toISOString().substring(0, 10),
+      },
     });
 
     // 구현부 종료

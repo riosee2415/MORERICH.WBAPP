@@ -184,7 +184,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     return res.status(200).json(result[0]);
   } catch (e) {
     console.error(e);
-    return res.status(400).send("장바구니에 상품을 추가할 수 없습니다.");
+    return res.status(401).send("장바구니에 상품을 추가할 수 없습니다.");
   }
 });
 

@@ -280,6 +280,7 @@ router.post("/product/detail", async (req, res, next) => {
           A.subName,
           A.price,
           CONCAT(FORMAT(A.price, 0), "원") 			AS viewPrice,
+          CAST(A.price - (A.discount / 100 * A.price) AS signed integer)	AS calcPrice,
           CONCAT(FORMAT(A.price - (A.discount / 100 * A.price), 0), "원")  AS viewCalcPrice,
           A.detail,
           A.infoType,
@@ -308,7 +309,9 @@ router.post("/product/detail", async (req, res, next) => {
   `;
 
   const sq3 = `
-  SELECT	value,
+  SELECT	
+  id,
+      value,
         ProductId
   FROM 	productOption
  WHERE	ProductId = ${id}
@@ -322,7 +325,7 @@ router.post("/product/detail", async (req, res, next) => {
     const result = await consistOfArrayToArray(list1[0], list2[0], "ProductId");
     const result2 = await consistOfArrayToArray2(result, list3[0], "ProductId");
 
-    return res.status(200).json(result2);
+    return res.status(200).json(result2[0]);
   } catch (error) {
     console.error(error);
     return res.status(400).send("상품데이터를 조회할 수 없습니다.");
@@ -859,7 +862,8 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           B.point,
           A.post,
           A.adrs,
-          A.dadrs
+          A.dadrs,
+          A.reason
     FROM	boughtHistory	A
    INNER
     JOIN	users 			B
@@ -942,6 +946,35 @@ router.post("/bought/stat/update2", isAdminCheck, async (req, res, next) => {
        SET  deliveryCompany = "${deliveryCompany}",
             deliveryNo = "${deliveryNo}",
             updatedAt = NOW()
+     WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("배송정보를 변경할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 취소/환불 처리
+ * PARAMETERS : { id, reason }
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/02
+ */
+router.post("/bought/cancel", isAdminCheck, async (req, res, next) => {
+  const { id, reason } = req.body;
+
+  const uq = `
+    UPDATE  boughtHistory
+       SET  updatedAt = NOW(),
+            reason = "${reason}",
+            status = 4
      WHERE  id = ${id}
   `;
 

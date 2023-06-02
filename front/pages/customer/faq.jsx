@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -20,20 +20,19 @@ import { Empty } from "antd";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import useInput from "../../hooks/useInput";
-import { FAQ_LIST_REQUEST } from "../../reducers/faq";
+import { FAQTYPE_LIST_REQUEST, FAQ_LIST_REQUEST } from "../../reducers/faq";
 import Link from "next/dist/client/link";
 
 const List = styled(Wrapper)`
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: ${(props) =>
-    props.isActive ? `none` : `1px solid ${Theme.grey3_C}`};
+  border-bottom: 1px solid ${Theme.grey3_C};
   padding: 26px 30px;
 
   &:hover {
     cursor: pointer;
     ${Text} {
-      color: ${Theme.black_C};
+      color: ${Theme.grey2_C};
     }
   }
 
@@ -42,21 +41,66 @@ const List = styled(Wrapper)`
   }
 `;
 
+const CateBtn = styled(Wrapper)`
+  padding: 0 14px;
+  width: auto;
+  height: 30px;
+  border-radius: 30px;
+  font-size: 16px;
+  border: ${(props) =>
+    props.isActive ? `1px solid ${Theme.black_C}` : `none`};
+  color: ${(props) => (props.isActive ? Theme.black_C : Theme.grey2_C)};
+  margin: 0 6px 5px;
+
+  &:hover {
+    cursor: pointer;
+    color: ${Theme.grey_C};
+  }
+`;
+
+const TypeBtn = styled(Wrapper)`
+  width: auto;
+  height: 31px;
+  padding: 0 10px;
+  border: ${(props) =>
+    props.isActive ? `1px solid ${Theme.black_C}` : `none`};
+  background: ${(props) =>
+    props.isActive ? Theme.white_C : Theme.lightGrey2_C};
+  color: ${(props) => (props.isActive ? Theme.black_C : Theme.grey_C)};
+  font-size: 16px;
+  font-weight: 500;
+
+  &:hover {
+    cursor: pointer;
+    border: 1px solid ${Theme.black_C};
+    color: ${Theme.black_C};
+  }
+`;
+
 const Notice = () => {
   ////// GLOBAL STATE //////
-  const { faqList, lastPage } = useSelector((state) => state.faq);
+  const { faqList, typeList, lastPage } = useSelector((state) => state.faq);
 
   const [isVisible, setIsVisible] = useState(false);
   const [visibleId, setVisibleId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [type, setType] = useState("");
+  const [currentTab, setCurrentTab] = useState(1);
 
   ////// HOOKS //////
   const width = useWidth();
   const dispatch = useDispatch();
 
-  const searchTitle = useInput("");
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    dispatch({
+      type: FAQ_LIST_REQUEST,
+      data: {
+        FaqTypeId: type,
+      },
+    });
+  }, [type]);
 
   ////// TOGGLE //////
   const faqToggle = useCallback(
@@ -77,6 +121,18 @@ const Notice = () => {
   );
 
   ////// HANDLER //////
+  const currentHandler = useCallback(
+    (data) => {
+      setCurrentTab(data);
+    },
+    [currentTab]
+  );
+  const typeHandler = useCallback(
+    (data) => {
+      setType(data);
+    },
+    [type]
+  );
   // 페이지네이션
   const otherPageCall = useCallback(
     (changePage) => {
@@ -103,48 +159,57 @@ const Notice = () => {
       <ClientLayout>
         <WholeWrapper>
           <Wrapper
-            padding={`48px 0 70px 0`}
             bgColor={Theme.lightGrey2_C}
+            padding={`50px 0`}
             margin={`0 0 50px`}
           >
-            <Text fontSize={`34px`} fontWeight={`bold`}>
+            <Text fontSize={width < 900 ? `22px` : `34px`} fontWeight={`600`}>
               고객센터
             </Text>
-            <Wrapper dr={`row`}>
+            <Wrapper dr={`row`} margin={`18px 0 0`}>
               <Link href={`/customer/notice`}>
                 <a>
-                  <Wrapper
-                    cursor={`pointer`}
-                    width={`auto`}
-                    fontSize={`16px`}
-                    color={Theme.grey2_C}
-                    margin={`0 26px 0 0`}
-                  >
-                    공지사항
-                  </Wrapper>
+                  <CateBtn onClick={() => currentHandler(0)}>공지사항</CateBtn>
                 </a>
               </Link>
 
-              <Wrapper
-                width={`auto`}
-                radius={`17px`}
-                border={`1px solid ${Theme.black_C}`}
-                padding={`6px 14px`}
-                fontSize={`16px`}
+              <CateBtn
+                onClick={() => currentHandler(1)}
+                isActive={1 === currentTab}
               >
                 FAQ
-              </Wrapper>
+              </CateBtn>
             </Wrapper>
           </Wrapper>
+
           <RsWrapper>
-            <Wrapper al={`flex-start`} margin={`0 0 30px`}>
+            <Wrapper dr={`row`} ju={`flex-start`} margin={`0 0 30px`}>
               <Text
                 fontSize={width < 900 ? `22px` : `26px`}
                 fontWeight={`bold`}
+                margin={`0 30px 0 0`}
               >
                 FAQ
               </Text>
+              {typeList && typeList.length === 0 ? (
+                <Wrapper al={`flex-start`}>조회된 유형이 없습니다.</Wrapper>
+              ) : (
+                typeList.map((data) => {
+                  return (
+                    <TypeBtn
+                      margin={`0 20px 0 0`}
+                      width={`auto`}
+                      key={data.id}
+                      isActive={type === data.id && true}
+                      onClick={() => typeHandler(data.id)}
+                    >
+                      {data.value}
+                    </TypeBtn>
+                  );
+                })
+              )}
             </Wrapper>
+
             <Wrapper borderTop={`1px solid ${Theme.grey3_C}`}>
               {faqList.length === 0 ? (
                 <Wrapper padding={`50px 0`}>
@@ -154,14 +219,18 @@ const Notice = () => {
                 faqList.map((data) => {
                   return (
                     <>
-                      <List onClick={() => faqToggle(data)}>
+                      <List
+                        key={data.id}
+                        isActive
+                        onClick={() => faqToggle(data)}
+                      >
                         <Wrapper width={`auto`} dr={`row`} ju={`flex-start`}>
                           <Text
                             fontSize={width < 900 ? `15px` : `18px`}
                             fontWeight={`600`}
                             color={Theme.black_C}
                           >
-                            Q
+                            Q.
                           </Text>
                           <Text
                             maxWidth={`calc(100% - 32px - 30px)`}
@@ -234,7 +303,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: FAQ_LIST_REQUEST,
+      type: FAQTYPE_LIST_REQUEST,
     });
     // 구현부 종료
     context.store.dispatch(END);

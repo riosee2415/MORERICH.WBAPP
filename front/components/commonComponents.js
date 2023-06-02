@@ -527,17 +527,11 @@ export const CustomPage = styled(Pagination)`
   }
 
   & .ant-pagination-item a {
-    color: ${(props) => props.theme.lightGrey6_C};
-  }
-
-  & .ant-pagination-item-active a {
     color: ${(props) => props.theme.grey2_C};
   }
 
-  & .ant-pagination-item-active {
-    background-color: ${(props) => props.theme.lightGrey_C} !important;
-    color: ${(props) => props.theme.grey2_C} !important;
-    border: none;
+  & .ant-pagination-item-active a {
+    color: ${(props) => props.theme.black_C};
   }
 
   & .ant-pagination-item:focus-visible a {

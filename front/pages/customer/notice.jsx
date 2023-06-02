@@ -36,12 +36,20 @@ const NoticeList = styled(Wrapper)`
     border-bottom: 1px solid ${Theme.basicTheme_C};
   }
 `;
+const CateBtn = styled(Wrapper)`
+  padding: 0 14px;
+  width: auto;
+  height: 30px;
+  border-radius: 30px;
+  font-size: 16px;
+  border: ${(props) =>
+    props.isActive ? `1px solid ${Theme.black_C}` : `none`};
+  color: ${(props) => (props.isActive ? Theme.black_C : Theme.grey2_C)};
+  margin: 0 6px 5px;
 
-const ListWrapper = styled(Wrapper)`
-  margin: 0 0 16px;
-
-  &:last-child {
-    margin: 0;
+  &:hover {
+    cursor: pointer;
+    color: ${Theme.grey_C};
   }
 `;
 
@@ -65,6 +73,7 @@ const Notice = () => {
   const { notices, lastPage, noticeLen } = useSelector((state) => state.notice);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [type, setType] = useState(0);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -87,6 +96,12 @@ const Notice = () => {
   ////// TOGGLE //////
 
   ////// HANDLER //////
+  const typeHandler = useCallback(
+    (data) => {
+      setType(data);
+    },
+    [type]
+  );
   // 페이지네이션
   const otherPageCall = useCallback(
     (changePage) => {
@@ -100,44 +115,31 @@ const Notice = () => {
   return (
     <>
       <Head>
-        <title>MoreRich | CUSTOMERCENTER</title>
+        <title>MoreRich | NOTICE</title>
       </Head>
 
       <ClientLayout>
         <WholeWrapper>
           <Wrapper
-            padding={`48px 0 70px 0`}
             bgColor={Theme.lightGrey2_C}
+            padding={`50px 0`}
             margin={`0 0 50px`}
           >
-            <Text fontSize={`34px`} fontWeight={`bold`}>
+            <Text fontSize={width < 900 ? `22px` : `34px`} fontWeight={`600`}>
               고객센터
             </Text>
-            <Wrapper dr={`row`}>
-              <Wrapper
-                width={`auto`}
-                radius={`17px`}
-                border={`1px solid ${Theme.black_C}`}
-                padding={`6px 14px`}
-                fontSize={`16px`}
-                margin={`0 26px 0 0`}
-              >
+            <Wrapper dr={`row`} margin={`18px 0 0`}>
+              <CateBtn onClick={() => typeHandler(0)} isActive={0 === type}>
                 공지사항
-              </Wrapper>
+              </CateBtn>
               <Link href={`/customer/faq`}>
                 <a>
-                  <Wrapper
-                    cursor={`pointer`}
-                    width={`auto`}
-                    fontSize={`16px`}
-                    color={Theme.grey2_C}
-                  >
-                    FAQ
-                  </Wrapper>
+                  <CateBtn onClick={() => typeHandler(1)}>FAQ</CateBtn>
                 </a>
               </Link>
             </Wrapper>
           </Wrapper>
+
           <RsWrapper>
             <Wrapper
               al={`flex-start`}
@@ -167,7 +169,8 @@ const Notice = () => {
                   width={width < 900 ? `100%` : `315px`}
                   height={`40px`}
                   placeholder={`검색어를 입력해주세요.`}
-                  padding={`0 40px 0 20px`}
+                  padding={`11px 14px`}
+                  border={`1px solid ${Theme.lightGrey_C}`}
                   {...searchTitle}
                 />
                 <Wrapper
@@ -178,7 +181,7 @@ const Notice = () => {
                   height={`100%`}
                 >
                   <Image
-                    width={`24px`}
+                    width={`18px`}
                     alt="icon"
                     src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cs-center/icon_search.png`}
                   />

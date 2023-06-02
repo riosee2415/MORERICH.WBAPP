@@ -16,6 +16,7 @@ module.exports = class BoughtList extends Model {
         option: {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수
+          defaultValue: "-",
         },
         thumbnail: {
           type: DataTypes.STRING(3000),

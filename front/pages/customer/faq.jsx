@@ -36,6 +36,10 @@ const List = styled(Wrapper)`
       color: ${Theme.black_C};
     }
   }
+
+  @media (max-width: 900px) {
+    padding: 15px;
+  }
 `;
 
 const Notice = () => {

@@ -280,7 +280,7 @@ router.post("/product/detail", async (req, res, next) => {
           A.subName,
           A.price,
           CONCAT(FORMAT(A.price, 0), "원") 			AS viewPrice,
-          A.price - (A.discount / 100 * A.price)  AS calcPrice,
+          CAST(A.price - (A.discount / 100 * A.price) AS signed integer)	AS calcPrice,
           CONCAT(FORMAT(A.price - (A.discount / 100 * A.price), 0), "원")  AS viewCalcPrice,
           A.detail,
           A.infoType,
@@ -862,7 +862,7 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           B.point,
           A.post,
           A.adrs,
-          A.dadrs
+          A.dadrs,
           A.reason
     FROM	boughtHistory	A
    INNER
@@ -967,6 +967,25 @@ router.post("/bought/stat/update2", isAdminCheck, async (req, res, next) => {
  * DEVELOPMENT : CTO 윤상호
  * DEV DATE : 2023/06/02
  */
-router.post("/bought/cancel", isAdminCheck, async (req, res, next) => {});
+router.post("/bought/cancel", isAdminCheck, async (req, res, next) => {
+  const { id, reason } = req.body;
+
+  const uq = `
+    UPDATE  boughtHistory
+       SET  updatedAt = NOW(),
+            reason = "${reason}",
+            status = 4
+     WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("배송정보를 변경할 수 없습니다.");
+  }
+});
 
 module.exports = router;

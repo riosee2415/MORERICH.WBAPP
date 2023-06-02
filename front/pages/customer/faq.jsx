@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -12,37 +12,22 @@ import {
   Wrapper,
   Image,
   CustomPage,
-  TextInput,
-  ATag,
   RsWrapper,
+  ATag,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Empty, Select } from "antd";
+import { Empty } from "antd";
 import styled from "styled-components";
-import Link from "next/dist/client/link";
 import { useDispatch, useSelector } from "react-redux";
-import { NOTICE_LIST_REQUEST } from "../../reducers/notice";
 import useInput from "../../hooks/useInput";
 import { FAQ_LIST_REQUEST } from "../../reducers/faq";
-
-const NoticeList = styled(Wrapper)`
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid ${Theme.grey3_C};
-  padding: 20px 0;
-
-  &:hover {
-    cursor: pointer;
-    border-bottom: 1px solid ${Theme.basicTheme_C};
-  }
-`;
-
-const ListWrapper = styled(Wrapper)``;
+import Link from "next/dist/client/link";
 
 const List = styled(Wrapper)`
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: 1px solid ${Theme.grey3_C};
+  border-bottom: ${(props) =>
+    props.isActive ? `none` : `1px solid ${Theme.grey3_C}`};
   padding: 26px 30px;
 
   &:hover {
@@ -57,11 +42,9 @@ const Notice = () => {
   ////// GLOBAL STATE //////
   const { faqList, lastPage } = useSelector((state) => state.faq);
 
-  const [currentTab, setCurrentTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [visibleId, setVisibleId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [nextPage, setNextPage] = useState(1);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -110,7 +93,7 @@ const Notice = () => {
   return (
     <>
       <Head>
-        <title>MoreRich | CUSTOMERCENTER</title>
+        <title>MoreRich | FAQ</title>
       </Head>
 
       <ClientLayout>
@@ -124,25 +107,26 @@ const Notice = () => {
               고객센터
             </Text>
             <Wrapper dr={`row`}>
-              <Wrapper
-                cursor={`pointer`}
-                width={`auto`}
-                fontSize={`16px`}
-                color={Theme.grey2_C}
-                isActive={currentTab === 0}
-                onClick={() => setCurrentTab(0)}
-                margin={`0 26px 0 0`}
-              >
-                공지사항
-              </Wrapper>
+              <Link href={`/customer/notice`}>
+                <a>
+                  <Wrapper
+                    cursor={`pointer`}
+                    width={`auto`}
+                    fontSize={`16px`}
+                    color={Theme.grey2_C}
+                    margin={`0 26px 0 0`}
+                  >
+                    공지사항
+                  </Wrapper>
+                </a>
+              </Link>
+
               <Wrapper
                 width={`auto`}
                 radius={`17px`}
                 border={`1px solid ${Theme.black_C}`}
                 padding={`6px 14px`}
                 fontSize={`16px`}
-                isActive={currentTab === 1}
-                onClick={() => setCurrentTab(1)}
               >
                 FAQ
               </Wrapper>

@@ -295,7 +295,7 @@ router.post("/address/update", isLoggedIn, async (req, res, next) => {
 
     const findResult = await models.sequelize.query(findQuery);
 
-    if (findResult[0].length) {
+    if (findResult[0].length === 0) {
       return res.status(400).send("주소가 존재하지 않습니다.");
     }
 
@@ -318,7 +318,7 @@ router.post("/address/update", isLoggedIn, async (req, res, next) => {
  * DEV DATE : 2023/06/02
  */
 
-router.post("/address/update", isLoggedIn, async (req, res, next) => {
+router.post("/address/isBasic", isLoggedIn, async (req, res, next) => {
   const { id, isBasic } = req.body;
 
   const findQuery = `
@@ -335,14 +335,14 @@ router.post("/address/update", isLoggedIn, async (req, res, next) => {
 
   const updateQuery2 = `
   UPDATE  address
-     SET  isBasic
+     SET  isBasic = 0
    WHERE  UserId = ${req.user.id}
-     AND  id != id
+     AND  id != ${id}
    `;
   try {
     const findResult = await models.sequelize.query(findQuery);
 
-    if (findResult[0].length) {
+    if (findResult[0].length === 0) {
       return res.status(400).send("주소가 존재하지 않습니다.");
     }
 
@@ -371,7 +371,7 @@ router.post("/address/delete", isLoggedIn, async (req, res, next) => {
 
   // ids : [1, 2, 3];
 
-  if (!Array.isArray(cartIds)) {
+  if (!Array.isArray(ids)) {
     return res.status(400).send("잘못된 요청입니다.");
   }
 

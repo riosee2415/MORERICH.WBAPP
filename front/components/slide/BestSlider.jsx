@@ -81,7 +81,6 @@ const SliderWrapper = styled(Carousel)`
 `;
 
 const BestSlider = ({ datum }) => {
-  console.log(datum);
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -116,10 +115,11 @@ const BestSlider = ({ datum }) => {
                 display={`flex !important`}
                 padding={`0 15px`}
                 cursor={`pointer`}
-                onClick={() => router.push(`/product/${data.ProductId}`)}
               >
                 <Wrapper al={`flex-start`}>
-                  <SquareBox>
+                  <SquareBox
+                    onClick={() => router.push(`/product/${data.ProductId}`)}
+                  >
                     <Image alt="thumbnail" src={data.thumbnail} />
                   </SquareBox>
 
@@ -159,11 +159,11 @@ const BestSlider = ({ datum }) => {
                       width={`22px`}
                       margin={`0 18px 0 0`}
                     />
-                    <Image
+                    {/* <Image
                       alt="cart icon"
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
                       width={`22px`}
-                    />
+                    /> */}
                   </Wrapper>
                 </Wrapper>
               </Wrapper>

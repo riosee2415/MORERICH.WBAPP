@@ -23,6 +23,8 @@ import BestSlider from "../components/slide/BestSlider";
 import NewSlider from "../components/slide/NewSlider";
 import SteadySlider from "../components/slide/SteadySlider";
 import { GET_SLIDE_REQUEST } from "../reducers/banner";
+import { useCallback } from "react";
+import { CART_LIST_REQUEST } from "../reducers/cart";
 
 const Box = styled(Wrapper)`
   width: calc(100% / 3);
@@ -67,9 +69,11 @@ const Home = ({}) => {
   ////// HOOKS //////
   const width = useWidth();
   ////// REDUX //////
+  const dispatch = useDispatch();
   ////// USEEFFECT //////
   ////// TOGGLE //////
   ////// HANDLER //////
+
   ////// DATAVIEW //////
 
   return (

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Popover, message, Modal, Form, Drawer } from "antd";
+import { Popover, message, Modal, Form, Drawer, Image } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -226,6 +226,39 @@ const Bought = ({}) => {
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
+
+  const column2 = [
+    {
+      title: "주문번호",
+      dataIndex: "id",
+      width: "10%",
+    },
+
+    {
+      title: "썸네일",
+      render: (row) => (
+        <Image
+          src={row.thumbnail}
+          style={{ width: "60px", height: "60px", objectFit: "cover" }}
+        />
+      ),
+    },
+
+    {
+      title: "상품명",
+      dataIndex: "productName",
+    },
+
+    {
+      title: "선택옵션",
+      dataIndex: "option",
+    },
+
+    {
+      title: "금액",
+      dataIndex: "viewPrice",
+    },
+  ];
   const column = [
     {
       title: "번호",
@@ -533,7 +566,7 @@ const Bought = ({}) => {
         onClose={() => detailDrToggle(null)}
       >
         <ManagementTable
-          columns={[]}
+          columns={column2}
           dataSource={crData ? crData.connectArray : []}
           rowKey={"id"}
         />

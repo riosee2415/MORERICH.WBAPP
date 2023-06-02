@@ -14,6 +14,7 @@ import {
   CustomPage,
   TextInput,
   ATag,
+  RsWrapper,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { Empty, Select } from "antd";
@@ -137,7 +138,7 @@ const Notice = () => {
               </Link>
             </Wrapper>
           </Wrapper>
-          <Wrapper width={width < 900 ? `90%` : `75%`}>
+          <RsWrapper>
             <Wrapper
               al={`flex-start`}
               margin={width < 900 ? `0 0 10px` : `0 0 20px`}
@@ -243,16 +244,16 @@ const Notice = () => {
                 );
               })
             )}
+          </RsWrapper>
 
-            <CustomPage
-              margin={`60px 0 100px`}
-              defaultCurrent={1}
-              current={parseInt(currentPage)}
-              total={lastPage * 10}
-              pageSize={10}
-              onChange={(page) => otherPageCall(page)}
-            />
-          </Wrapper>
+          <CustomPage
+            margin={`60px 0 100px`}
+            defaultCurrent={1}
+            current={parseInt(currentPage)}
+            total={lastPage * 10}
+            pageSize={10}
+            onChange={(page) => otherPageCall(page)}
+          />
         </WholeWrapper>
       </ClientLayout>
     </>

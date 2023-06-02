@@ -789,7 +789,10 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           B.username,
           B.email,
           B.mobile,
-          B.point
+          B.point,
+          A.post,
+          A.adrs,
+          A.dadrs
     FROM	boughtHistory	A
    INNER
     JOIN	users 			B

@@ -131,7 +131,7 @@ export default function* cartSaga() {
     fork(watchCartList),
     fork(watchCartCreate),
     fork(watchCartQunUpdate),
-    // fork(watchCartDelete),
+    fork(watchCartDelete),
     //
   ]);
 }

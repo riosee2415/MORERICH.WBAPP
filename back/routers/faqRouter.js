@@ -143,7 +143,9 @@ router.post("/type/delete", isAdminCheck, async (req, res, next) => {
  * DEV DATE : 2023/06/01
  */
 router.post("/list", async (req, res, next) => {
-  const { page } = req.body;
+  const { FaqTypeId, page } = req.body;
+
+  const _FaqTypeId = FaqTypeId ? FaqTypeId : false;
 
   const LIMIT = 10;
 
@@ -162,7 +164,9 @@ router.post("/list", async (req, res, next) => {
           A.updatedAt,
           DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일") 		AS viewCreatedAt,
           DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일") 		AS viewUpdatedAt,
-          A.FaqTypeId
+          A.FaqTypeId,
+          B.value,
+          C.username 										               AS updator
     FROM 	faq   A 
    INNER	
     JOIN	faqType   B 
@@ -172,6 +176,7 @@ router.post("/list", async (req, res, next) => {
     JOIN	users	C
       ON	A.updator = C.id
    WHERE 	A.isDelete = 0
+          ${_FaqTypeId ? `AND A.FaqTypeId = ${_FaqTypeId}` : ``}
    ORDER  BY num DESC 
    LIMIT  ${LIMIT}
   OFFSET  ${OFFSET}

@@ -118,6 +118,11 @@ export const initailState = {
   st_productDetialLoading: false,
   st_productDetialDone: false,
   st_productDetialError: null,
+
+  // 취소/환불 처리
+  st_cancelBoughtLoading: false,
+  st_cancelBoughtDone: false,
+  st_cancelBoughtError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -211,6 +216,10 @@ export const DELI_BOUGHTLIST_FAILURE = "DELI_BOUGHTLIST_FAILURE";
 export const PRODUCT_DETAIL_REQUEST = "PRODUCT_DETAIL_REQUEST";
 export const PRODUCT_DETAIL_SUCCESS = "PRODUCT_DETAIL_SUCCESS";
 export const PRODUCT_DETAIL_FAILURE = "PRODUCT_DETAIL_FAILURE";
+
+export const CANCEL_BOUGHT_REQUEST = "CANCEL_BOUGHT_REQUEST";
+export const CANCEL_BOUGHT_SUCCESS = "CANCEL_BOUGHT_SUCCESS";
+export const CANCEL_BOUGHT_FAILURE = "CANCEL_BOUGHT_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -762,6 +771,30 @@ const reducer = (state = initailState, action) =>
         draft.st_productDetailLoading = false;
         draft.st_productDetailDone = false;
         draft.st_productDetailError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case CANCEL_BOUGHT_REQUEST: {
+        draft.st_cancelBoughtLoading = true;
+        draft.st_cancelBoughtDone = false;
+        draft.st_cancelBoughtError = null;
+        break;
+      }
+
+      case CANCEL_BOUGHT_SUCCESS: {
+        draft.st_cancelBoughtLoading = false;
+        draft.st_cancelBoughtDone = true;
+        draft.st_cancelBoughtError = null;
+        break;
+      }
+
+      case CANCEL_BOUGHT_FAILURE: {
+        draft.st_cancelBoughtLoading = false;
+        draft.st_cancelBoughtDone = false;
+        draft.st_cancelBoughtError = action.error;
         break;
       }
 

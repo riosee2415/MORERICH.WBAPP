@@ -25,7 +25,7 @@ export const items = {
       useYn: true,
     },
     {
-      name: "상품유형별 통계",
+      name: "월별 매출통계",
       link: "/",
       useYn: true,
     },
@@ -169,7 +169,7 @@ export const items = {
       useYn: true,
     },
     {
-      name: "주문내역",
+      name: "주문관리",
       link: "/admin/store/bought",
       useYn: true,
     },

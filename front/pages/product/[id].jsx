@@ -21,12 +21,21 @@ import styled from "styled-components";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useCallback } from "react";
+import { PRODUCT_DETAIL_REQUEST } from "../../reducers/store";
+import { useSelector } from "react-redux";
 
 const Index = () => {
   ////// GLOBAL STATE //////
-  const [cartModal, setCartModal] = useState(false);
+  const { productDetail } = useSelector((s) => s.store);
+  console.log(productDetail);
   ////// HOOKS //////
   const width = useWidth();
+
+  // MODAL
+  const [cartModal, setCartModal] = useState(false);
+
+  // DATA
+  const [currentDatum, setcurrentDatum] = useState([]); // 상품 선택
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
@@ -34,6 +43,18 @@ const Index = () => {
     setCartModal((prev) => !prev);
   }, [cartModal]);
   ////// HANDLER //////
+
+  // 옵션 선택
+  const optionCreateHandler = useCallback((data) => {
+    let arr = currentDatum ? currentDatum.map((data) => data) : [];
+    const currentId = arr.findIndex((value) => value.id === data.id);
+
+    if (currentId === -1) {
+      arr.push(data);
+    } else {
+      arr.splice(currentId, 1);
+    }
+  }, []);
   ////// DATAVIEW //////
 
   return (
@@ -70,16 +91,18 @@ const Index = () => {
             <Wrapper
               width={width < 1100 ? (width < 800 ? `100%` : `30%`) : `50%`}
             >
-              <Image
-                alt="thumbnail"
-                margin={`0 0 20px`}
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
-              />
-              <Image
-                alt="thumbnail"
-                margin={`0 0 20px`}
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
-              />
+              {productDetail &&
+                productDetail.connectArray &&
+                productDetail.connectArray.map((data, idx) => {
+                  return (
+                    <Image
+                      key={idx}
+                      alt="thumbnail"
+                      margin={`0 0 20px`}
+                      src={data.filepath}
+                    />
+                  );
+                })}
             </Wrapper>
             <Wrapper
               width={width < 1100 ? (width < 800 ? `100%` : `70%`) : `50%`}
@@ -90,13 +113,13 @@ const Index = () => {
               al={`flex-start`}
             >
               <Text fontSize={width < 800 ? `16px` : `20px`} fontWeight={`600`}>
-                CASESTUDY
+                {productDetail && productDetail.name}
               </Text>
               <Text
                 fontSize={width < 800 ? `18px` : `24px`}
                 margin={`12px 0 19px`}
               >
-                [CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG
+                {productDetail && productDetail.subName}
               </Text>
               <Wrapper
                 dr={`row`}
@@ -105,19 +128,21 @@ const Index = () => {
                 padding={`0 0 36px`}
               >
                 <Wrapper width={`auto`} dr={`row`}>
-                  <Text
-                    color={Theme.grey_C}
-                    className="line"
-                    margin={`0 12px 0 0`}
-                    fontSize={width < 800 ? `14px` : `20px`}
-                  >
-                    2,100,000원
-                  </Text>
+                  {productDetail && productDetail.discount !== 0 && (
+                    <Text
+                      color={Theme.grey_C}
+                      className="line"
+                      margin={`0 12px 0 0`}
+                      fontSize={width < 800 ? `14px` : `20px`}
+                    >
+                      {productDetail && productDetail.viewPrice}
+                    </Text>
+                  )}
                   <Text
                     fontSize={width < 800 ? `16px` : `28px`}
                     fontWeight={`bold`}
                   >
-                    1,100,000원
+                    {productDetail && productDetail.viewCalcPrice}
                   </Text>
                 </Wrapper>
                 <Image
@@ -153,7 +178,7 @@ const Index = () => {
                 al={`flex-start`}
               >
                 <Text fontSize={width < 800 ? `14px` : `18px`}>
-                  - Product 상세 내용
+                  {productDetail && productDetail.detail}
                 </Text>
               </Wrapper>
               <CustomSelect
@@ -162,9 +187,19 @@ const Index = () => {
                 margin={`34px 0`}
                 sBorder={`1px solid ${Theme.black_C}`}
               >
-                <Select placeholder="옵션을 선택해주세요.">
-                  <Select.Option>옵션</Select.Option>
-                  <Select.Option>옵션</Select.Option>
+                <Select
+                  placeholder="옵션을 선택해주세요."
+                  onChange={optionCreateHandler}
+                >
+                  {productDetail &&
+                    productDetail.options &&
+                    productDetail.options.map((data, idx) => {
+                      return (
+                        <Select.Option key={idx} value={data}>
+                          {data.value}
+                        </Select.Option>
+                      );
+                    })}
                 </Select>
               </CustomSelect>
               <Wrapper
@@ -174,7 +209,8 @@ const Index = () => {
                 margin={`0 0 32px`}
               >
                 <Text fontSize={width < 800 ? `14px` : `16px`}>
-                  [CASESTUDY GOLF CLUB X BALANSA] BALANSA - BLACK
+                  {productDetail && productDetail.name} -{" "}
+                  {productDetail && productDetail.name}
                 </Text>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`12px 0 0`}>
                   <Wrapper
@@ -190,7 +226,9 @@ const Index = () => {
                       height={`30px`}
                       fontSize={`12px`}
                     >
-                      <MinusOutlined />
+                      <Text isHover>
+                        <MinusOutlined />
+                      </Text>
                     </Wrapper>
                     <Wrapper
                       width={`50px`}
@@ -207,7 +245,9 @@ const Index = () => {
                       height={`30px`}
                       fontSize={`12px`}
                     >
-                      <PlusOutlined />
+                      <Text isHover>
+                        <PlusOutlined />
+                      </Text>
                     </Wrapper>
                   </Wrapper>
                   <Text
@@ -224,7 +264,7 @@ const Index = () => {
                   fontSize={width < 800 ? `16px` : `28px`}
                   fontWeight={`bold`}
                 >
-                  1,100,000원
+                  {productDetail && productDetail.viewCalcPrice}
                 </Text>
               </Wrapper>
               <CommonButton
@@ -319,6 +359,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: PRODUCT_DETAIL_REQUEST,
+      data: {
+        id: context.query.id,
+      },
     });
 
     // 구현부 종료

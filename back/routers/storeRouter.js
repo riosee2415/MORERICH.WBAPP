@@ -322,7 +322,7 @@ router.post("/product/detail", async (req, res, next) => {
     const result = await consistOfArrayToArray(list1[0], list2[0], "ProductId");
     const result2 = await consistOfArrayToArray2(result, list3[0], "ProductId");
 
-    return res.status(200).json(result2);
+    return res.status(200).json(result2[0]);
   } catch (error) {
     console.error(error);
     return res.status(400).send("상품데이터를 조회할 수 없습니다.");

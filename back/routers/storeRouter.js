@@ -1039,6 +1039,35 @@ router.post("/bought/stat/update2", isAdminCheck, async (req, res, next) => {
 });
 
 /**
+ * SUBJECT : 취소/환불 신청
+ * PARAMETERS : id, reason
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 시니어 개발자 신태섭
+ * DEV DATE : 2023/06/02
+ */
+router.post("/bought/cancel", isLoggedIn, async (req, res, next) => {
+  const { id, reason } = req.body;
+
+  const cancalQuery = `
+    UPDATE  boughtHistory
+       SET  updatedAt = NOW(),
+            status = 4,
+            reason = "${reason}"
+     WHERE  id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(cancalQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("취소/환불 신청을 진행할 수 없습니다.");
+  }
+});
+
+/**
  * SUBJECT : 취소/환불 처리
  * PARAMETERS : { id, reason }
  * ORDER BY : -

@@ -547,7 +547,7 @@ router.get("/me", isLoggedIn, async (req, res, next) => {
 });
 
 router.post("/me/update", isLoggedIn, async (req, res, next) => {
-  const { id, nickname, mobile } = req.body;
+  const { password, mobile, email } = req.body;
 
   try {
     const exUser = await User.findOne({ where: { id: parseInt(id) } });
@@ -556,12 +556,17 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("존재하지 않는 사용자 입니다.");
     }
 
-    const updateUser = await User.update(
-      { nickname, mobile },
-      {
-        where: { id: parseInt(id) },
-      }
-    );
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const updateQuery = `
+    UPDATE  users  
+       SET  password = "${hashedPassword}",
+            mobile = "${mobile}",
+            email = "${email}",
+    WHERE  id = ${id}
+    `;
+
+    await models.sequelize.query(updateQuery);
 
     return res.status(200).json({ result: true });
   } catch (error) {
@@ -884,6 +889,56 @@ router.post("/upJoinSet", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).send("데이터 로드 실패");
+  }
+});
+
+/**
+ * SUBJECT : 회원탈퇴
+ * PARAMETERS : password
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 홍민기
+ * DEV DATE : 2023/03/07
+ */
+router.post("/exit/update", isLoggedIn, async (req, res, next) => {
+  const { password } = req.body;
+
+  const findQ = `
+  SELECT  id,
+          password
+    FROM  users
+   WHERE  id = ${req.user.id}
+  `;
+
+  const updateQ = `
+  UPDATE  users
+     SET  isExit = TRUE,
+          exitedAt = NOW()
+   WHERE  id = ${req.user.id}
+  `;
+
+  req.logout();
+
+  req.session.save(() => {
+    res.clearCookie("connect.sid");
+    res.redirect("/");
+  });
+
+  try {
+    const find = await models.sequelize.query(findQ);
+
+    const result = await bcrypt.compare(password, find[0][0].password);
+
+    if (!result) {
+      return res.status(400).send("비밀번호가 일치하지 않습니다.");
+    }
+
+    await models.sequelize.query(updateQ);
+
+    return res.status(200).json({ result: true });
+  } catch (e) {
+    console.error(e);
+    return res.status(400).send("탈퇴할 수 없습니다.");
   }
 });
 

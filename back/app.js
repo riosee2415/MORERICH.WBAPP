@@ -28,6 +28,7 @@ const faqRouter = require("./routers/faqRouter");
 const storeRouter = require("./routers/storeRouter");
 const cartRouter = require("./routers/cartRouter");
 const mypageRouter = require("./routers/mypageRouter");
+const wishRouter = require("./routers/wishRouter");
 
 // Config Settings
 db.sequelize
@@ -110,6 +111,7 @@ app.use("/api/faq", faqRouter);
 app.use("/api/store", storeRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/mypage", mypageRouter);
+app.use("/api/wish", wishRouter);
 
 // second minute hour day-of-month month day-of-week
 const task = cron.schedule(

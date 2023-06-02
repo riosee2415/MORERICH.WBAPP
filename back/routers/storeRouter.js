@@ -5,6 +5,7 @@ const multer = require("multer");
 const path = require("path");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 
 const router = express.Router();
 
@@ -899,6 +900,84 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).send("데이터를 로드할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품 구매하기
+ * PARAMETERS : post,
+                adrs,
+                dadrs,
+                boughtLists
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 시니어 개발자 신태섭
+ * DEV DATE : 2023/06/02
+ */
+router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
+  const { post, adrs, dadrs, boughtLists } = req.body;
+
+  if (!Array.isArray(boughtLists)) {
+    return res.status(401).send("잘못된 요청입니다.");
+  }
+
+  const insertQuery = `
+  INSERT  INTO  boughtHistory
+  (
+    post,
+    adrs,
+    dadrs,
+    UserId,
+    createdAt,
+    updatedAt
+  )
+  VALUES
+  (
+    "${post}",
+    "${adrs}",
+    "${dadrs}",
+    ${req.user.id},
+    NOW(),
+    NOW()
+  )
+  `;
+
+  try {
+    const insertResult = await models.sequelize.query(insertQuery);
+
+    await Promise.all(
+      boughtLists.map(async (data) => {
+        const insertQuery2 = `
+        INSERT  INTO  boughtList
+        (
+          productName,
+          price,
+          optionValue,
+          thumbnail,
+          BoughtHistoryId,
+          createdAt,
+          updatedAt
+        )
+        VALUES
+        (
+          "${data.productName}",
+          ${data.price},
+          "${data.optionValue}",
+          "${data.thumbnail}",
+          ${insertResult[0].insertId},
+          NOW(),
+          NOW()
+        )
+        `;
+
+        await models.sequelize.query(insertQuery2);
+      })
+    );
+
+    return res.status(201).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("상품을 구매할 수 없습니다.");
   }
 });
 

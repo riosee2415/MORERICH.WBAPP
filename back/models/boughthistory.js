@@ -11,12 +11,12 @@ module.exports = class BoughtHistory extends Model {
           defaultValue: "-",
         },
         adrs: {
-          type: DataTypes.STRING(200),
+          type: DataTypes.STRING(300),
           allowNull: false, // 필수
           defaultValue: "-",
         },
         dadrs: {
-          type: DataTypes.STRING(200),
+          type: DataTypes.STRING(300),
           allowNull: false, // 필수
           defaultValue: "-",
         },

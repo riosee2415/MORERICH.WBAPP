@@ -13,7 +13,7 @@ module.exports = class BoughtList extends Model {
           type: DataTypes.INTEGER,
           allowNull: false, // 필수
         },
-        option: {
+        optionValue: {
           type: DataTypes.STRING(100),
           allowNull: false, // 필수
           defaultValue: "-",

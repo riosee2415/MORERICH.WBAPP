@@ -31,6 +31,7 @@ import {
   GET_BOUGHTLIST_REQUEST,
   STATUS_BOUGHTLIST_REQUEST,
   DELI_BOUGHTLIST_REQUEST,
+  CANCEL_BOUGHT_REQUEST,
 } from "../../../reducers/store";
 import { numberWithCommas } from "../../../components/commonUtils";
 
@@ -44,9 +45,10 @@ const Bought = ({}) => {
     //
     st_deliBoughtListDone,
     st_deliBoughtListError,
+    //
+    st_cancelBoughtDone,
+    st_cancelBoughtError,
   } = useSelector((state) => state.store);
-
-  console.log(boughtlist);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -65,6 +67,7 @@ const Bought = ({}) => {
 
   const [deliModal, setDeliModal] = useState(false);
   const [canModal, setCanModal] = useState(false);
+  const [canInfoModal, setCanInfoModal] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
   const [adrs, setAdrs] = useState(false);
 
@@ -114,6 +117,26 @@ const Bought = ({}) => {
       return message.error(st_statusBoughtListError);
     }
   }, [st_statusBoughtListDone, st_statusBoughtListError]);
+
+  useEffect(() => {
+    if (st_cancelBoughtDone) {
+      dispatch({
+        type: GET_BOUGHTLIST_REQUEST,
+        data: {
+          searchDate: searchDate,
+          searchId: _searchId,
+          stat: stat,
+        },
+      });
+
+      canModalToggle(null);
+      setCrData(null);
+    }
+
+    if (st_cancelBoughtError) {
+      return message.error(st_cancelBoughtError);
+    }
+  }, [st_cancelBoughtDone, st_cancelBoughtError]);
 
   useEffect(() => {
     if (st_deliBoughtListDone) {
@@ -173,8 +196,27 @@ const Bought = ({}) => {
 
   ////// HANDLER //////
 
+  const cancelHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: CANCEL_BOUGHT_REQUEST,
+        data: {
+          id: crData.id,
+          reason: data.reason,
+        },
+      });
+    },
+    [crData]
+  );
+
   const canModalToggle = useCallback((row) => {
     setCanModal((p) => !p);
+
+    setCrData(row);
+  }, []);
+
+  const canInfoModalToggle = useCallback((row) => {
+    setCanInfoModal((p) => !p);
 
     setCrData(row);
   }, []);
@@ -425,7 +467,11 @@ const Bought = ({}) => {
       title: "취소/환불",
       render: (row) => {
         if (row.status === 4) {
-          return <ManageDelButton>사유확인</ManageDelButton>;
+          return (
+            <ManageDelButton onClick={() => canInfoModalToggle(row)}>
+              사유확인
+            </ManageDelButton>
+          );
         } else {
           return (
             <Popconfirm
@@ -646,6 +692,7 @@ const Bought = ({}) => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
           colon={false}
+          onFinish={cancelHandler}
         >
           <ManagementForm.Item
             label="취소/환불 사유"
@@ -656,9 +703,26 @@ const Bought = ({}) => {
           </ManagementForm.Item>
 
           <Wrapper dr="row" ju="flex-end">
-            <ManageDelButton>취소/환불 등록</ManageDelButton>
+            <ManageDelButton htmlType="submit">취소/환불 등록</ManageDelButton>
           </Wrapper>
         </ManagementForm>
+      </Modal>
+
+      <Modal
+        visible={canInfoModal}
+        width="500px"
+        title="취소/환불 사유 확인하기"
+        footer={null}
+        onCancel={() => canInfoModalToggle(null)}
+      >
+        <Wrapper
+          bgColor={Theme.adminLightGrey_C}
+          padding="10px"
+          radius="5px"
+          al="flex-start"
+        >
+          {crData && crData.reason}
+        </Wrapper>
       </Modal>
     </AdminLayout>
   );

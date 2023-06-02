@@ -16,17 +16,21 @@ import {
   CommonButton,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Modal, Select } from "antd";
+import { message, Modal, Select } from "antd";
 import styled from "styled-components";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useCallback } from "react";
 import { PRODUCT_DETAIL_REQUEST } from "../../reducers/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { CART_CREATE_REQUEST } from "../../reducers/cart";
+import { useEffect } from "react";
 
 const Index = () => {
   ////// GLOBAL STATE //////
   const { productDetail } = useSelector((s) => s.store);
+  const { st_cartCreateDone, st_cartCreateError } = useSelector((s) => s.cart);
   ////// HOOKS //////
   const width = useWidth();
 
@@ -38,12 +42,51 @@ const Index = () => {
   const [optionData, setOptionData] = useState(null); // 옵션 데이터
   const [totalPrice, setTotalPrice] = useState(0); // 상품금액
   ////// REDUX //////
+  const dispatch = useDispatch();
+  const router = useRouter();
   ////// USEEFFECT //////
+
+  // 카드 후 처리
+  useEffect(() => {
+    if (st_cartCreateDone) {
+      setCartModal(true);
+      return;
+    }
+
+    if (st_cartCreateError) {
+      return message.error(st_cartCreateError);
+    }
+  }, [st_cartCreateDone, st_cartCreateError]);
+
   ////// TOGGLE //////
   const cartModalToggle = useCallback(() => {
     setCartModal((prev) => !prev);
   }, [cartModal]);
   ////// HANDLER //////
+
+  // 장바구니 담기
+  const cartCreateHandler = useCallback(() => {
+    let products = [];
+
+    if (currentDatum.length === 0) {
+      return message.error("옵션을 선택해주세요");
+    }
+
+    currentDatum.map((data) => {
+      products.push({
+        ProductId: router.query.id,
+        ProductOptionId: data.id,
+        qun: data.qun,
+      });
+    });
+
+    dispatch({
+      type: CART_CREATE_REQUEST,
+      data: {
+        products,
+      },
+    });
+  }, [currentDatum]);
 
   // 수량 증가
   const optionQunUpdateHandler = useCallback(
@@ -89,7 +132,6 @@ const Index = () => {
     },
     [currentDatum, productDetail, totalPrice]
   );
-  console.log(productDetail);
   ////// DATAVIEW //////
 
   return (
@@ -334,7 +376,7 @@ const Index = () => {
                   fontSize={width < 800 ? `14px` : `20px`}
                   fontWeight={`600`}
                   kindOf={`white`}
-                  onClick={cartModalToggle}
+                  onClick={cartCreateHandler}
                 >
                   장바구니
                 </CommonButton>
@@ -376,6 +418,7 @@ const Index = () => {
                   height={`50px`}
                   kindOf={`white`}
                   margin={`0 4px 0 0`}
+                  onClick={() => router.push(`/cart`)}
                 >
                   카트 바로가기
                 </CommonButton>
@@ -385,6 +428,7 @@ const Index = () => {
                   fontWeight={`600`}
                   height={`50px`}
                   margin={`0 0 0 4px`}
+                  onClick={() => setCartModal(false)}
                 >
                   계속 쇼핑하기
                 </CommonButton>

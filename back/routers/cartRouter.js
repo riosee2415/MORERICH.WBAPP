@@ -38,7 +38,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
     		B.price - (B.price * (B.discount / 100))							            	AS discountPrice,
     		FORMAT(B.price - (B.price * (B.discount / 100)), 0)					            	AS formatDiscountPrice,
     		CONCAT(FORMAT(B.price - (B.price * (B.discount / 100)), 0), "원")	            	AS concatDiscountPrice,
-            (B.price - (B.price * (B.discount / 100))) * A.qun								    AS totalPrice,
+            CAST((B.price - (B.price * (B.discount / 100))) * A.qun AS signed integer)								    AS totalPrice,
             FORMAT((B.price - (B.price * (B.discount / 100))) * A.qun, 0)                       AS formatTotalPrice,
             CONCAT(FORMAT((B.price - (B.price * (B.discount / 100))) * A.qun, 0), "원")         AS concatTotalPrice,
     		C.value																	AS optionName

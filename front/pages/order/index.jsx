@@ -26,6 +26,7 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BOUGHT_CREATE_REQUEST } from "../../reducers/store";
 import { useRouter } from "next/router";
+import { CART_DELETE_REQUEST } from "../../reducers/cart";
 
 const style = {
   overflow: "hidden",
@@ -35,6 +36,7 @@ const Index = () => {
   ////// GLOBAL STATE //////
   const { boughtHistoryId, st_boughtCreateDone, st_boughtCreateError } =
     useSelector((state) => state.store);
+  const { me } = useSelector((state) => state.user);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -67,6 +69,16 @@ const Index = () => {
       sessionStorage.setItem("HISTORY", JSON.stringify(boughtHistoryId));
       sessionStorage.removeItem("BUY");
       sessionStorage.removeItem("TOTAL");
+
+      let arr = [];
+      currentData.map((data) => arr.push(data.id));
+
+      dispatch({
+        type: CART_DELETE_REQUEST,
+        data: {
+          cartIds: arr,
+        },
+      });
       return;
     }
 
@@ -84,11 +96,12 @@ const Index = () => {
       ? JSON.parse(sessionStorage.getItem("TOTAL"))
       : [];
 
-    if (data && total) {
+    if (data && total && me) {
       setCurrentData(data);
       setTotalData(total);
+      nameInput.setValue(me && me.nickname);
     }
-  }, []);
+  }, [me]);
 
   ////// TOGGLE //////
   ////// HANDLER //////

@@ -130,10 +130,12 @@ router.post("/adminList", async (req, res, next) => {
   `;
 
   const selectQuery2 = `
-  SELECT 	id,
+  SELECT 	ROW_NUMBER() OVER(ORDER	BY createdAt)		AS num,
+          id,
           post,
           adrs,
           dadrs,
+          isBasic,
           createdAt,
           updatedAt,
           DATE_FORMAT(createdAt, '%Y. %m. %d')			AS viewCreatedAt,

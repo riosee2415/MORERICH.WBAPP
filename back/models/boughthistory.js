@@ -46,6 +46,18 @@ module.exports = class BoughtHistory extends Model {
           type: DataTypes.STRING(1000),
           allowNull: true, // 필수
         },
+        returnAccountName: {
+          type: DataTypes.STRING(50),
+          allowNull: true,
+        },
+        returnBankName: {
+          type: DataTypes.STRING(50),
+          allowNull: true,
+        },
+        returnAccountNum: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
       },
       {
         modelName: "BoughtHistory",

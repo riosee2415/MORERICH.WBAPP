@@ -864,7 +864,10 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           A.post,
           A.adrs,
           A.dadrs,
-          A.reason
+          A.reason,
+          A.returnAccountName,
+          A.returnBankName,
+          A.returnAccountNum
     FROM	boughtHistory	A
    INNER
     JOIN	users 			B
@@ -1040,20 +1043,24 @@ router.post("/bought/stat/update2", isAdminCheck, async (req, res, next) => {
 
 /**
  * SUBJECT : 취소/환불 신청
- * PARAMETERS : id, reason
+ * PARAMETERS : id, reason, returnAccountName, returnBankName, returnAccountNum
  * ORDER BY : -
  * STATEMENT : -
  * DEVELOPMENT : 시니어 개발자 신태섭
  * DEV DATE : 2023/06/02
  */
 router.post("/bought/cancel", isLoggedIn, async (req, res, next) => {
-  const { id, reason } = req.body;
+  const { id, reason, returnAccountName, returnBankName, returnAccountNum } =
+    req.body;
 
   const cancalQuery = `
     UPDATE  boughtHistory
        SET  updatedAt = NOW(),
             status = 4,
-            reason = "${reason}"
+            reason = "${reason}",
+            returnAccountName = "${returnAccountName}",
+            returnBankName = "${returnBankName}",
+            returnAccountNum = "${returnAccountNum}"
      WHERE  id = ${id}
   `;
 

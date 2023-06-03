@@ -17,19 +17,118 @@ import {
   TextInput,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Checkbox, Modal, Select } from "antd";
+import { Checkbox, message, Modal, Select } from "antd";
 import { useState } from "react";
+import { useEffect } from "react";
+import useInput from "../../hooks/useInput";
+import DaumPostcode from "react-daum-postcode";
 import { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BOUGHT_CREATE_REQUEST } from "../../reducers/store";
+import { useRouter } from "next/router";
+
+const style = {
+  overflow: "hidden",
+};
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { boughtHistoryId, st_boughtCreateDone, st_boughtCreateError } =
+    useSelector((state) => state.store);
+
   ////// HOOKS //////
   const width = useWidth();
-  ////// REDUX //////
-  ////// USEEFFECT //////
-  ////// TOGGLE //////
 
+  // MODAL
+  const [isAddressModal, setIsAddressModal] = useState(false);
+
+  // DATA
+  const [totalData, setTotalData] = useState(0); // 최종결제금액
+  const [currentData, setCurrentData] = useState([]); // 구매할 상품
+
+  // INPUT
+  const nameInput = useInput(``);
+  const postcodeInput = useInput(``);
+  const addressInput = useInput(``);
+  const detailAddressInput = useInput(``);
+  const mobileInput = useInput(``);
+  const deliveryInput = useInput(``);
+
+  // BOOLEAN
+  const [isTerms, setIsTerms] = useState(false);
+  ////// REDUX //////
+  const dispatch = useDispatch();
+  const router = useRouter();
+  ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_boughtCreateDone && boughtHistoryId) {
+      router.push(`/order/complete`);
+      sessionStorage.setItem("HISTORY", JSON.stringify(boughtHistoryId));
+      sessionStorage.removeItem("BUY");
+      sessionStorage.removeItem("TOTAL");
+      return;
+    }
+
+    if (st_boughtCreateError) {
+      return message.error(st_boughtCreateError);
+    }
+  }, [st_boughtCreateDone, st_boughtCreateError, boughtHistoryId]);
+
+  useEffect(() => {
+    const data = sessionStorage.getItem("BUY")
+      ? JSON.parse(sessionStorage.getItem("BUY"))
+      : [];
+
+    const total = sessionStorage.getItem("TOTAL")
+      ? JSON.parse(sessionStorage.getItem("TOTAL"))
+      : [];
+
+    if (data && total) {
+      setCurrentData(data);
+      setTotalData(total);
+    }
+  }, []);
+
+  ////// TOGGLE //////
   ////// HANDLER //////
+
+  // 구매하기
+  const buyCreateHandler = useCallback(() => {
+    let boughtLists = [];
+
+    if (!postcodeInput.value) {
+      return message.error("주소를 선택해주세요.");
+    }
+
+    if (!detailAddressInput.value) {
+      return message.error("상세주소를 입력해주세요.");
+    }
+
+    if (!isTerms) {
+      return message.error("이용약관에 동의해주세요.");
+    }
+
+    currentData.map((data) => {
+      boughtLists.push({
+        productName: data.name,
+        price: data.totalPrice,
+        optionValue: data.optionName,
+        thumbnail: data.thumbnail,
+      });
+    });
+
+    dispatch({
+      type: BOUGHT_CREATE_REQUEST,
+      data: {
+        post: postcodeInput.value,
+        adrs: addressInput.value,
+        dadrs: detailAddressInput.value,
+        boughtLists,
+      },
+    });
+  }, [currentData, postcodeInput, addressInput, detailAddressInput, isTerms]);
+
   ////// DATAVIEW //////
 
   return (
@@ -91,6 +190,7 @@ const Index = () => {
                     width={width < 800 ? `100%` : `calc(100% - 182px)`}
                     placeholder="주문자명"
                     height={`50px`}
+                    {...nameInput}
                   />
                 </Wrapper>
                 <Wrapper dr={`row`} al={`flex-start`}>
@@ -105,19 +205,33 @@ const Index = () => {
                     dr={`row`}
                     ju={`space-between`}
                   >
-                    <TextInput width={`calc(100% - 188px)`} height={`50px`} />
-                    <CommonButton height={`50px`} width={`180px`}>
+                    <TextInput
+                      width={`calc(100% - 188px)`}
+                      height={`50px`}
+                      {...postcodeInput}
+                      readOnly
+                      placeholder="주소를 검색해주세요."
+                    />
+                    <CommonButton
+                      height={`50px`}
+                      width={`180px`}
+                      onClick={() => setIsAddressModal(true)}
+                    >
                       주소검색
                     </CommonButton>
                     <TextInput
                       width={`100%`}
                       height={`50px`}
                       margin={`10px 0`}
+                      {...addressInput}
+                      readOnly
+                      placeholder="주소를 검색해주세요."
                     />
                     <TextInput
                       width={`100%`}
                       height={`50px`}
                       placeholder="상세주소"
+                      {...detailAddressInput}
                     />
                   </Wrapper>
                 </Wrapper>
@@ -132,6 +246,7 @@ const Index = () => {
                     width={width < 800 ? `100%` : `calc(100% - 182px)`}
                     placeholder="연락처"
                     height={`50px`}
+                    {...mobileInput}
                   />
                 </Wrapper>
                 <Wrapper dr={`row`}>
@@ -146,9 +261,17 @@ const Index = () => {
                     height={`50px`}
                     sBorder={`1px solid ${Theme.black_C}`}
                   >
-                    <Select placeholder="선택해주세요.">
-                      <Select.Option></Select.Option>
-                      <Select.Option></Select.Option>
+                    <Select
+                      placeholder="선택해주세요."
+                      value={deliveryInput.value}
+                      onChange={(e) => deliveryInput.setValue(e)}
+                    >
+                      <Select.Option value={"배송유의사항1"}>
+                        배송유의사항1
+                      </Select.Option>
+                      <Select.Option value={"배송유의사항2"}>
+                        배송유의사항2
+                      </Select.Option>
                     </Select>
                   </CustomSelect>
                 </Wrapper>
@@ -170,7 +293,7 @@ const Index = () => {
               >
                 무통장 입금
               </CommonButton>
-              <Wrapper
+              {/* <Wrapper
                 al={`flex-start`}
                 margin={`34px 0 24px`}
                 fontSize={width < 800 ? `15px` : `18px`}
@@ -221,7 +344,7 @@ const Index = () => {
                     placeholder="'-'없이 숫자만 입력해주세요."
                   />
                 </Wrapper>
-              </Wrapper>
+              </Wrapper> */}
               <Wrapper
                 al={`flex-start`}
                 margin={`34px 0 24px`}
@@ -262,68 +385,82 @@ const Index = () => {
                 padding={width < 800 ? `30px 15px` : `40px`}
                 al={`flex-start`}
               >
-                <Text
+                <Wrapper
                   fontSize={width < 800 ? `20px` : `26px`}
                   fontWeight={`600`}
-                  margin={`0 0 28px`}
+                  padding={`0 0 28px`}
+                  borderBottom={`1px solid ${Theme.grey3_C}`}
+                  al={`flex-start`}
                 >
                   주문상품
-                </Text>
-                <Wrapper
-                  borderTop={`1px solid ${Theme.grey3_C}`}
-                  borderBottom={`1px solid ${Theme.grey3_C}`}
-                  padding={`28px 0`}
-                  dr={`row`}
-                >
-                  <Image
-                    alt="thumbnail"
-                    width={width < 900 ? `80px` : `112px`}
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
-                  />
-                  <Wrapper
-                    width={
-                      width < 900 ? `calc(100% - 80px)` : `calc(100% - 112px)`
-                    }
-                    padding={`0 0 0 14px`}
-                    al={`flex-start`}
-                  >
-                    <Text
-                      fontSize={width < 900 ? `16px` : `18px`}
-                      fontWeight={`600`}
-                    >
-                      CASESTUDY
-                    </Text>
-                    <Text
-                      fontSize={width < 900 ? `14px` : `17px`}
-                      minHeight={`45px`}
-                    >
-                      [CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG
-                    </Text>
-                    <Wrapper dr={`row`} ju={`space-between`}>
-                      <Wrapper width={`auto`} dr={`row`}>
-                        <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
-                          margin={`0 15px 0 0`}
-                        >
-                          옵션 : BLACK
-                        </Text>
-                        <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
-                        >
-                          수량 : 1개
-                        </Text>
-                      </Wrapper>
-                      <Text
-                        fontSize={width < 800 ? `15px` : `18px`}
-                        fontWeight={`600`}
-                      >
-                        1,100,000원
-                      </Text>
-                    </Wrapper>
-                  </Wrapper>
                 </Wrapper>
+                {currentData.map((data) => {
+                  return (
+                    <Wrapper
+                      key={data.id}
+                      borderBottom={`1px solid ${Theme.grey3_C}`}
+                      padding={`28px 0`}
+                      dr={`row`}
+                    >
+                      <Image
+                        alt="thumbnail"
+                        width={width < 900 ? `80px` : `112px`}
+                        height={width < 900 ? `80px` : `112px`}
+                        src={data.thumbnail}
+                      />
+                      <Wrapper
+                        width={
+                          width < 900
+                            ? `calc(100% - 80px)`
+                            : `calc(100% - 112px)`
+                        }
+                        padding={`0 0 0 14px`}
+                        al={`flex-start`}
+                      >
+                        <Text
+                          fontSize={width < 900 ? `16px` : `18px`}
+                          fontWeight={`600`}
+                        >
+                          {data.name}
+                        </Text>
+                        <Text
+                          fontSize={width < 900 ? `14px` : `17px`}
+                          minHeight={`45px`}
+                        >
+                          {data.subName}
+                        </Text>
+                        <Wrapper dr={`row`} ju={`space-between`}>
+                          <Wrapper width={`auto`} dr={`row`}>
+                            <Text
+                              fontSize={width < 900 ? `14px` : `15px`}
+                              color={Theme.grey_C}
+                              margin={`0 15px 0 0`}
+                            >
+                              옵션 : {data.optionName}
+                            </Text>
+                            <Text
+                              fontSize={width < 900 ? `14px` : `15px`}
+                              color={Theme.grey_C}
+                            >
+                              수량 :{" "}
+                              {String(data.qun).replace(
+                                /\B(?=(\d{3})+(?!\d))/g,
+                                ","
+                              )}
+                              개
+                            </Text>
+                          </Wrapper>
+                          <Text
+                            fontSize={width < 800 ? `15px` : `18px`}
+                            fontWeight={`600`}
+                          >
+                            {data.concatTotalPrice}
+                          </Text>
+                        </Wrapper>
+                      </Wrapper>
+                    </Wrapper>
+                  );
+                })}
               </Wrapper>
 
               <Wrapper
@@ -347,7 +484,7 @@ const Index = () => {
                     fontSize={width < 800 ? `15px` : `18px`}
                     fontWeight={`600`}
                   >
-                    1,100,000원
+                    {totalData.productprice}원
                   </Text>
                 </Wrapper>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`16px 0`}>
@@ -358,7 +495,7 @@ const Index = () => {
                     fontSize={width < 800 ? `15px` : `18px`}
                     fontWeight={`600`}
                   >
-                    1개
+                    {totalData.qun}개
                   </Text>
                 </Wrapper>
                 <Wrapper dr={`row`} ju={`space-between`}>
@@ -384,7 +521,7 @@ const Index = () => {
                     fontSize={width < 800 ? `20px` : `28px`}
                     fontWeight={`bold`}
                   >
-                    1,103,500원
+                    {totalData.totalPrice}원
                   </Text>
                 </Wrapper>
               </Wrapper>
@@ -400,7 +537,10 @@ const Index = () => {
                 >
                   약관동의
                 </Text>
-                <Checkbox checked>
+                <Checkbox
+                  checked={isTerms}
+                  onChange={() => setIsTerms(!isTerms)}
+                >
                   <Wrapper
                     dr={`row`}
                     ju={`flex-start`}
@@ -423,12 +563,35 @@ const Index = () => {
                   fontSize={width < 800 ? `16px` : `20px`}
                   fontWeight={`600`}
                   margin={`28px 0 0`}
+                  onClick={buyCreateHandler}
                 >
                   바로구매
                 </CommonButton>
               </Wrapper>
             </Wrapper>
           </RsWrapper>
+
+          <Modal
+            width={`500px`}
+            style={{ top: 200 }}
+            footer={null}
+            visible={isAddressModal}
+            onCancel={() => setIsAddressModal(false)}
+          >
+            <DaumPostcode
+              onComplete={(data) => {
+                postcodeInput.setValue(data.zonecode);
+                addressInput.setValue(data.address);
+
+                setIsAddressModal(false);
+              }}
+              width={`600px`}
+              height={`500px`}
+              autoClose
+              animation
+              style={style}
+            />
+          </Modal>
         </WholeWrapper>
       </ClientLayout>
     </>

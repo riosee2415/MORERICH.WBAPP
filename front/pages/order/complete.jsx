@@ -15,6 +15,7 @@ import {
   Wrapper,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
+import { useSelector } from "react-redux";
 
 const Complete = () => {
   ////// GLOBAL STATE //////

@@ -64,6 +64,26 @@ const Index = () => {
   }, [cartModal]);
   ////// HANDLER //////
 
+  // 바로 구매
+  const createHandler = useCallback(() => {
+    let currentCheck = [];
+
+    sessionStorage.setItem("BUY", JSON.stringify([productDetail]));
+    sessionStorage.setItem(
+      "TOTAL",
+      JSON.stringify({
+        totalPriceInt: resultPrice + 3500,
+        totalPrice: String(resultPrice + 3500).replace(
+          /\B(?=(\d{3})+(?!\d))/g,
+          ","
+        ),
+        qun: resultQun,
+        productprice: String(resultPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      })
+    );
+  }, [currentDatum]);
+  console.log(currentDatum);
+
   // 장바구니 담기
   const cartCreateHandler = useCallback(() => {
     let products = [];

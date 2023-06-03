@@ -127,6 +127,7 @@ const Index = () => {
     );
     router.push(`/order`);
   }, [currentCheck, resultPrice, resultQun]);
+  
 
   // 장바구니 수량 수정
   const cartUpdateHandler = useCallback((data, num) => {

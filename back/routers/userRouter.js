@@ -130,8 +130,7 @@ router.post("/adminList", async (req, res, next) => {
   `;
 
   const selectQuery2 = `
-  SELECT 	ROW_NUMBER() OVER(ORDER	BY createdAt)		AS num,
-          id,
+  SELECT 	id,
           post,
           adrs,
           dadrs,

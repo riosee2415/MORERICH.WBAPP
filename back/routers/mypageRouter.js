@@ -154,10 +154,10 @@ router.post("/address/list", isLoggedIn, async (req, res, next) => {
           title,
           name,
           mobile,
-  		post,
-  		adrs,
-  		dadrs,
-  		isBasic
+      		post,
+      		adrs,
+      		dadrs,
+      		isBasic
     FROM  address a
    WHERE  UserId = ${req.user.id}
    ORDER  BY  isBasic DESC
@@ -166,6 +166,44 @@ router.post("/address/list", isLoggedIn, async (req, res, next) => {
     const result = await models.sequelize.query(selectQuery);
 
     return res.status(200).json(result[0]);
+  } catch (e) {
+    console.error(e);
+    return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 배송지 상세
+ * PARAMETERS : id
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 시니어 홍민기
+ * DEV DATE : 2023/06/03
+ */
+
+router.post("/address/detail", isLoggedIn, async (req, res, next) => {
+  const { id } = req.body;
+
+  const selectQuery = `
+  SELECT  id,
+          title,
+          name,
+          mobile,
+  		    post,
+  		    adrs,
+  		    dadrs,
+  		    isBasic
+    FROM  address a
+   WHERE  id = ${id}
+  `;
+  try {
+    const result = await models.sequelize.query(selectQuery);
+
+    if (result[0].length === 0) {
+      return res.status(400).send("배송지가 존재하지 없습니다.");
+    }
+
+    return res.status(200).json(result[0][0]);
   } catch (e) {
     console.error(e);
     return res.status(400).send("데이터를 조회할 수 없습니다.");

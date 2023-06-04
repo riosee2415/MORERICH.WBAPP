@@ -563,8 +563,8 @@ router.post("/me/update", isLoggedIn, async (req, res, next) => {
     UPDATE  users  
        SET  password = "${hashedPassword}",
             mobile = "${mobile}",
-            email = "${email}",
-    WHERE  id = ${id}
+            email = "${email}"
+    WHERE  id = ${req.user.id}
     `;
 
     await models.sequelize.query(updateQuery);

@@ -141,7 +141,7 @@ const Login = () => {
               >
                 회원가입
               </CommonButton>
-              <CommonButton
+              {/* <CommonButton
                 width={`356px`}
                 fontSize={`16px`}
                 fontWeight={`600`}
@@ -155,7 +155,7 @@ const Login = () => {
                   src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_kakao_h.png`}
                 />
                 카카오로 로그인
-              </CommonButton>
+              </CommonButton> */}
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
@@ -17,15 +17,34 @@ import {
 } from "../../../components/commonComponents";
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { BOUGHT_LIST_REQUEST } from "../../../reducers/mypage";
+import { useRouter } from "next/router";
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { me } = useSelector((state) => state.user);
+  const { boughtList } = useSelector((state) => state.mypage);
+
+  console.log(boughtList);
+
   const [dModal, setDModal] = useState(false);
+
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (!me) {
+      router.push(`/user/login`);
+
+      return message.error("로그인이 필요한 서비스입니다.");
+    }
+  }, [me]);
   ////// TOGGLE //////
   const dModalToggle = useCallback(() => {
     setDModal((prev) => !prev);
@@ -458,6 +477,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: BOUGHT_LIST_REQUEST,
     });
 
     // 구현부 종료

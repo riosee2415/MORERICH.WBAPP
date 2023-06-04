@@ -155,7 +155,7 @@ const AppHeader = ({}) => {
             color={Theme.grey_C}
           >
             {me ? (
-              <Link href={`/mypage`}>
+              <Link href={`/mypage/order`}>
                 <a>
                   <Text margin={`0 24px 0 0`} isHover>
                     마이페이지

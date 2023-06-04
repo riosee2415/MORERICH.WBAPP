@@ -13,6 +13,7 @@ import faqSaga from "./faq";
 import storeSaga from "./store";
 import cartSaga from "./cart";
 import wishSaga from "./wish";
+import mypageSaga from "./mypage";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -36,6 +37,7 @@ export default function* rootSaga() {
     fork(storeSaga),
     fork(cartSaga),
     fork(wishSaga),
+    fork(mypageSaga),
     //
   ]);
 }

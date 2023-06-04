@@ -64,7 +64,7 @@ const reducer = (state = initailState, action) =>
         draft.st_boughtDetailLoading = false;
         draft.st_boughtDetailDone = true;
         draft.st_boughtDetailError = null;
-        draft.boughtDetail = action.data;
+        draft.boughtDetail = action.data[0];
         break;
       }
       case BOUGHT_DETAIL_FAILURE: {

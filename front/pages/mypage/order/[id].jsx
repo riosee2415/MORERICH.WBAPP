@@ -64,158 +64,176 @@ const Index = () => {
                 구매내역상세
               </Wrapper>
 
-              <Wrapper borderTop={`1px solid ${Theme.black_C}`}>
-                <Wrapper
-                  height={`50px`}
-                  borderBottom={`1px solid ${Theme.grey3_C}`}
-                  dr={`row`}
-                  ju={`flex-start`}
-                  fontSize={`16px`}
-                  padding={`0 14px`}
-                >
-                  <Text margin={`0 16px 0 0`}>2023-05-23</Text>
-                  <Text color={Theme.grey_C}>ORDER230137192783</Text>
-                </Wrapper>
-                <Wrapper borderBottom={`1px solid ${Theme.black_C}`} dr={`row`}>
-                  <Wrapper
-                    width={width < 900 ? `100%` : `58%`}
-                    dr={`row`}
-                    padding={`23px 14px`}
-                  >
-                    <Image
-                      alt="thumbnail"
-                      width={width < 900 ? `80px` : `112px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
-                    />
+              {boughtDetail &&
+                boughtDetail.connectArray.map((item) => {
+                  return (
                     <Wrapper
-                      width={
-                        width < 900 ? `calc(100% - 80px)` : `calc(100% - 112px)`
-                      }
-                      padding={`0 0 0 14px`}
-                      al={`flex-start`}
+                      borderTop={`1px solid ${Theme.black_C}`}
+                      key={item.id}
                     >
-                      <Text
-                        fontSize={width < 900 ? `16px` : `18px`}
-                        fontWeight={`600`}
+                      <Wrapper
+                        height={`50px`}
+                        borderBottom={`1px solid ${Theme.grey3_C}`}
+                        dr={`row`}
+                        ju={`flex-start`}
+                        fontSize={`16px`}
+                        padding={`0 14px`}
                       >
-                        CASESTUDY
-                      </Text>
-                      <Text
-                        fontSize={width < 900 ? `14px` : `17px`}
-                        minHeight={`45px`}
-                      >
-                        [CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG
-                      </Text>
-                      <Wrapper width={`auto`} dr={`row`}>
-                        <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
-                          margin={`0 15px 0 0`}
-                        >
-                          옵션 : BLACK
-                        </Text>
-                        <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
-                        >
-                          수량 : 1개
+                        <Text margin={`0 16px 0 0`}>{item.viewCreatedAt}</Text>
+                        <Text color={Theme.grey_C}>
+                          {item.sortCreatedAt}
+                          {item.id}
                         </Text>
                       </Wrapper>
-                      {width < 900 && (
-                        <>
-                          <Text>1,100,000원</Text>
-                          <Wrapper dr={`row`} margin={`5px 0`}>
-                            <Text fontWeight={`600`} margin={`0 10px 0 0`}>
-                              배송완료
+                      <Wrapper
+                        borderBottom={`1px solid ${Theme.black_C}`}
+                        dr={`row`}
+                      >
+                        <Wrapper
+                          width={width < 900 ? `100%` : `58%`}
+                          dr={`row`}
+                          padding={`23px 14px`}
+                        >
+                          <Image
+                            alt="thumbnail"
+                            width={width < 900 ? `80px` : `112px`}
+                            height={width < 900 ? `80px` : `112px`}
+                            src={item.thumbnail}
+                          />
+                          <Wrapper
+                            width={
+                              width < 900
+                                ? `calc(100% - 80px)`
+                                : `calc(100% - 112px)`
+                            }
+                            padding={`0 0 0 14px`}
+                            al={`flex-start`}
+                          >
+                            <Text
+                              fontSize={width < 900 ? `16px` : `18px`}
+                              fontWeight={`600`}
+                            >
+                              {item.productName}
                             </Text>
-                            <Text color={Theme.grey_C}>롯데택배 </Text>
-                            <Text color={Theme.grey_C}>12365454654548</Text>
+
+                            <Wrapper width={`auto`} dr={`row`}>
+                              <Text
+                                fontSize={width < 900 ? `14px` : `15px`}
+                                color={Theme.grey_C}
+                                margin={`0 15px 0 0`}
+                              >
+                                옵션 : {item.optionValue}
+                              </Text>
+                              <Text
+                                fontSize={width < 900 ? `14px` : `15px`}
+                                color={Theme.grey_C}
+                              >
+                                수량 : {item.qun}개
+                              </Text>
+                            </Wrapper>
+                            {width < 900 && (
+                              <>
+                                <Text>{item.viewCalcPrice}</Text>
+                                <Wrapper dr={`row`} margin={`5px 0`}>
+                                  <Text
+                                    fontWeight={`600`}
+                                    margin={`0 10px 0 0`}
+                                  >
+                                    배송완료
+                                  </Text>
+                                  <Text color={Theme.grey_C}>롯데택배 </Text>
+                                  <Text color={Theme.grey_C}>
+                                    12365454654548
+                                  </Text>
+                                </Wrapper>
+                                <Wrapper dr={`row`}>
+                                  <CommonButton
+                                    width={`32%`}
+                                    height={`30px`}
+                                    kindOf={`grey3`}
+                                    padding={`0`}
+                                  >
+                                    교환 요청
+                                  </CommonButton>
+                                  <CommonButton
+                                    width={`32%`}
+                                    height={`30px`}
+                                    kindOf={`grey3`}
+                                    padding={`0`}
+                                    margin={`0 4px`}
+                                  >
+                                    환불 요청
+                                  </CommonButton>
+                                  <CommonButton
+                                    width={`32%`}
+                                    height={`30px`}
+                                    kindOf={`grey3`}
+                                    padding={`0`}
+                                  >
+                                    1:1 채팅
+                                  </CommonButton>
+                                </Wrapper>
+                              </>
+                            )}
                           </Wrapper>
-                          <Wrapper dr={`row`}>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                            >
-                              교환 요청
-                            </CommonButton>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                              margin={`0 4px`}
-                            >
-                              환불 요청
-                            </CommonButton>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                            >
-                              1:1 채팅
-                            </CommonButton>
-                          </Wrapper>
-                        </>
-                      )}
+                        </Wrapper>
+                        <Wrapper
+                          width={`14%`}
+                          display={width < 900 ? `none` : `flex`}
+                          fontSize={`18px`}
+                          fontWeight={`600`}
+                        >
+                          {item.viewCalcPrice}
+                        </Wrapper>
+                        <Wrapper
+                          width={`14%`}
+                          display={width < 900 ? `none` : `flex`}
+                        >
+                          <Text
+                            fontSize={`18px`}
+                            fontWeight={`600`}
+                            margin={`0 0 14px`}
+                          >
+                            배송완료
+                          </Text>
+                          <Text color={Theme.grey_C}>롯데택배 </Text>
+                          <Text color={Theme.grey_C}>12365454654548</Text>
+                        </Wrapper>
+                        <Wrapper
+                          width={`14%`}
+                          display={width < 900 ? `none` : `flex`}
+                        >
+                          <CommonButton
+                            width={`78px`}
+                            height={`30px`}
+                            kindOf={`grey3`}
+                            padding={`0`}
+                          >
+                            교환 요청
+                          </CommonButton>
+                          <CommonButton
+                            width={`78px`}
+                            height={`30px`}
+                            kindOf={`grey3`}
+                            padding={`0`}
+                            margin={`6px 0`}
+                          >
+                            환불 요청
+                          </CommonButton>
+                          <CommonButton
+                            width={`78px`}
+                            height={`30px`}
+                            kindOf={`grey3`}
+                            padding={`0`}
+                          >
+                            1:1 채팅
+                          </CommonButton>
+                        </Wrapper>
+                      </Wrapper>
                     </Wrapper>
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                    fontSize={`18px`}
-                    fontWeight={`600`}
-                  >
-                    1,100,000원
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                  >
-                    <Text
-                      fontSize={`18px`}
-                      fontWeight={`600`}
-                      margin={`0 0 14px`}
-                    >
-                      배송완료
-                    </Text>
-                    <Text color={Theme.grey_C}>롯데택배 </Text>
-                    <Text color={Theme.grey_C}>12365454654548</Text>
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                  >
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                    >
-                      교환 요청
-                    </CommonButton>
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                      margin={`6px 0`}
-                    >
-                      환불 요청
-                    </CommonButton>
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                    >
-                      1:1 채팅
-                    </CommonButton>
-                  </Wrapper>
-                </Wrapper>
-              </Wrapper>
+                  );
+                })}
+
               <Wrapper
                 al={`flex-start`}
                 margin={`80px 0 24px`}

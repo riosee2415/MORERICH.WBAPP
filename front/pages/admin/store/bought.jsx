@@ -306,13 +306,18 @@ const Bought = ({}) => {
     },
     {
       title: "선택옵션",
-      dataIndex: "option",
+      dataIndex: "optionValue",
+    },
+    {
+      title: "구매수량",
+      render: (row) => <Text>{row.qun}개</Text>,
     },
     {
       title: "금액",
       dataIndex: "viewPrice",
     },
   ];
+
   const column = [
     {
       title: "번호",
@@ -722,6 +727,13 @@ const Bought = ({}) => {
           al="flex-start"
         >
           {crData && crData.reason}
+
+          <Wrapper margin="10px" al="flex-start">
+            <Text fontSize="18px">계좌정보</Text>
+            <Text> 은 행 명 : {crData && crData.returnAccountName}</Text>
+            <Text> 예 금 주 : {crData && crData.returnBankName}</Text>
+            <Text> 계좌번호 : {crData && crData.returnAccountNum}</Text>
+          </Wrapper>
         </Wrapper>
       </Modal>
     </AdminLayout>

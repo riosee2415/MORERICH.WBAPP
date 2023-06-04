@@ -17,11 +17,18 @@ import {
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";
 import Link from "next/dist/client/link";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { BOUGHT_DETAIL_REQUEST } from "../../../reducers/mypage";
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { boughtDetail } = useSelector((state) => state.mypage);
+
+  console.log(boughtDetail);
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
@@ -414,6 +421,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: BOUGHT_DETAIL_REQUEST,
+      data: {
+        id: context.query.id,
+      },
     });
 
     // 구현부 종료

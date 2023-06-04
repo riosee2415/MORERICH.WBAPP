@@ -17,7 +17,7 @@ import {
 } from "../../../components/commonComponents";
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";
-import { message, Modal } from "antd";
+import { Empty, message, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { BOUGHT_LIST_REQUEST } from "../../../reducers/mypage";
 import { useRouter } from "next/router";
@@ -65,6 +65,11 @@ const Index = () => {
     [dModal]
   );
   ////// HANDLER //////
+  const movelinkHandler = useCallback((link) => {
+    router.push(link);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -123,190 +128,225 @@ const Index = () => {
 
               {/* 반복되는 영역 시작 */}
 
-              {boughtList.map((item) => {
-                return (
-                  <Wrapper key={item.id}>
-                    <Wrapper
-                      height={`50px`}
-                      borderBottom={`1px solid ${Theme.grey3_C}`}
-                      dr={`row`}
-                      ju={`flex-start`}
-                      fontSize={`16px`}
-                      padding={`0 14px`}
-                    >
-                      <Text margin={`0 16px 0 0`}>{item.viewCreatedAt}</Text>
-                      <Text color={Theme.grey_C}>
-                        {item.sortCreatedAt + "" + item.id}
-                      </Text>
-                    </Wrapper>
-                    <Wrapper
-                      borderBottom={`1px solid ${Theme.black_C}`}
-                      dr={`row`}
-                    >
+              {boughtList && boughtList.length === 0 ? (
+                <Wrapper padding={`50px 0`}>
+                  <Empty description="조회된 구매내역이 없습니다." />
+                </Wrapper>
+              ) : (
+                boughtList.map((item) => {
+                  return (
+                    <Wrapper key={item.id}>
                       <Wrapper
-                        width={width < 900 ? `100%` : `58%`}
+                        height={`50px`}
+                        borderBottom={`1px solid ${Theme.grey3_C}`}
                         dr={`row`}
-                        padding={`23px 14px`}
+                        ju={`flex-start`}
+                        fontSize={`16px`}
+                        padding={`0 14px`}
                       >
-                        <Image
-                          alt="thumbnail"
-                          width={width < 900 ? `80px` : `112px`}
-                          height={width < 900 ? `80px` : `112px`}
-                          src={item.connectArray[0].thumbnail}
-                        />
+                        <Text margin={`0 16px 0 0`}>{item.viewCreatedAt}</Text>
+                        <Text color={Theme.grey_C}>
+                          {item.sortCreatedAt + "" + item.id}
+                        </Text>
+                      </Wrapper>
+                      <Wrapper
+                        borderBottom={`1px solid ${Theme.black_C}`}
+                        dr={`row`}
+                      >
                         <Wrapper
-                          width={
-                            width < 900
-                              ? `calc(100% - 80px)`
-                              : `calc(100% - 112px)`
-                          }
-                          padding={`0 0 0 14px`}
-                          al={`flex-start`}
+                          width={width < 900 ? `100%` : `58%`}
+                          dr={`row`}
+                          padding={`23px 14px`}
                         >
-                          <Text
-                            fontSize={width < 900 ? `16px` : `18px`}
-                            fontWeight={`600`}
+                          <Image
+                            alt="thumbnail"
+                            width={width < 900 ? `80px` : `112px`}
+                            height={width < 900 ? `80px` : `112px`}
+                            src={item.connectArray[0].thumbnail}
+                          />
+                          <Wrapper
+                            width={
+                              width < 900
+                                ? `calc(100% - 80px)`
+                                : `calc(100% - 112px)`
+                            }
+                            padding={`0 0 0 14px`}
+                            al={`flex-start`}
                           >
-                            {item.connectArray.length < 2 ? (
-                              item.connectArray[0].productName
-                            ) : (
+                            <Text
+                              fontSize={width < 900 ? `16px` : `18px`}
+                              fontWeight={`600`}
+                            >
+                              {item.connectArray.length < 2 ? (
+                                item.connectArray[0].productName
+                              ) : (
+                                <>
+                                  {item.connectArray[0].productName} 외 &nbsp;
+                                  {item.connectArray.length}개
+                                </>
+                              )}
+                            </Text>
+
+                            <Wrapper width={`auto`} dr={`row`}>
+                              <Text
+                                fontSize={width < 900 ? `14px` : `15px`}
+                                color={Theme.grey_C}
+                              >
+                                수량 : {item.connectArray.length}개
+                              </Text>
+                            </Wrapper>
+                            {width < 900 && (
                               <>
-                                {item.connectArray[0].productName} 외 &nbsp;
-                                {item.connectArray.length}개
+                                <Text>
+                                  {numberWithCommas(
+                                    item.connectArray.reduce(
+                                      (sum, currValue) => {
+                                        return sum + currValue.price;
+                                      },
+                                      0
+                                    )
+                                  )}
+                                  원
+                                </Text>
+                                <Wrapper
+                                  dr={`row`}
+                                  margin={`5px 0`}
+                                  ju={`flex-start`}
+                                >
+                                  <Text
+                                    fontWeight={`600`}
+                                    margin={`0 10px 0 0`}
+                                  >
+                                    {item.status === 0 && "상품 준비중"}
+                                    {item.status === 1 && "배송 준비중"}
+                                    {item.status === 2 && "배송중"}
+                                    {item.status === 3 && "배송완료"}
+                                    {item.status === 4 && "취소/환불"}
+                                  </Text>
+                                  <Text color={Theme.grey_C}>
+                                    {item.deliveryCompany === "-"
+                                      ? "배송정보가"
+                                      : item.deliveryCompany}{" "}
+                                    {item.deliveryNo === "-"
+                                      ? "입력되지 않았습니다"
+                                      : item.deliveryNo}
+                                  </Text>
+                                </Wrapper>
+                                <Wrapper dr={`row`}>
+                                  <CommonButton
+                                    width={`32%`}
+                                    height={`30px`}
+                                    kindOf={`grey3`}
+                                    padding={`0`}
+                                    onClick={() =>
+                                      movelinkHandler(
+                                        `/mypage/order/${item.id}`
+                                      )
+                                    }
+                                  >
+                                    주문리스트
+                                  </CommonButton>
+                                  <CommonButton
+                                    width={`32%`}
+                                    height={`30px`}
+                                    kindOf={`grey3`}
+                                    padding={`0`}
+                                    margin={`0 4px`}
+                                    onClick={() => dModalToggle(item)}
+                                  >
+                                    {item.status <= 2 ? "취소요청" : "환불요청"}
+                                  </CommonButton>
+                                  <CommonButton
+                                    width={`32%`}
+                                    height={`30px`}
+                                    kindOf={`grey3`}
+                                    padding={`0`}
+                                  >
+                                    1:1 채팅
+                                  </CommonButton>
+                                </Wrapper>
                               </>
                             )}
-                          </Text>
-
-                          <Wrapper width={`auto`} dr={`row`}>
-                            <Text
-                              fontSize={width < 900 ? `14px` : `15px`}
-                              color={Theme.grey_C}
-                            >
-                              수량 : {item.connectArray.length}개
-                            </Text>
                           </Wrapper>
-                          {width < 900 && (
-                            <>
-                              <Text>
-                                {numberWithCommas(
-                                  item.connectArray.reduce((sum, currValue) => {
-                                    return sum + currValue.price;
-                                  }, 0)
-                                )}
-                                원
-                              </Text>
-                              <Wrapper dr={`row`} margin={`5px 0`}>
-                                <Text fontWeight={`600`} margin={`0 10px 0 0`}>
-                                  배송완료
-                                </Text>
-                                <Text color={Theme.grey_C}>롯데택배 </Text>
-                                <Text color={Theme.grey_C}>12365454654548</Text>
-                              </Wrapper>
-                              <Wrapper dr={`row`}>
-                                <CommonButton
-                                  width={`32%`}
-                                  height={`30px`}
-                                  kindOf={`grey3`}
-                                  padding={`0`}
-                                >
-                                  교환 요청
-                                </CommonButton>
-                                <CommonButton
-                                  width={`32%`}
-                                  height={`30px`}
-                                  kindOf={`grey3`}
-                                  padding={`0`}
-                                  margin={`0 4px`}
-                                >
-                                  환불 요청
-                                </CommonButton>
-                                <CommonButton
-                                  width={`32%`}
-                                  height={`30px`}
-                                  kindOf={`grey3`}
-                                  padding={`0`}
-                                >
-                                  1:1 채팅
-                                </CommonButton>
-                              </Wrapper>
-                            </>
-                          )}
                         </Wrapper>
-                      </Wrapper>
-                      <Wrapper
-                        width={`14%`}
-                        display={width < 900 ? `none` : `flex`}
-                        fontSize={`18px`}
-                        fontWeight={`600`}
-                      >
-                        {numberWithCommas(
-                          item.connectArray.reduce((sum, currValue) => {
-                            return sum + currValue.price;
-                          }, 0)
-                        )}
-                        원
-                      </Wrapper>
-                      <Wrapper
-                        width={`14%`}
-                        display={width < 900 ? `none` : `flex`}
-                      >
-                        <Text
+                        <Wrapper
+                          width={`14%`}
+                          display={width < 900 ? `none` : `flex`}
                           fontSize={`18px`}
                           fontWeight={`600`}
-                          margin={`0 0 14px`}
                         >
-                          {item.status === 0 && "상품 준비중"}
-                          {item.status === 1 && "배송 준비중"}
-                          {item.status === 2 && "배송중"}
-                          {item.status === 3 && "배송완료"}
-                          {item.status === 4 && "취소/환불"}
-                        </Text>
-                        <Text color={Theme.grey_C}>
-                          {item.deliveryCompany === "-"
-                            ? "배송정보가"
-                            : item.deliveryCompany}
-                        </Text>
-                        <Text color={Theme.grey_C}>
-                          {item.deliveryNo === "-"
-                            ? "입력되지 않았습니다"
-                            : item.deliveryNo}
-                        </Text>
-                      </Wrapper>
-                      <Wrapper
-                        width={`14%`}
-                        display={width < 900 ? `none` : `flex`}
-                      >
-                        <CommonButton
-                          width={`78px`}
-                          height={`30px`}
-                          kindOf={`grey3`}
-                          padding={`0`}
+                          {numberWithCommas(
+                            item.connectArray.reduce((sum, currValue) => {
+                              return sum + currValue.price;
+                            }, 0)
+                          )}
+                          원
+                        </Wrapper>
+                        <Wrapper
+                          width={`14%`}
+                          display={width < 900 ? `none` : `flex`}
                         >
-                          주문리스트
-                        </CommonButton>
-                        <CommonButton
-                          width={`78px`}
-                          height={`30px`}
-                          kindOf={`grey3`}
-                          padding={`0`}
-                          margin={`6px 0`}
-                          onClick={() => dModalToggle(item)}
+                          <Text
+                            fontSize={`18px`}
+                            fontWeight={`600`}
+                            margin={`0 0 14px`}
+                          >
+                            {item.status === 0 && "상품 준비중"}
+                            {item.status === 1 && "배송 준비중"}
+                            {item.status === 2 && "배송중"}
+                            {item.status === 3 && "배송완료"}
+                            {item.status === 4 && "취소/환불"}
+                          </Text>
+                          <Text color={Theme.grey_C}>
+                            {item.deliveryCompany === "-"
+                              ? "배송정보가"
+                              : item.deliveryCompany}
+                          </Text>
+                          <Text color={Theme.grey_C}>
+                            {item.deliveryNo === "-"
+                              ? "입력되지 않았습니다"
+                              : item.deliveryNo}
+                          </Text>
+                        </Wrapper>
+                        <Wrapper
+                          width={`14%`}
+                          display={width < 900 ? `none` : `flex`}
                         >
-                          {item.status <= 2 ? "취소요청" : "환불요청"}
-                        </CommonButton>
-                        <CommonButton
-                          width={`78px`}
-                          height={`30px`}
-                          kindOf={`grey3`}
-                          padding={`0`}
-                        >
-                          1:1 채팅
-                        </CommonButton>
+                          <CommonButton
+                            width={`78px`}
+                            height={`30px`}
+                            kindOf={`grey3`}
+                            padding={`0`}
+                            onClick={() =>
+                              movelinkHandler(`/mypage/order/${item.id}`)
+                            }
+                          >
+                            주문리스트
+                          </CommonButton>
+                          <CommonButton
+                            width={`78px`}
+                            height={`30px`}
+                            kindOf={`grey3`}
+                            padding={`0`}
+                            margin={`6px 0`}
+                            onClick={() => dModalToggle(item)}
+                          >
+                            {item.status <= 2 ? "취소요청" : "환불요청"}
+                          </CommonButton>
+                          <CommonButton
+                            width={`78px`}
+                            height={`30px`}
+                            kindOf={`grey3`}
+                            padding={`0`}
+                          >
+                            1:1 채팅
+                          </CommonButton>
+                        </Wrapper>
                       </Wrapper>
                     </Wrapper>
-                  </Wrapper>
-                );
-              })}
+                  );
+                })
+              )}
 
               {/* 반복되는 영역 끝 */}
             </Wrapper>

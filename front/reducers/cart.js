@@ -55,7 +55,7 @@ const reducer = (state = initailState, action) =>
       case CART_LIST_FAILURE: {
         draft.st_cartListLoading = false;
         draft.st_cartListDone = false;
-        draft.st_cartListError = action.data;
+        draft.st_cartListError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ const reducer = (state = initailState, action) =>
       case CART_CREATE_FAILURE: {
         draft.st_cartCreateLoading = false;
         draft.st_cartCreateDone = false;
-        draft.st_cartCreateError = action.data;
+        draft.st_cartCreateError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ const reducer = (state = initailState, action) =>
       case CART_QUN_UPDATE_FAILURE: {
         draft.st_cartQunUpdateLoading = false;
         draft.st_cartQunUpdateDone = false;
-        draft.st_cartQunUpdateError = action.data;
+        draft.st_cartQunUpdateError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ const reducer = (state = initailState, action) =>
       case CART_DELETE_FAILURE: {
         draft.st_cartDeleteLoading = false;
         draft.st_cartDeleteDone = false;
-        draft.st_cartDeleteError = action.data;
+        draft.st_cartDeleteError = action.error;
         break;
       }
       ///////////////////////////////////////////////////////

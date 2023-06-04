@@ -31,7 +31,7 @@ const reducer = (state = initailState, action) =>
       case BOUGHT_LIST_FAILURE: {
         draft.st_boughtListLoading = false;
         draft.st_boughtListDone = false;
-        draft.st_boughtListError = action.data;
+        draft.st_boughtListError = action.error;
         break;
       }
 

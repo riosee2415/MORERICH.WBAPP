@@ -896,6 +896,7 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
   SELECT	id,
           productName,
           price,
+          qun,
           CONCAT(FORMAT(price, 0), "원") 			AS viewPrice,
           optionValue,
           thumbnail,

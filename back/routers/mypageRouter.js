@@ -1,6 +1,7 @@
 const express = require("express");
 const models = require("../models");
 const isLoggedIn = require("../middlewares/isLoggedIn");
+const isAdminCheck = require("../middlewares/isAdminCheck");
 
 const router = express.Router();
 
@@ -30,10 +31,9 @@ const consistOfArrayToArray = (arr1, arr2, targetColumn) => {
  */
 
 router.post("/bought/list", isLoggedIn, async (req, res, next) => {
-  const { status } = req.body;
-  try {
-    const _status = status !== null ? parseInt(status) : 5;
+  const { status = 3 } = req.body;
 
+  try {
     const selectQ1 = `
     SELECT	ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
             A.id,
@@ -70,7 +70,12 @@ router.post("/bought/list", isLoggedIn, async (req, res, next) => {
         ON	A.UserId = B.id
      WHERE  1 = 1
        AND  A.UserId = ${req.user.id}
-            ${_status !== 5 ? `AND  A.status = ${_status}` : ``}
+       ${
+         parseInt(status) === 4
+           ? `AND A.status = ${status}`
+           : `AND  A.status <= ${status}`
+       }
+            
      ORDER  BY A.createdAt DESC
     `;
 

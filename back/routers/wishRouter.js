@@ -13,7 +13,7 @@ const router = express.Router();
  * DEV DATE : 2023/06/02
  */
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { ProductId } = req.body;
+  const { ProductId, id } = req.body;
 
   const findDataQuery = `
     SELECT    id
@@ -49,12 +49,16 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       return res.status(201).json({ result: true });
     }
     // 좋아요를 남긴 내역이 존재할 때
-    if (findData[0].length !== 0) {
+    if (findData[0].length > 0) {
+      console.log("🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀");
+      console.log("🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀");
+      console.log("🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀");
+
       const deleteQuery = `
                  DELETE
                    FROM  wish
                   WHERE  UserId = ${req.user.id}
-                    AND  ProductId = ${ProductId}
+                    AND  id = ${id}
                  `;
 
       await models.sequelize.query(deleteQuery);

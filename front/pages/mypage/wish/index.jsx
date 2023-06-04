@@ -106,6 +106,7 @@ const Index = () => {
         type: LIKE_CREATE_REQUEST,
         data: {
           ProductId: data.ProductId,
+          id: data.id,
         },
       });
     },

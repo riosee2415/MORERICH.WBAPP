@@ -195,7 +195,52 @@ router.post("/bought/detail", isLoggedIn, async (req, res, next) => {
  */
 
 router.post("/wish/list", isLoggedIn, async (req, res, next) => {
+  const { page } = req.body;
+
+  const LIMIT = 6;
+
+  const _page = page ? page : 1;
+
+  const __page = _page - 1;
+  const OFFSET = __page * 6;
+
   try {
+    const lengthQuery = `
+    SELECT  ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
+            A.id,
+            A.ProductId,
+            B.thumbnail,
+            B.name,
+            B.subName,
+            B.price,
+            CONCAT(FORMAT(B.price, 0), "원") 			AS viewPrice,
+            CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice,
+            B.detail,
+            B.infoType,
+            B.infoConsist,
+            B.infoColor,
+            B.infoSize,
+            B.infoFrom,
+            B.discount,
+            B.isNew,
+            B.isBest,
+            B.isRecomm,
+            DATE_FORMAT(B.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+            DATE_FORMAT(B.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+            DATE_FORMAT(B.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+            DATE_FORMAT(B.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+            B.ProductTypeId,
+            C.value
+      FROM  wish			A
+     INNER
+      JOIN  product			B
+        ON  A.ProductId = B.id
+     INNER	
+      JOIN	productType		C
+        ON	B.ProductTypeId = C.id
+     WHERE  A.UserId = ${req.user.id}
+     ORDER  BY A.createdAt DESC
+    `;
     const selectQuery = `
     SELECT  ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
             A.id,
@@ -229,12 +274,24 @@ router.post("/wish/list", isLoggedIn, async (req, res, next) => {
      INNER	
       JOIN	productType		C
         ON	B.ProductTypeId = C.id
+     WHERE  A.UserId = ${req.user.id}
      ORDER  BY A.createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
     `;
 
+    const lengths = await models.sequelize.query(lengthQuery);
     const result = await models.sequelize.query(selectQuery);
 
-    return res.status(200).json(result[0]);
+    const wishLen = lengths[0].length;
+
+    const lastPage =
+      wishLen % LIMIT > 0 ? wishLen / LIMIT + 1 : wishLen / LIMIT;
+
+    return res.status(200).json({
+      wishList: result[0],
+      lastPage: parseInt(lastPage),
+    });
   } catch (e) {
     console.error(e);
     return res.status(400).send("데이터를 조회할 수 없습니다.");

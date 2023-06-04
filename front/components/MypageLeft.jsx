@@ -49,6 +49,8 @@ const Box = styled(Wrapper)`
 `;
 
 const MypageLeft = () => {
+  const { me } = useSelector((state) => state.user);
+
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -73,7 +75,7 @@ const MypageLeft = () => {
           fontWeight={`600`}
           margin={`0 5px 0 0`}
         >
-          박마루
+          {me && me.userId}
         </SpanText>
         님, 반갑습니다.
       </Text>

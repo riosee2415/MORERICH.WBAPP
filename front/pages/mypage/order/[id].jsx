@@ -282,12 +282,14 @@ const Index = () => {
                     상품금액
                   </Text>
                   <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                    {numberWithCommas(
-                      boughtDetail &&
+                    {boughtDetail &&
+                      numberWithCommas(
                         boughtDetail.connectArray.reduce((sum, currValue) => {
-                          return sum + currValue.price;
+                          let a = parseInt(sum + currValue.price);
+
+                          return a;
                         }, 0)
-                    )}
+                      )}
                     원
                   </Text>
                 </Wrapper>
@@ -322,12 +324,14 @@ const Index = () => {
                     fontWeight={`bold`}
                     color={Theme.red_C}
                   >
-                    {numberWithCommas(
-                      boughtDetail &&
+                    {boughtDetail &&
+                      numberWithCommas(
                         boughtDetail.connectArray.reduce((sum, currValue) => {
-                          return sum + currValue.price + 2500;
-                        }, 0)
-                    )}
+                          let a = parseInt(sum + currValue.price);
+
+                          return a;
+                        }, 0) + 2500
+                      )}
                     원
                   </Text>
                 </Wrapper>

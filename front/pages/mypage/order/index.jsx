@@ -21,15 +21,16 @@ import { message, Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { BOUGHT_LIST_REQUEST } from "../../../reducers/mypage";
 import { useRouter } from "next/router";
+import { numberWithCommas } from "../../../components/commonUtils";
 
 const Index = () => {
   ////// GLOBAL STATE //////
   const { me } = useSelector((state) => state.user);
   const { boughtList } = useSelector((state) => state.mypage);
 
-  console.log(boughtList);
-
   const [dModal, setDModal] = useState(false);
+  const [drData, setCrData] = useState(null);
+  const [sTab, setSTab] = useState(3);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -45,10 +46,24 @@ const Index = () => {
       return message.error("로그인이 필요한 서비스입니다.");
     }
   }, [me]);
+
+  useEffect(() => {
+    dispatch({
+      type: BOUGHT_LIST_REQUEST,
+      data: {
+        status: sTab,
+      },
+    });
+  }, [sTab]);
   ////// TOGGLE //////
-  const dModalToggle = useCallback(() => {
-    setDModal((prev) => !prev);
-  }, [dModal]);
+  const dModalToggle = useCallback(
+    (row) => {
+      setDModal((prev) => !prev);
+
+      setCrData(row);
+    },
+    [dModal]
+  );
   ////// HANDLER //////
   ////// DATAVIEW //////
 
@@ -89,350 +104,230 @@ const Index = () => {
                   width={`140px`}
                   height={`40px`}
                   margin={`0 8px 0 0`}
-                  kindOf={`grey2`}
+                  kindOf={sTab <= 3 ? "grey2" : "grey"}
                   fontSize={`15px`}
+                  onClick={() => setSTab(3)}
                 >
                   구매내역
                 </CommonButton>
                 <CommonButton
                   width={`140px`}
-                  kindOf={`grey`}
+                  kindOf={sTab > 3 ? "grey2" : "grey"}
                   fontSize={`15px`}
                   height={`40px`}
+                  onClick={() => setSTab(4)}
                 >
                   취소 · 교환 · 환불
                 </CommonButton>
               </Wrapper>
 
               {/* 반복되는 영역 시작 */}
-              <Wrapper>
-                <Wrapper
-                  height={`50px`}
-                  borderBottom={`1px solid ${Theme.grey3_C}`}
-                  dr={`row`}
-                  ju={`flex-start`}
-                  fontSize={`16px`}
-                  padding={`0 14px`}
-                >
-                  <Text margin={`0 16px 0 0`}>2023-05-23</Text>
-                  <Text color={Theme.grey_C}>ORDER230137192783</Text>
-                </Wrapper>
-                <Wrapper borderBottom={`1px solid ${Theme.black_C}`} dr={`row`}>
-                  <Wrapper
-                    width={width < 900 ? `100%` : `58%`}
-                    dr={`row`}
-                    padding={`23px 14px`}
-                  >
-                    <Image
-                      alt="thumbnail"
-                      width={width < 900 ? `80px` : `112px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
-                    />
+
+              {boughtList.map((item) => {
+                return (
+                  <Wrapper key={item.id}>
                     <Wrapper
-                      width={
-                        width < 900 ? `calc(100% - 80px)` : `calc(100% - 112px)`
-                      }
-                      padding={`0 0 0 14px`}
-                      al={`flex-start`}
+                      height={`50px`}
+                      borderBottom={`1px solid ${Theme.grey3_C}`}
+                      dr={`row`}
+                      ju={`flex-start`}
+                      fontSize={`16px`}
+                      padding={`0 14px`}
                     >
-                      <Text
-                        fontSize={width < 900 ? `16px` : `18px`}
+                      <Text margin={`0 16px 0 0`}>{item.viewCreatedAt}</Text>
+                      <Text color={Theme.grey_C}>
+                        {item.sortCreatedAt + "" + item.id}
+                      </Text>
+                    </Wrapper>
+                    <Wrapper
+                      borderBottom={`1px solid ${Theme.black_C}`}
+                      dr={`row`}
+                    >
+                      <Wrapper
+                        width={width < 900 ? `100%` : `58%`}
+                        dr={`row`}
+                        padding={`23px 14px`}
+                      >
+                        <Image
+                          alt="thumbnail"
+                          width={width < 900 ? `80px` : `112px`}
+                          height={width < 900 ? `80px` : `112px`}
+                          src={item.connectArray[0].thumbnail}
+                        />
+                        <Wrapper
+                          width={
+                            width < 900
+                              ? `calc(100% - 80px)`
+                              : `calc(100% - 112px)`
+                          }
+                          padding={`0 0 0 14px`}
+                          al={`flex-start`}
+                        >
+                          <Text
+                            fontSize={width < 900 ? `16px` : `18px`}
+                            fontWeight={`600`}
+                          >
+                            {item.connectArray.length < 2 ? (
+                              item.connectArray[0].productName
+                            ) : (
+                              <>
+                                {item.connectArray[0].productName} 외 &nbsp;
+                                {item.connectArray.length}개
+                              </>
+                            )}
+                          </Text>
+
+                          <Wrapper width={`auto`} dr={`row`}>
+                            <Text
+                              fontSize={width < 900 ? `14px` : `15px`}
+                              color={Theme.grey_C}
+                            >
+                              수량 : {item.connectArray.length}개
+                            </Text>
+                          </Wrapper>
+                          {width < 900 && (
+                            <>
+                              <Text>
+                                {numberWithCommas(
+                                  item.connectArray.reduce((sum, currValue) => {
+                                    return sum + currValue.price;
+                                  }, 0)
+                                )}
+                                원
+                              </Text>
+                              <Wrapper dr={`row`} margin={`5px 0`}>
+                                <Text fontWeight={`600`} margin={`0 10px 0 0`}>
+                                  배송완료
+                                </Text>
+                                <Text color={Theme.grey_C}>롯데택배 </Text>
+                                <Text color={Theme.grey_C}>12365454654548</Text>
+                              </Wrapper>
+                              <Wrapper dr={`row`}>
+                                <CommonButton
+                                  width={`32%`}
+                                  height={`30px`}
+                                  kindOf={`grey3`}
+                                  padding={`0`}
+                                >
+                                  교환 요청
+                                </CommonButton>
+                                <CommonButton
+                                  width={`32%`}
+                                  height={`30px`}
+                                  kindOf={`grey3`}
+                                  padding={`0`}
+                                  margin={`0 4px`}
+                                >
+                                  환불 요청
+                                </CommonButton>
+                                <CommonButton
+                                  width={`32%`}
+                                  height={`30px`}
+                                  kindOf={`grey3`}
+                                  padding={`0`}
+                                >
+                                  1:1 채팅
+                                </CommonButton>
+                              </Wrapper>
+                            </>
+                          )}
+                        </Wrapper>
+                      </Wrapper>
+                      <Wrapper
+                        width={`14%`}
+                        display={width < 900 ? `none` : `flex`}
+                        fontSize={`18px`}
                         fontWeight={`600`}
                       >
-                        CASESTUDY
-                      </Text>
-                      <Text
-                        fontSize={width < 900 ? `14px` : `17px`}
-                        minHeight={`45px`}
+                        {numberWithCommas(
+                          item.connectArray.reduce((sum, currValue) => {
+                            return sum + currValue.price;
+                          }, 0)
+                        )}
+                        원
+                      </Wrapper>
+                      <Wrapper
+                        width={`14%`}
+                        display={width < 900 ? `none` : `flex`}
                       >
-                        [CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG
-                      </Text>
-                      <Wrapper width={`auto`} dr={`row`}>
                         <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
-                          margin={`0 15px 0 0`}
+                          fontSize={`18px`}
+                          fontWeight={`600`}
+                          margin={`0 0 14px`}
                         >
-                          옵션 : BLACK
+                          {item.status === 0 && "상품 준비중"}
+                          {item.status === 1 && "배송 준비중"}
+                          {item.status === 2 && "배송중"}
+                          {item.status === 3 && "배송완료"}
+                          {item.status === 4 && "취소/환불"}
                         </Text>
-                        <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
-                        >
-                          수량 : 1개
+                        <Text color={Theme.grey_C}>
+                          {item.deliveryCompany === "-"
+                            ? "배송정보가"
+                            : item.deliveryCompany}
+                        </Text>
+                        <Text color={Theme.grey_C}>
+                          {item.deliveryNo === "-"
+                            ? "입력되지 않았습니다"
+                            : item.deliveryNo}
                         </Text>
                       </Wrapper>
-                      {width < 900 && (
-                        <>
-                          <Text>1,100,000원</Text>
-                          <Wrapper dr={`row`} margin={`5px 0`}>
-                            <Text fontWeight={`600`} margin={`0 10px 0 0`}>
-                              배송완료
-                            </Text>
-                            <Text color={Theme.grey_C}>롯데택배 </Text>
-                            <Text color={Theme.grey_C}>12365454654548</Text>
-                          </Wrapper>
-                          <Wrapper dr={`row`}>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                            >
-                              교환 요청
-                            </CommonButton>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                              margin={`0 4px`}
-                            >
-                              환불 요청
-                            </CommonButton>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                            >
-                              1:1 채팅
-                            </CommonButton>
-                          </Wrapper>
-                        </>
-                      )}
-                    </Wrapper>
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                    fontSize={`18px`}
-                    fontWeight={`600`}
-                  >
-                    1,100,000원
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                  >
-                    <Text
-                      fontSize={`18px`}
-                      fontWeight={`600`}
-                      margin={`0 0 14px`}
-                    >
-                      배송완료
-                    </Text>
-                    <Text color={Theme.grey_C}>롯데택배 </Text>
-                    <Text color={Theme.grey_C}>12365454654548</Text>
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                  >
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                    >
-                      교환 요청
-                    </CommonButton>
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                      margin={`6px 0`}
-                    >
-                      환불 요청
-                    </CommonButton>
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                    >
-                      1:1 채팅
-                    </CommonButton>
-                  </Wrapper>
-                </Wrapper>
-              </Wrapper>
-              {/* 반복되는 영역 끝 */}
-              {/* 반복되는 영역 시작 */}
-              <Wrapper>
-                <Wrapper
-                  height={`50px`}
-                  borderBottom={`1px solid ${Theme.grey3_C}`}
-                  dr={`row`}
-                  ju={`flex-start`}
-                  fontSize={`16px`}
-                  padding={`0 14px`}
-                >
-                  <Text margin={`0 16px 0 0`}>2023-05-23</Text>
-                  <Text color={Theme.grey_C}>ORDER230137192783</Text>
-                </Wrapper>
-                <Wrapper borderBottom={`1px solid ${Theme.black_C}`} dr={`row`}>
-                  <Wrapper
-                    width={width < 900 ? `100%` : `58%`}
-                    dr={`row`}
-                    padding={`23px 14px`}
-                  >
-                    <Image
-                      alt="thumbnail"
-                      width={width < 900 ? `80px` : `112px`}
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
-                    />
-                    <Wrapper
-                      width={
-                        width < 900 ? `calc(100% - 80px)` : `calc(100% - 112px)`
-                      }
-                      padding={`0 0 0 14px`}
-                      al={`flex-start`}
-                    >
-                      <Text
-                        fontSize={width < 900 ? `16px` : `18px`}
-                        fontWeight={`600`}
+                      <Wrapper
+                        width={`14%`}
+                        display={width < 900 ? `none` : `flex`}
                       >
-                        CASESTUDY
-                      </Text>
-                      <Text
-                        fontSize={width < 900 ? `14px` : `17px`}
-                        minHeight={`45px`}
-                      >
-                        [CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG
-                      </Text>
-                      <Wrapper width={`auto`} dr={`row`}>
-                        <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
-                          margin={`0 15px 0 0`}
+                        <CommonButton
+                          width={`78px`}
+                          height={`30px`}
+                          kindOf={`grey3`}
+                          padding={`0`}
                         >
-                          옵션 : BLACK
-                        </Text>
-                        <Text
-                          fontSize={width < 900 ? `14px` : `15px`}
-                          color={Theme.grey_C}
+                          주문리스트
+                        </CommonButton>
+                        <CommonButton
+                          width={`78px`}
+                          height={`30px`}
+                          kindOf={`grey3`}
+                          padding={`0`}
+                          margin={`6px 0`}
+                          onClick={() => dModalToggle(item)}
                         >
-                          수량 : 1개
-                        </Text>
+                          {item.status <= 2 ? "취소요청" : "환불요청"}
+                        </CommonButton>
+                        <CommonButton
+                          width={`78px`}
+                          height={`30px`}
+                          kindOf={`grey3`}
+                          padding={`0`}
+                        >
+                          1:1 채팅
+                        </CommonButton>
                       </Wrapper>
-                      {width < 900 && (
-                        <>
-                          <Text>1,100,000원</Text>
-                          <Wrapper dr={`row`} margin={`5px 0`}>
-                            <Text fontWeight={`600`} margin={`0 10px 0 0`}>
-                              배송완료
-                            </Text>
-                            <Text color={Theme.grey_C}>롯데택배 </Text>
-                            <Text color={Theme.grey_C}>12365454654548</Text>
-                          </Wrapper>
-                          <Wrapper dr={`row`}>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                            >
-                              취소 요청
-                            </CommonButton>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                              margin={`0 4px`}
-                              onClick={dModalToggle}
-                            >
-                              주문 취소
-                            </CommonButton>
-                            <CommonButton
-                              width={`32%`}
-                              height={`30px`}
-                              kindOf={`grey3`}
-                              padding={`0`}
-                            >
-                              1:1 채팅
-                            </CommonButton>
-                          </Wrapper>
-                        </>
-                      )}
                     </Wrapper>
                   </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                    fontSize={`18px`}
-                    fontWeight={`600`}
-                  >
-                    1,100,000원
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                  >
-                    <Text
-                      fontSize={`18px`}
-                      fontWeight={`600`}
-                      margin={`0 0 14px`}
-                    >
-                      배송완료
-                    </Text>
-                    <Text color={Theme.grey_C}>롯데택배 </Text>
-                    <Text color={Theme.grey_C}>12365454654548</Text>
-                  </Wrapper>
-                  <Wrapper
-                    width={`14%`}
-                    display={width < 900 ? `none` : `flex`}
-                  >
-                    {/* 결제 대기일때 */}
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                      margin={`0 0 6px`}
-                      onClick={dModalToggle}
-                    >
-                      주문 취소
-                    </CommonButton>
-                    {/* 결제 완료일때 */}
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                      margin={`0 0 6px`}
-                    >
-                      취소 요청
-                    </CommonButton>
+                );
+              })}
 
-                    <CommonButton
-                      width={`78px`}
-                      height={`30px`}
-                      kindOf={`grey3`}
-                      padding={`0`}
-                    >
-                      1:1 채팅
-                    </CommonButton>
-                  </Wrapper>
-                </Wrapper>
-              </Wrapper>
               {/* 반복되는 영역 끝 */}
-
-              <CustomPage margin={`60px 0 0`} />
             </Wrapper>
           </RsWrapper>
 
-          <Modal onCancel={dModalToggle} visible={dModal} footer={null}>
+          <Modal
+            onCancel={() => dModalToggle(null)}
+            visible={dModal}
+            footer={null}
+          >
             <Wrapper padding={width < 800 ? `30px 0` : `50px 0`}>
               <Text fontSize={`28px`} fontWeight={`600`}>
-                주문취소
+                {drData && drData.status <= 2 ? "주문취소" : "환불요청"}
               </Text>
               <Text fontSize={`16px`} margin={`30px 0 0`}>
-                정말 취소하시겠습니까?
+                {drData && drData.status <= 2
+                  ? "정말 취소하시겠습니까?"
+                  : "환불요청 하시겠습니까?"}
               </Text>
               <Text fontSize={`16px`} margin={`0 0 30px`}>
-                주문 취소 후 번복할 수 없습니다.
+                주문 취소/환불 후 번복할 수 없습니다.
               </Text>
               <Wrapper dr={`row`}>
                 <CommonButton
@@ -453,7 +348,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 0 4px`}
                 >
-                  주문취소
+                  {drData && drData.status <= 2 ? "주문취소" : "환불요청"}
                 </CommonButton>
               </Wrapper>
             </Wrapper>

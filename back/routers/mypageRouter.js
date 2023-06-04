@@ -41,6 +41,10 @@ router.post("/bought/list", isLoggedIn, async (req, res, next) => {
             A.deliveryNo,
             A.UserId,
             A.status,
+            A.reason,
+            A.returnAccountName,
+            A.returnBankName,
+            A.returnAccountNum,
             DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
             DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
             DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
@@ -49,7 +53,17 @@ router.post("/bought/list", isLoggedIn, async (req, res, next) => {
             B.username,
             B.email,
             B.mobile,
-            B.point
+            B.point,
+            (
+              SELECT  SUM(C.price * C.qun)
+                FROM  boughtList C
+               WHERE  C.BoughtHistoryId = A.id
+            )													AS boughtPrice,
+            (
+              SELECT  SUM(C.qun)
+                FROM  boughtList C
+               WHERE  C.BoughtHistoryId = A.id
+            )													AS boughtQun
       FROM	boughtHistory	A
      INNER
       JOIN	users 			B
@@ -64,8 +78,10 @@ router.post("/bought/list", isLoggedIn, async (req, res, next) => {
     SELECT	id,
             productName,
             price,
+            qun,
             CONCAT(FORMAT(price, 0), "원") 			AS viewPrice,
-            \`option\`,
+            CONCAT(FORMAT((price * qun), 0), "원") 			AS viewPrice,
+            CONCAT(FORMAT(price, 0), "원") 			AS viewPrice,
             thumbnail,
             BoughtHistoryId 
       FROM	boughtList
@@ -77,6 +93,143 @@ router.post("/bought/list", isLoggedIn, async (req, res, next) => {
     const result = consistOfArrayToArray(list1[0], list2[0], "BoughtHistoryId");
 
     return res.status(200).json(result);
+  } catch (e) {
+    console.error(e);
+    return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 구매내역 상세 조회
+ * PARAMETERS : { id }
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 시니어 홍민기
+ * DEV DATE : 2023/06/03
+ */
+router.post("/bought/detail", isLoggedIn, async (req, res, next) => {
+  const { id } = req.body;
+
+  const selectQ1 = `
+  SELECT	ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
+          A.id,
+          A.deliveryCompany,
+          A.deliveryNo,
+          A.UserId,
+          A.status,
+          A.reason,
+          A.returnAccountName,
+          A.returnBankName,
+          A.returnAccountNum,
+          DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+          DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+          DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+          DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+          B.userId,
+          B.username,
+          B.email,
+          B.mobile,
+          B.point,
+          A.post,
+          A.adrs,
+          A.dadrs,
+          A.reason,
+          A.returnAccountName,
+          A.returnBankName,
+          A.returnAccountNum,
+          (
+          	SELECT  SUM(C.price * C.qun)
+          	  FROM  boughtList C
+          	 WHERE  C.BoughtHistoryId = A.id
+          )													AS boughtPrice,
+          (
+          	SELECT  SUM(C.qun)
+          	  FROM  boughtList C
+          	 WHERE  C.BoughtHistoryId = A.id
+          )													AS boughtQun
+    FROM	boughtHistory	A
+   INNER
+    JOIN	users 			B
+      ON	A.UserId = B.id
+   WHERE  1 = 1
+     AND  A.id = ${id}
+  `;
+
+  const selectQ2 = `
+  SELECT	id,
+          productName,
+          price,
+          qun,
+          CONCAT(FORMAT(price, 0), "원") 			AS viewPrice,
+          CONCAT(FORMAT((price * qun), 0), "원") 			AS viewPrice,
+          thumbnail,
+          BoughtHistoryId 
+    FROM	boughtList
+  `;
+
+  try {
+    const list1 = await models.sequelize.query(selectQ1);
+    const list2 = await models.sequelize.query(selectQ2);
+
+    const result = consistOfArrayToArray(list1[0], list2[0], "BoughtHistoryId");
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 로드할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 위시리스트 조회
+ * PARAMETERS :
+ * ORDER BY : createdAt DESC
+ * STATEMENT : -
+ * DEVELOPMENT : 시니어 홍민기
+ * DEV DATE : 2023/06/02
+ */
+
+router.post("/wish/list", isLoggedIn, async (req, res, next) => {
+  try {
+    const selectQuery = `
+    SELECT  ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
+            A.id,
+            A.ProductId,
+            B.thumbnail,
+            B.name,
+            B.subName,
+            B.price,
+            CONCAT(FORMAT(B.price, 0), "원") 			AS viewPrice,
+            CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice,
+            B.detail,
+            B.infoType,
+            B.infoConsist,
+            B.infoColor,
+            B.infoSize,
+            B.infoFrom,
+            B.discount,
+            B.isNew,
+            B.isBest,
+            B.isRecomm,
+            DATE_FORMAT(B.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+            DATE_FORMAT(B.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+            DATE_FORMAT(B.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+            DATE_FORMAT(B.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+            B.ProductTypeId,
+            C.value
+      FROM  wish			A
+     INNER
+      JOIN  product			B
+        ON  A.ProductId = B.id
+     INNER	
+      JOIN	productType		C
+        ON	B.ProductTypeId = C.id
+     ORDER  BY A.createdAt DESC
+    `;
+
+    const result = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json(result[0]);
   } catch (e) {
     console.error(e);
     return res.status(400).send("데이터를 조회할 수 없습니다.");
@@ -181,9 +334,7 @@ router.post("/address/list", isLoggedIn, async (req, res, next) => {
  * DEV DATE : 2023/06/03
  */
 
-router.post("/address/detail", isLoggedIn, async (req, res, next) => {
-  const { id } = req.body;
-
+router.post("/address/isBasic", isLoggedIn, async (req, res, next) => {
   const selectQuery = `
   SELECT  id,
           title,
@@ -194,7 +345,8 @@ router.post("/address/detail", isLoggedIn, async (req, res, next) => {
   		    dadrs,
   		    isBasic
     FROM  address a
-   WHERE  id = ${id}
+   WHERE  UserId = ${req.user.id}
+     AND  isBasic = 1
   `;
   try {
     const result = await models.sequelize.query(selectQuery);

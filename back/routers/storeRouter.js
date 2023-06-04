@@ -867,7 +867,17 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           A.reason,
           A.returnAccountName,
           A.returnBankName,
-          A.returnAccountNum
+          A.returnAccountNum,
+          (
+          	SELECT  SUM(C.price * C.qun)
+          	  FROM  boughtList C
+          	 WHERE  C.BoughtHistoryId = A.id
+          )													AS boughtPrice,
+          (
+          	SELECT  SUM(C.qun)
+          	  FROM  boughtList C
+          	 WHERE  C.BoughtHistoryId = A.id
+          )													AS boughtQun
     FROM	boughtHistory	A
    INNER
     JOIN	users 			B
@@ -955,6 +965,7 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
         (
           productName,
           price,
+          qun,
           optionValue,
           thumbnail,
           BoughtHistoryId,
@@ -965,6 +976,7 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
         (
           "${data.productName}",
           ${data.price},
+          ${data.qun},
           "${data.optionValue}",
           "${data.thumbnail}",
           ${insertResult[0].insertId},

@@ -11,6 +11,11 @@ module.exports = class BoughtList extends Model {
         },
         price: {
           type: DataTypes.INTEGER,
+          defaultValue: 1,
+          allowNull: false, // 필수
+        },
+        qun: {
+          type: DataTypes.INTEGER, // 수량
           allowNull: false, // 필수
         },
         optionValue: {

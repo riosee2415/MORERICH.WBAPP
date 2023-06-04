@@ -85,7 +85,7 @@ const reducer = (state = initailState, action) =>
         draft.st_wishListLoading = false;
         draft.st_wishListDone = true;
         draft.st_wishListError = null;
-        draft.wishList = action.data;
+        draft.wishList = action.data.wishList;
         break;
       }
       case WISH_LIST_FAILURE: {

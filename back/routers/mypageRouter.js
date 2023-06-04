@@ -276,8 +276,7 @@ router.post("/wish/list", isLoggedIn, async (req, res, next) => {
         ON	B.ProductTypeId = C.id
      WHERE  A.UserId = ${req.user.id}
      ORDER  BY A.createdAt DESC
-     LIMIT  ${LIMIT}
-    OFFSET  ${OFFSET}
+
     `;
 
     const lengths = await models.sequelize.query(lengthQuery);

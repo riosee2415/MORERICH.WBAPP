@@ -13,6 +13,7 @@ import logo from "./logo";
 import faq from "./faq";
 import store from "./store";
 import cart from "./cart";
+import wish from "./wish";
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -34,6 +35,7 @@ const rootReducer = (state, action) => {
         faq,
         store,
         cart,
+        wish,
       });
       return combinedReducer(state, action);
     }

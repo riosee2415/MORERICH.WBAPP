@@ -81,8 +81,6 @@ const Address = ({}) => {
 
   const { users } = useSelector((state) => state.user);
 
-  console.log(users);
-
   const [sameDepth, setSameDepth] = useState([]);
 
   const [level1, setLevel1] = useState("회원관리");
@@ -134,21 +132,36 @@ const Address = ({}) => {
     </PopWrapper>
   );
   /////////////////////////////////////////////////////////////////////////
-  const dispatch = useDispatch();
 
   ////// HOOKS //////
 
   //   DRAWER
   const [isDrawer, setIsDrawer] = useState(false); // 배송지확인
 
+  // DATA
+  const [currentData, setCurrentData] = useState([]);
+
   // INPUT
   const nameInput = useInput(``);
+
+  ////// REDUX //////
+  const dispatch = useDispatch();
 
   ////// USEEFFECT //////
 
   ////// TOGGLE //////
 
   ////// HANDLER //////
+
+  // 배송지확인
+  const addressHandler = useCallback(
+    (data) => {
+      setCurrentData(data.connectArray);
+
+      setIsDrawer(!isDrawer);
+    },
+    [isDrawer]
+  );
 
   // 초기화
   const searchResetHandler = useCallback(() => {
@@ -181,32 +194,33 @@ const Address = ({}) => {
       sorter: (a, b) => a.username.localeCompare(b.username),
     },
     {
-      title: "닉네임",
-      render: (data) => <div>{data.nickname}</div>,
+      title: "회원아이디",
+      render: (data) => <div>{data.userId}</div>,
+      sorter: (a, b) => a.username.localeCompare(b.userId),
     },
     {
       title: "이메일",
       render: (data) => <div>{data.email}</div>,
+      sorter: (a, b) => a.username.localeCompare(b.email),
     },
     {
       title: "전화번호",
       render: (data) => <div>{data.mobile}</div>,
+      sorter: (a, b) => a.username.localeCompare(b.mobile),
     },
     {
       title: "가입일",
       render: (data) => <div>{data.viewCreatedAt}</div>,
+      sorter: (a, b) => a.username.localeCompare(b.viewCreatedAt),
     },
-    {
-      title: "권한",
-      render: (data) => <div>{data.viewLevel}</div>,
-    },
+
     {
       title: "배송지",
-      render: () => (
+      render: (data) => (
         <Button
           type="primary"
           size="small"
-          onClick={() => setIsDrawer(!isDrawer)}
+          onClick={() => addressHandler(data)}
         >
           배송지확인
         </Button>
@@ -216,25 +230,20 @@ const Address = ({}) => {
 
   const addressCol = [
     {
-      title: "번호",
-      dataIndex: "num",
-    },
-    {
       title: "기본배송지",
-      render: () => <div>기본배송지</div>,
-      //   아니라면 -로 표시
+      render: (data) => (data.isBasic ? "기본배송지" : "-"),
     },
     {
       title: "우편번호",
-      dataIndex: "postcode",
+      dataIndex: "post",
     },
     {
       title: "주소",
-      dataIndex: "address",
+      dataIndex: "adrs",
     },
     {
       title: "상세주소",
-      dataIndex: "detailAddress",
+      dataIndex: "dadrs",
       width: `40%`,
     },
     {
@@ -320,7 +329,7 @@ const Address = ({}) => {
           style={{ width: "100%" }}
           rowKey="id"
           columns={addressCol}
-          dataSource={users ? users : []}
+          dataSource={currentData}
           size="small"
         />
       </Drawer>

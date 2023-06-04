@@ -134,6 +134,7 @@ router.post("/adminList", async (req, res, next) => {
           post,
           adrs,
           dadrs,
+          isBasic,
           createdAt,
           updatedAt,
           DATE_FORMAT(createdAt, '%Y. %m. %d')			AS viewCreatedAt,

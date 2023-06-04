@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 import useInput from "../hooks/useInput";
@@ -25,6 +25,8 @@ import SteadySlider from "../components/slide/SteadySlider";
 import { GET_SLIDE_REQUEST } from "../reducers/banner";
 import { useCallback } from "react";
 import { CART_LIST_REQUEST } from "../reducers/cart";
+import { LIKE_CREATE_REQUEST } from "../reducers/wish";
+import { message } from "antd";
 
 const Box = styled(Wrapper)`
   width: calc(100% / 3);
@@ -65,12 +67,33 @@ const Box = styled(Wrapper)`
 const Home = ({}) => {
   ////// GLOBAL STATE //////
   const { slides } = useSelector((state) => state.banner);
+  const { st_likeCreateDone, st_likeCreateError } = useSelector(
+    (state) => state.wish
+  );
 
   ////// HOOKS //////
   const width = useWidth();
+
+  const [likeId, setLikeId] = useState(null);
+
   ////// REDUX //////
   const dispatch = useDispatch();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_likeCreateDone) {
+      if (likeId) {
+        return message.success("좋아요 목록에 추가되었습니다.");
+      } else {
+        return message.success("좋아요가 취소되었습니다.");
+      }
+    }
+
+    if (st_likeCreateError) {
+      return message.error(st_likeCreateError);
+    }
+  }, [st_likeCreateDone, st_likeCreateError]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -91,7 +114,11 @@ const Home = ({}) => {
                 {slides[0] && slides[0].title}
               </Text>
             </Wrapper>
-            <BestSlider datum={slides[0] && slides[0].connectArray} />
+            <BestSlider
+              datum={slides[0] && slides[0].connectArray}
+              likeId={likeId}
+              setLikeId={setLikeId}
+            />
             <Image
               margin={`120px 0`}
               alt="banner img"
@@ -106,7 +133,11 @@ const Home = ({}) => {
                 {slides[1] && slides[1].title}
               </Text>
             </Wrapper>
-            <NewSlider datum={slides[1] && slides[1].connectArray} />
+            <NewSlider
+              datum={slides[1] && slides[1].connectArray}
+              likeId={likeId}
+              setLikeId={setLikeId}
+            />
             <Wrapper dr={`row`} margin={`120px 0`}>
               <Box>
                 <Image
@@ -241,7 +272,11 @@ const Home = ({}) => {
                 {slides[2] && slides[2].title}
               </Text>
             </Wrapper>
-            <SteadySlider datum={slides[2] && slides[2].connectArray} />
+            <SteadySlider
+              datum={slides[2] && slides[2].connectArray}
+              likeId={likeId}
+              setLikeId={setLikeId}
+            />
           </RsWrapper>
           <Popup />
         </WholeWrapper>

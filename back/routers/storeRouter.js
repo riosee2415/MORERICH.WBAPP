@@ -989,7 +989,11 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
       })
     );
 
-    return res.status(201).json({ result: true });
+    const boughtHistoryId = insertResult[0].insertId;
+
+    return res
+      .status(201)
+      .json({ result: true, boughtHistoryId: boughtHistoryId });
   } catch (error) {
     console.error(error);
     return res.status(401).send("상품을 구매할 수 없습니다.");

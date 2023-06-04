@@ -6,6 +6,8 @@ import Theme from "../Theme";
 import { Carousel, Empty, message } from "antd";
 import useWidth from "../../hooks/useWidth";
 import { useRouter } from "next/router";
+import { LIKE_CREATE_REQUEST } from "../../reducers/wish";
+import { useState } from "react";
 
 const BestSliderWrapper = styled(Wrapper)`
   justify-content: flex-start;
@@ -80,12 +82,38 @@ const SliderWrapper = styled(Carousel)`
   }
 `;
 
-const BestSlider = ({ datum }) => {
+const BestSlider = ({ datum, likeId, setLikeId }) => {
   const width = useWidth();
   const router = useRouter();
   const dispatch = useDispatch();
 
   const { me } = useSelector((state) => state.user);
+  const { st_likeCreateDone, st_likeCreateError } = useSelector(
+    (state) => state.wish
+  );
+
+  // 좋아요
+  const likeHandler = useCallback(
+    (data) => {
+      if (!me) {
+        return message.error("로그인 후 이용할 수 있습니다.");
+      }
+
+      if (likeId === data.ProductId) {
+        setLikeId(null);
+      } else {
+        setLikeId(data.ProductId);
+      }
+
+      dispatch({
+        type: LIKE_CREATE_REQUEST,
+        data: {
+          ProductId: data.ProductId,
+        },
+      });
+    },
+    [likeId, me]
+  );
 
   return (
     <BestSliderWrapper>
@@ -107,7 +135,6 @@ const BestSlider = ({ datum }) => {
         ) : (
           datum &&
           datum.map((data, idx) => {
-            console.log(data);
             return (
               <Wrapper
                 key={idx}
@@ -158,6 +185,7 @@ const BestSlider = ({ datum }) => {
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
                       width={`22px`}
                       margin={`0 18px 0 0`}
+                      onClick={() => likeHandler(data)}
                     />
                     {/* <Image
                       alt="cart icon"

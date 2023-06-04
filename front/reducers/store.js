@@ -9,6 +9,7 @@ export const initailState = {
   wishChart: [],
   boughtlist: [],
   productDetail: [], // 상품상세가져오기
+  boughtHistoryId: null, // 구매 후 ID값
   // 상품
   products: [],
   products2: [],
@@ -123,6 +124,11 @@ export const initailState = {
   st_cancelBoughtLoading: false,
   st_cancelBoughtDone: false,
   st_cancelBoughtError: null,
+
+  // 상품 구매하기
+  st_boughtCreateLoading: false,
+  st_boughtCreateDone: false,
+  st_boughtCreateError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -220,6 +226,10 @@ export const PRODUCT_DETAIL_FAILURE = "PRODUCT_DETAIL_FAILURE";
 export const CANCEL_BOUGHT_REQUEST = "CANCEL_BOUGHT_REQUEST";
 export const CANCEL_BOUGHT_SUCCESS = "CANCEL_BOUGHT_SUCCESS";
 export const CANCEL_BOUGHT_FAILURE = "CANCEL_BOUGHT_FAILURE";
+
+export const BOUGHT_CREATE_REQUEST = "BOUGHT_CREATE_REQUEST";
+export const BOUGHT_CREATE_SUCCESS = "BOUGHT_CREATE_SUCCESS";
+export const BOUGHT_CREATE_FAILURE = "BOUGHT_CREATE_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -795,6 +805,31 @@ const reducer = (state = initailState, action) =>
         draft.st_cancelBoughtLoading = false;
         draft.st_cancelBoughtDone = false;
         draft.st_cancelBoughtError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case BOUGHT_CREATE_REQUEST: {
+        draft.st_boughtCreateLoading = true;
+        draft.st_boughtCreateDone = false;
+        draft.st_boughtCreateError = null;
+        break;
+      }
+
+      case BOUGHT_CREATE_SUCCESS: {
+        draft.st_boughtCreateLoading = false;
+        draft.st_boughtCreateDone = true;
+        draft.st_boughtCreateError = null;
+        draft.boughtHistoryId = action.data.boughtHistoryId;
+        break;
+      }
+
+      case BOUGHT_CREATE_FAILURE: {
+        draft.st_boughtCreateLoading = false;
+        draft.st_boughtCreateDone = false;
+        draft.st_boughtCreateError = action.error;
         break;
       }
 

@@ -17,7 +17,7 @@ import {
   Image,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Empty, Select } from "antd";
+import { Empty, message, Select } from "antd";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -25,6 +25,7 @@ import {
   GET_PRODUCT_REQUEST,
 } from "../../reducers/store";
 import { useRouter } from "next/router";
+import { LIKE_CREATE_REQUEST } from "../../reducers/wish";
 
 const CateBtn = styled(Wrapper)`
   padding: 0 14px;
@@ -46,9 +47,15 @@ const CateBtn = styled(Wrapper)`
 const Index = () => {
   ////// GLOBAL STATE //////
   const { products, productTypes } = useSelector((state) => state.store);
+  const { me } = useSelector((state) => state.user);
+  const { st_likeCreateDone, st_likeCreateError } = useSelector(
+    (state) => state.wish
+  );
 
   const [type, setType] = useState(0);
   const [orderType, setOrderType] = useState(1); // 순서
+
+  const [likeId, setLikeId] = useState(null);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -57,6 +64,21 @@ const Index = () => {
 
   ////// REDUX //////
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (st_likeCreateDone) {
+      if (likeId) {
+        return message.success("좋아요 목록에 추가되었습니다.");
+      } else {
+        return message.success("좋아요가 취소되었습니다.");
+      }
+    }
+
+    if (st_likeCreateError) {
+      return message.error(st_likeCreateError);
+    }
+  }, [st_likeCreateDone, st_likeCreateError]);
+
   useEffect(() => {
     dispatch({
       type: GET_PRODUCT_REQUEST,
@@ -69,6 +91,29 @@ const Index = () => {
 
   ////// TOGGLE //////
   ////// HANDLER //////
+
+  // 좋아요
+  const likeCreateHandler = useCallback(
+    (data) => {
+      if (!me) {
+        return message.error("로그인 후 이용할 수 있습니다.");
+      }
+      if (likeId === data.id) {
+        setLikeId(null);
+      } else {
+        setLikeId(data.id);
+      }
+
+      dispatch({
+        type: LIKE_CREATE_REQUEST,
+        data: {
+          ProductId: data.id,
+        },
+      });
+    },
+    [likeId, me]
+  );
+
   const typeHandler = useCallback(
     (data) => {
       setType(data);
@@ -158,11 +203,10 @@ const Index = () => {
               ) : (
                 products.map((data, idx) => {
                   return (
-                    <ProductWrapper
-                      key={idx}
-                      onClick={() => movelinkHandler(`/product/${data.id}`)}
-                    >
-                      <SquareBox>
+                    <ProductWrapper key={idx}>
+                      <SquareBox
+                        onClick={() => movelinkHandler(`/product/${data.id}`)}
+                      >
                         <Image alt="thumbnail" src={data.thumbnail} />
                       </SquareBox>
 
@@ -202,12 +246,13 @@ const Index = () => {
                             src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
                             width={`22px`}
                             margin={`0 18px 0 0`}
+                            onClick={() => likeCreateHandler(data)}
                           />
-                          <Image
+                          {/* <Image
                             alt="cart icon"
                             src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
                             width={`22px`}
-                          />
+                          /> */}
                         </Wrapper>
                       </Wrapper>
                     </ProductWrapper>

@@ -96,6 +96,10 @@ import {
   CANCEL_BOUGHT_REQUEST,
   CANCEL_BOUGHT_SUCCESS,
   CANCEL_BOUGHT_FAILURE,
+  //
+  BOUGHT_CREATE_REQUEST,
+  BOUGHT_CREATE_SUCCESS,
+  BOUGHT_CREATE_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -741,6 +745,33 @@ function* cancelBought(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function boughtCreateAPI(data) {
+  return await axios.post(`/api/store/boughtCreate`, data);
+}
+
+function* boughtCreate(action) {
+  try {
+    const result = yield call(boughtCreateAPI, action.data);
+
+    yield put({
+      type: BOUGHT_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BOUGHT_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
   yield takeLatest(GET_PRODUCTTYPE_REQUEST, getProductType);
@@ -814,6 +845,9 @@ function* watchProductDetail() {
 function* watchCancelBought() {
   yield takeLatest(CANCEL_BOUGHT_REQUEST, cancelBought);
 }
+function* watchBoughtCreate() {
+  yield takeLatest(BOUGHT_CREATE_REQUEST, boughtCreate);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -842,6 +876,7 @@ export default function* storeSaga() {
     fork(watchDeliBoughtList),
     fork(watchProductDetail),
     fork(watchCancelBought),
+    fork(watchBoughtCreate),
 
     //
   ]);

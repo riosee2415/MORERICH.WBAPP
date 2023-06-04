@@ -201,7 +201,7 @@ const Index = () => {
                                   {numberWithCommas(
                                     item.connectArray.reduce(
                                       (sum, currValue) => {
-                                        return sum + currValue.price;
+                                        return sum + currValue.price + 2500;
                                       },
                                       0
                                     )
@@ -277,7 +277,7 @@ const Index = () => {
                         >
                           {numberWithCommas(
                             item.connectArray.reduce((sum, currValue) => {
-                              return sum + currValue.price;
+                              return sum + currValue.price + 2500;
                             }, 0)
                           )}
                           원

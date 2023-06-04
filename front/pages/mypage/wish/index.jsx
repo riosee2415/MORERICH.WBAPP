@@ -61,8 +61,6 @@ const Index = () => {
 
   const [isLikeState, setIsLikeState] = useState(false);
 
-  console.log(wishList);
-
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -82,10 +80,8 @@ const Index = () => {
         type: WISH_LIST_REQUEST,
       });
 
-      if (isLikeState) {
+      if (!isLikeState) {
         message.success("위시리스트에서 삭제되었습니다.");
-      } else {
-        message.success("위시리스트에 추가되었습니다.");
       }
     }
 

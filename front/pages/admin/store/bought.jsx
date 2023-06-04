@@ -314,7 +314,7 @@ const Bought = ({}) => {
     },
     {
       title: "금액",
-      dataIndex: "viewPrice",
+      render: (row) => <Text>{numberWithCommas(row.price * row.qun)}원</Text>,
     },
   ];
 
@@ -346,7 +346,9 @@ const Bought = ({}) => {
         <Text>
           {numberWithCommas(
             row.connectArray.reduce((sum, currValue) => {
-              return sum + currValue.price;
+              let a = sum + currValue.price;
+
+              return a * currValue.qun;
             }, 0)
           )}
           원

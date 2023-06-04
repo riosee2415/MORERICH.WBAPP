@@ -64,8 +64,8 @@ const MypageLeft = () => {
     <Wrapper
       width={width < 1100 ? `100%` : `266px`}
       al={`flex-start`}
-      position={`sticky`}
-      top={`120px`}
+      position={width < 1100 ? `relative` : `sticky`}
+      top={width < 1100 ? `0` : `120px`}
       left={`0`}
       zIndex={`100`}
     >

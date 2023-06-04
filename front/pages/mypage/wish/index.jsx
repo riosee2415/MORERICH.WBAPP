@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
@@ -18,6 +18,11 @@ import {
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { WISH_LIST_REQUEST } from "../../../reducers/mypage";
+import { Empty, message } from "antd";
+import { useRouter } from "next/router";
+import { LIKE_CREATE_REQUEST } from "../../../reducers/wish";
 
 const ProductWrapper = styled(Wrapper)`
   width: calc(100% / 3 - 44px);
@@ -48,65 +53,71 @@ const ProductWrapper = styled(Wrapper)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { me } = useSelector((state) => state.user);
+  const { wishList } = useSelector((state) => state.mypage);
+  const { st_likeCreateDone, st_likeCreateError } = useSelector(
+    (state) => state.wish
+  );
+
+  const [isLikeState, setIsLikeState] = useState(false);
+
+  console.log(wishList);
+
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (!me) {
+      router.push("/user/login");
+      return message.error("로그인 후 이용해주세요.");
+    }
+  }, [me]);
+
+  useEffect(() => {
+    if (st_likeCreateDone) {
+      dispatch({
+        type: WISH_LIST_REQUEST,
+      });
+
+      if (isLikeState) {
+        message.success("위시리스트에서 삭제되었습니다.");
+      } else {
+        message.success("위시리스트에 추가되었습니다.");
+      }
+    }
+
+    if (st_likeCreateError) {
+      return message.error(st_likeCreateError);
+    }
+  }, [st_likeCreateDone, st_likeCreateError]);
+
   ////// TOGGLE //////
 
   ////// HANDLER //////
-  ////// DATAVIEW //////
+  // 좋아요
+  const likeCreateHandler = useCallback(
+    (data) => {
+      setIsLikeState(data.isLike);
 
-  const bannerData = [
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
+      dispatch({
+        type: LIKE_CREATE_REQUEST,
+        data: {
+          ProductId: data.ProductId,
+        },
+      });
     },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod2.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod3.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod4.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-    {
-      imgUrl:
-        "https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png",
-      title: "CASESTUDY",
-      name: "[CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG",
-      price: "2,100,000원",
-      salePrice: "1,100,000원",
-    },
-  ];
+    [isLikeState]
+  );
+
+  const movelinkHandler = useCallback((link) => {
+    router.push(link);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  ////// DATAVIEW //////
 
   return (
     <>
@@ -136,16 +147,20 @@ const Index = () => {
                 위시리스트
               </Wrapper>
               <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
-                {bannerData && bannerData.length === 0 ? (
+                {wishList && wishList.length === 0 ? (
                   <Wrapper padding={`100px 0`}>
                     <Empty description="조회된 내역이 없습니다." />
                   </Wrapper>
                 ) : (
-                  bannerData.map((data, idx) => {
+                  wishList.map((data, idx) => {
                     return (
                       <ProductWrapper key={idx}>
-                        <SquareBox>
-                          <Image alt="thumbnail" src={data.imgUrl} />
+                        <SquareBox
+                          onClick={() =>
+                            movelinkHandler(`/product/${data.ProductId}`)
+                          }
+                        >
+                          <Image alt="thumbnail" src={data.thumbnail} />
                         </SquareBox>
 
                         <Wrapper
@@ -157,11 +172,11 @@ const Index = () => {
                             fontWeight={`600`}
                             margin={`23px 0 12px`}
                           >
-                            {data.title}
+                            {data.name}
                           </Text>
 
                           <Text fontSize={width < 900 ? `13px` : `17px`}>
-                            {data.name}
+                            {data.subName}
                           </Text>
                           <Wrapper
                             dr={`row`}
@@ -174,9 +189,9 @@ const Index = () => {
                               className="line"
                               margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
                             >
-                              {data.price}
+                              {data.viewCalcPrice}
                             </Text>
-                            <Text>{data.price}</Text>
+                            <Text>{data.viewPrice}</Text>
                           </Wrapper>
                           <Wrapper dr={`row`} ju={`flex-start`}>
                             <Image
@@ -184,11 +199,7 @@ const Index = () => {
                               src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
                               width={`22px`}
                               margin={`0 18px 0 0`}
-                            />
-                            <Image
-                              alt="cart icon"
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
-                              width={`22px`}
+                              onClick={() => likeCreateHandler(data)}
                             />
                           </Wrapper>
                         </Wrapper>
@@ -197,7 +208,6 @@ const Index = () => {
                   })
                 )}
               </Wrapper>
-              <CustomPage margin={`60px 0 0`} />
             </Wrapper>
           </RsWrapper>
         </WholeWrapper>
@@ -219,6 +229,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: WISH_LIST_REQUEST,
     });
 
     // 구현부 종료

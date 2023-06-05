@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
@@ -11,8 +11,6 @@ import {
   Text,
   WholeWrapper,
   Wrapper,
-  Image,
-  CustomPage,
   CommonButton,
   TextInput,
   SpanText,
@@ -20,13 +18,25 @@ import {
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";
 import styled from "styled-components";
-import { Checkbox, Modal, Radio } from "antd";
+import { message, Modal } from "antd";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import useInput from "../../../hooks/useInput";
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { me } = useSelector((state) => state.user);
   const [cModal, setCModal] = useState(false);
+
+  console.log(me);
+
+  const exitPassword = useInput(``);
+  const password = useInput(``);
+  const mobile = useInput(me && me.mobile);
+
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
@@ -34,6 +44,14 @@ const Index = () => {
     setCModal((prev) => !prev);
   }, [cModal]);
   ////// HANDLER //////
+  useEffect(() => {
+    if (!me) {
+      router.push(`/user/login`);
+
+      return message.error("로그인이 필요한 서비스입니다.");
+    }
+  }, [me]);
+
   ////// DATAVIEW //////
 
   return (
@@ -78,6 +96,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   readOnly
+                  value={me && me.userId}
                 />
                 <Text margin={`0 0 8px`}>
                   <SpanText>*</SpanText>비밀번호
@@ -98,6 +117,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   readOnly
+                  value={me && me.username}
                 />
                 <Text margin={`0 0 8px`}>연락처</Text>
                 <TextInput
@@ -115,6 +135,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   readOnly
+                  value={me && me.email}
                 />
                 <Text margin={`0 0 8px`}>주소</Text>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 8px`}>
@@ -184,6 +205,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   type={`password`}
+                  {...exitPassword}
                 />
               </Wrapper>
               <Wrapper dr={`row`} ju={`space-between`}>

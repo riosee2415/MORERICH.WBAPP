@@ -76,6 +76,10 @@ import {
   USER_MODIFY_UPDATE_REQUEST,
   USER_MODIFY_UPDATE_SUCCESS,
   USER_MODIFY_UPDATE_FAILURE,
+  //
+  USER_EXIT_REQUEST,
+  USER_EXIT_SUCCESS,
+  USER_EXIT_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -586,6 +590,33 @@ function* modifyUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function userExitAPI(data) {
+  return await axios.post(`/api/user/exit/update`, data);
+}
+
+function* userExit(action) {
+  try {
+    const result = yield call(userExitAPI, action.data);
+
+    yield put({
+      type: USER_EXIT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_EXIT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -664,6 +695,10 @@ function* watchUserModfiyUpdate() {
   yield takeLatest(USER_MODIFY_UPDATE_REQUEST, modifyUpdate);
 }
 
+function* watchUserExit() {
+  yield takeLatest(USER_EXIT_REQUEST, userExit);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -686,6 +721,7 @@ export default function* userSaga() {
     fork(watchUserFindPw),
     fork(watchCheckSecret),
     fork(watchUserModfiyUpdate),
+    fork(watchUserExit),
     //
   ]);
 }

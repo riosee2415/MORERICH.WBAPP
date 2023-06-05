@@ -112,7 +112,7 @@ router.post("/bought/list", isLoggedIn, async (req, res, next) => {
  * DEVELOPMENT : 시니어 홍민기
  * DEV DATE : 2023/06/03
  */
-router.post("/bought/detail", isLoggedIn, async (req, res, next) => {
+router.post("/bought/detail", async (req, res, next) => {
   const { id } = req.body;
 
   const selectQ1 = `

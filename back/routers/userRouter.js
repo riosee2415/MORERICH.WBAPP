@@ -360,7 +360,10 @@ router.get("/signin", async (req, res, next) => {
           "pointPer",
           "nickname",
           "email",
+          "mobile",
           "level",
+          "isExit",
+          "username",
           "menuRight1",
           "menuRight2",
           "menuRight3",
@@ -416,8 +419,10 @@ router.post("/signin", (req, res, next) => {
           "email",
           "level",
           "point",
+          "isExit",
           "pointPer",
           "username",
+          "mobile",
           "menuRight1",
           "menuRight2",
           "menuRight3",
@@ -432,6 +437,10 @@ router.post("/signin", (req, res, next) => {
           "menuRight12",
         ],
       });
+
+      if (fullUserWithoutPassword.isExit) {
+        return res.status(400).send("탈퇴한 회원 입니다.");
+      }
 
       return res.status(200).json(fullUserWithoutPassword);
     });
@@ -472,6 +481,8 @@ router.post("/signin/admin", (req, res, next) => {
           "email",
           "level",
           "username",
+          "mobile",
+          "isExit",
           "menuRight1",
           "menuRight2",
           "menuRight3",
@@ -550,8 +561,12 @@ router.get("/me", isLoggedIn, async (req, res, next) => {
 router.post("/me/update", isLoggedIn, async (req, res, next) => {
   const { password, mobile, email } = req.body;
 
+  console.log(password);
+  console.log(mobile);
+  console.log(email);
+
   try {
-    const exUser = await User.findOne({ where: { id: parseInt(id) } });
+    const exUser = await User.findOne({ where: { id: parseInt(req.user.id) } });
 
     if (!exUser) {
       return res.status(401).send("존재하지 않는 사용자 입니다.");

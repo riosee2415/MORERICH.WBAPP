@@ -126,7 +126,7 @@ const Index = () => {
       console.log(data);
       boughtLists.push({
         productName: data.name,
-        price: data.totalPrice,
+        price: data.calcPrice,
         qun: data.qun,
         optionValue: data.optionName,
         thumbnail: data.thumbnail,

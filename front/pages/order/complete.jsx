@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BOUGHT_DETAIL_REQUEST } from "../../reducers/mypage";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { numberWithCommas } from "../../components/commonUtils";
 
 const Complete = () => {
   ////// GLOBAL STATE //////
@@ -289,7 +290,17 @@ const Complete = () => {
                   상품금액
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                  {boughtDetail && boughtDetail.boughtPrice}원
+                  {numberWithCommas(
+                    String(
+                      boughtDetail &&
+                        boughtDetail.connectArray.reduce((sum, currValue) => {
+                          let a = sum + currValue.price;
+
+                          return a;
+                        }, 0)
+                    )
+                  )}
+                  원
                 </Text>
               </Wrapper>
               <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -317,7 +328,17 @@ const Complete = () => {
                   fontWeight={`bold`}
                   color={Theme.red_C}
                 >
-                  000,000원
+                  {numberWithCommas(
+                    String(
+                      boughtDetail &&
+                        boughtDetail.connectArray.reduce((sum, currValue) => {
+                          let a = sum + currValue.price;
+
+                          return a;
+                        }, 0) + 2500
+                    )
+                  )}
+                  원
                 </Text>
               </Wrapper>
             </Wrapper>

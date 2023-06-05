@@ -102,6 +102,8 @@ const Home = ({}) => {
 
   ////// DATAVIEW //////
 
+  console.log(slides);
+
   return (
     <>
       <Head>

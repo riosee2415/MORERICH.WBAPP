@@ -416,7 +416,7 @@ router.post("/list/slide", async (req, res, next) => {
               SELECT	id
                 FROM	wish	Z
                WHERE	Z.UserId = ${req.user.id}
-                 AND	A.id = Z.ProductId 
+                 AND	A.ProductId = Z.ProductId 
             )	AS exWish`
               : `(
               SELECT	null

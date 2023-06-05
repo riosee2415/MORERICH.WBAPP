@@ -156,6 +156,13 @@ export const Wrapper = styled.div`
   .line {
     text-decoration: line-through;
   }
+
+  & pre {
+    white-space: pre-wrap;
+    line-height: 1.4;
+    color: ${(props) => props.theme.darkGrey_C};
+    font-size: 14px;
+  }
 `;
 
 export const RsWrapper = styled.article`

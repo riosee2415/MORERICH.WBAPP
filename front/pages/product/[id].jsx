@@ -278,14 +278,14 @@ const Index = () => {
                   <Text
                     td={`underline`}
                     isHover
-                    margin={`0 24px 0 0`}
+                    // margin={`0 24px 0 0`}
                     onClick={() => setCancelModal(true)}
                   >
                     배송 /교환·환불 정보
                   </Text>
-                  <Text td={`underline`} isHover>
+                  {/* <Text td={`underline`} isHover>
                     상품 정보 고시
-                  </Text>
+                  </Text> */}
                 </Wrapper>
               </Wrapper>
               <Wrapper

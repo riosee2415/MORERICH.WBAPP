@@ -45,6 +45,9 @@ const Index = () => {
     st_addressDeleteDone,
     st_addressDeleteError,
     //
+    st_addressUpdateDone,
+    st_addressUpdateError,
+    //
     st_addressBasicDone,
     st_addressBasicError,
   } = useSelector((state) => state.mypage);
@@ -53,7 +56,6 @@ const Index = () => {
   const [cModal, setCModal] = useState(false);
   const [pModal, setPModal] = useState(false);
   const [normal, setNormal] = useState(false);
-  const [uNormal, setUNormal] = useState(false);
   const [allCheck, setAllCheck] = useState(false); // 전체체크
   const [currentCheck, setCurrentCheck] = useState([]); // 개별체크
 
@@ -114,6 +116,22 @@ const Index = () => {
       return message.success("배송지가 추가되었습니다.");
     }
   }, [st_addressCreateDone]);
+
+  // ********************** 배송지 수정 후처리 *************************
+  useEffect(() => {
+    if (st_addressUpdateError) {
+      return message.error(st_addressUpdateError);
+    }
+    if (st_addressUpdateDone) {
+      dispatch({
+        type: ADDRESS_LIST_REQUEST,
+      });
+
+      uModalToggle();
+
+      return message.success("배송지가 수정되었습니다.");
+    }
+  }, [st_addressUpdateError, st_addressUpdateDone]);
 
   // ********************** 배송지 삭제 후처리 *************************
   useEffect(() => {
@@ -639,8 +657,6 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                 />
-
-                <Checkbox checked={normal}>기본주소로 설정</Checkbox>
               </Wrapper>
 
               <CommonButton

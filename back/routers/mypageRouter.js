@@ -515,7 +515,7 @@ router.post("/address/update", isLoggedIn, async (req, res, next) => {
  * DEV DATE : 2023/06/02
  */
 
-router.post("/address/isBasic", isLoggedIn, async (req, res, next) => {
+router.post("/address/isBasicUpdate", isLoggedIn, async (req, res, next) => {
   const { id, isBasic } = req.body;
 
   const findQuery = `

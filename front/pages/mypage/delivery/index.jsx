@@ -59,6 +59,13 @@ const Index = () => {
   const adrs = useInput("");
   const dadrs = useInput("");
 
+  const u_title = useInput("");
+  const u_name = useInput("");
+  const u_mobile = useInput("");
+  const u_post = useInput("");
+  const u_adrs = useInput("");
+  const u_dadrs = useInput("");
+
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
@@ -120,9 +127,17 @@ const Index = () => {
     setCModal((prev) => !prev);
   }, [cModal]);
 
-  const uModalToggle = useCallback(() => {
-    setUModal((prev) => !prev);
-  }, [uModal]);
+  const uModalToggle = useCallback(
+    (snapshot = null) => {
+      if (snapshot) {
+        console.log(snapshot);
+        u_title.setValue(snapshot.title);
+      }
+
+      setUModal((prev) => !prev);
+    },
+    [uModal]
+  );
 
   const pModalToggle = useCallback(() => {
     setPModal((prev) => !prev);
@@ -531,6 +546,7 @@ const Index = () => {
                   width={`100%`}
                   height={`50px`}
                   margin={`0 0 25px`}
+                  {...u_title}
                 />
                 <Text margin={`0 0 8px`}>성명</Text>
                 <TextInput

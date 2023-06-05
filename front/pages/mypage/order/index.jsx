@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BOUGHT_LIST_REQUEST } from "../../../reducers/mypage";
 import { useRouter } from "next/router";
 import { numberWithCommas } from "../../../components/commonUtils";
+import Link from "next/dist/client/link";
 
 const Index = () => {
   ////// GLOBAL STATE //////
@@ -381,15 +382,19 @@ const Index = () => {
                 >
                   이전으로
                 </CommonButton>
-                <CommonButton
-                  width={width < 800 ? `130px` : `170px`}
-                  fontSize={`16px`}
-                  fontWeight={`600`}
-                  height={`50px`}
-                  margin={`0 0 0 4px`}
-                >
-                  {drData && drData.status <= 2 ? "주문취소" : "환불요청"}
-                </CommonButton>
+                <Link href={`/mypage/order/cancel`}>
+                  <a>
+                    <CommonButton
+                      width={width < 800 ? `130px` : `170px`}
+                      fontSize={`16px`}
+                      fontWeight={`600`}
+                      height={`50px`}
+                      margin={`0 0 0 4px`}
+                    >
+                      {drData && drData.status <= 2 ? "주문취소" : "환불요청"}
+                    </CommonButton>
+                  </a>
+                </Link>
               </Wrapper>
             </Wrapper>
           </Modal>

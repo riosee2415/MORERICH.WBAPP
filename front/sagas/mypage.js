@@ -12,6 +12,14 @@ import {
   WISH_LIST_REQUEST,
   WISH_LIST_SUCCESS,
   WISH_LIST_FAILURE,
+  //
+  ADDRESS_LIST_REQUEST,
+  ADDRESS_LIST_SUCCESS,
+  ADDRESS_LIST_FAILURE,
+  //
+  ADDRESS_CREATE_REQUEST,
+  ADDRESS_CREATE_SUCCESS,
+  ADDRESS_CREATE_FAILURE,
 } from "../reducers/mypage";
 
 // SAGA AREA ********************************************************************************************************
@@ -83,6 +91,52 @@ function* wishList(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function addressListAPI(data) {
+  return await axios.post(`/api/mypage/address/list`, data);
+}
+
+function* addressList(action) {
+  try {
+    const result = yield call(addressListAPI, action.data);
+
+    yield put({
+      type: ADDRESS_LIST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADDRESS_LIST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function addressCreateAPI(data) {
+  return await axios.post(`/api/mypage/address/create`, data);
+}
+
+function* addressCreate(action) {
+  try {
+    const result = yield call(addressCreateAPI, action.data);
+
+    yield put({
+      type: ADDRESS_CREATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADDRESS_CREATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 //////////////////////////////////////////////////////////////
 function* watchBoughtList() {
   yield takeLatest(BOUGHT_LIST_REQUEST, boughtList);
@@ -96,12 +150,22 @@ function* watchWishList() {
   yield takeLatest(WISH_LIST_REQUEST, wishList);
 }
 
+function* watchAddressList() {
+  yield takeLatest(ADDRESS_LIST_REQUEST, addressList);
+}
+
+function* watchAddressCreate() {
+  yield takeLatest(ADDRESS_CREATE_REQUEST, addressCreate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* mypageSaga() {
   yield all([
     fork(watchBoughtList),
     fork(watchBoughtDetail),
     fork(watchWishList),
+    fork(watchAddressList),
+    fork(watchAddressCreate),
 
     //
   ]);

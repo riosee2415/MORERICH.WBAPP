@@ -26,6 +26,14 @@ export const initailState = {
   st_addressCreateLoading: false,
   st_addressCreateDone: false,
   st_addressCreateError: null,
+  // 배송지리스트 수정하기
+  st_addressUpdateLoading: false,
+  st_addressUpdateDone: false,
+  st_addressUpdateError: null,
+  // 배송지리스트 삭제하기
+  st_addressDeleteLoading: false,
+  st_addressDeleteDone: false,
+  st_addressDeleteError: null,
 };
 
 export const BOUGHT_LIST_REQUEST = "BOUGHT_LIST_REQUEST";
@@ -47,6 +55,14 @@ export const ADDRESS_LIST_FAILURE = "ADDRESS_LIST_FAILURE";
 export const ADDRESS_CREATE_REQUEST = "ADDRESS_CREATE_REQUEST";
 export const ADDRESS_CREATE_SUCCESS = "ADDRESS_CREATE_SUCCESS";
 export const ADDRESS_CREATE_FAILURE = "ADDRESS_CREATE_FAILURE";
+
+export const ADDRESS_UPDATE_REQUEST = "ADDRESS_UPDATE_REQUEST";
+export const ADDRESS_UPDATE_SUCCESS = "ADDRESS_UPDATE_SUCCESS";
+export const ADDRESS_UPDATE_FAILURE = "ADDRESS_UPDATE_FAILURE";
+
+export const ADDRESS_DELETE_REQUEST = "ADDRESS_DELETE_REQUEST";
+export const ADDRESS_DELETE_SUCCESS = "ADDRESS_DELETE_SUCCESS";
+export const ADDRESS_DELETE_FAILURE = "ADDRESS_DELETE_FAILURE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -151,6 +167,46 @@ const reducer = (state = initailState, action) =>
         draft.st_addressCreateLoading = false;
         draft.st_addressCreateDone = false;
         draft.st_addressCreateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case ADDRESS_UPDATE_REQUEST: {
+        draft.st_addressUpdateLoading = true;
+        draft.st_addressUpdateDone = false;
+        draft.st_addressUpdateError = null;
+        break;
+      }
+      case ADDRESS_UPDATE_SUCCESS: {
+        draft.st_addressUpdateLoading = false;
+        draft.st_addressUpdateDone = true;
+        draft.st_addressUpdateError = null;
+        break;
+      }
+      case ADDRESS_UPDATE_FAILURE: {
+        draft.st_addressUpdateLoading = false;
+        draft.st_addressUpdateDone = false;
+        draft.st_addressUpdateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case ADDRESS_DELETE_REQUEST: {
+        draft.st_addressDeleteLoading = true;
+        draft.st_addressDeleteDone = false;
+        draft.st_addressDeleteError = null;
+        break;
+      }
+      case ADDRESS_DELETE_SUCCESS: {
+        draft.st_addressDeleteLoading = false;
+        draft.st_addressDeleteDone = true;
+        draft.st_addressDeleteError = null;
+        break;
+      }
+      case ADDRESS_DELETE_FAILURE: {
+        draft.st_addressDeleteLoading = false;
+        draft.st_addressDeleteDone = false;
+        draft.st_addressDeleteError = action.error;
         break;
       }
 

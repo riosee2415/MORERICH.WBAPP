@@ -73,6 +73,15 @@ const Login = () => {
     });
   }, [idInput, pwInput]);
 
+  const onSubmitHandler = useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        loginHandler();
+      }
+    },
+    [idInput, pwInput]
+  );
+
   ////// DATAVIEW //////
 
   return (
@@ -99,6 +108,7 @@ const Login = () => {
                 height={`50px`}
                 margin={`0 0 8px`}
                 {...idInput}
+                onKeyPress={onSubmitHandler}
               />
               <TextInput
                 placeholder="비밀번호"
@@ -106,6 +116,7 @@ const Login = () => {
                 height={`50px`}
                 margin={`0 0 11px`}
                 {...pwInput}
+                onKeyPress={onSubmitHandler}
                 type="password"
               />
               <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 12px`}>

@@ -24,7 +24,9 @@ import { Checkbox, Empty, message, Modal, Radio } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ADDRESS_CREATE_REQUEST,
+  ADDRESS_DELETE_REQUEST,
   ADDRESS_LIST_REQUEST,
+  ADDRESS_UPDATE_REQUEST,
 } from "../../../reducers/mypage";
 import useInput from "../../../hooks/useInput";
 import { useRouter } from "next/router";
@@ -33,14 +35,22 @@ import DaumPostcode from "react-daum-postcode";
 const Index = () => {
   ////// GLOBAL STATE //////
   const { me } = useSelector((state) => state.user);
-  const { addressList, st_addressCreateDone, st_addressCreateError } =
-    useSelector((state) => state.mypage);
+  const {
+    addressList,
+    //
+    st_addressCreateDone,
+    st_addressCreateError,
+    //
+    st_addressDeleteDone,
+    st_addressDeleteError,
+  } = useSelector((state) => state.mypage);
 
-  console.log(addressList);
-
+  const [uModal, setUModal] = useState(false);
   const [cModal, setCModal] = useState(false);
   const [pModal, setPModal] = useState(false);
   const [normal, setNormal] = useState(false);
+  const [allCheck, setAllCheck] = useState(false); // 전체체크
+  const [currentCheck, setCurrentCheck] = useState([]); // 개별체크
 
   const title = useInput("");
   const name = useInput("");
@@ -48,6 +58,13 @@ const Index = () => {
   const post = useInput("");
   const adrs = useInput("");
   const dadrs = useInput("");
+
+  const u_title = useInput("");
+  const u_name = useInput("");
+  const u_mobile = useInput("");
+  const u_post = useInput("");
+  const u_adrs = useInput("");
+  const u_dadrs = useInput("");
 
   ////// HOOKS //////
   const width = useWidth();
@@ -64,7 +81,7 @@ const Index = () => {
     }
   }, [me]);
 
-  // ********************** 회원정보 수정 후처리 *************************
+  // ********************** 배송지 추가 후처리 *************************
 
   useEffect(() => {
     if (st_addressCreateError) {
@@ -91,10 +108,36 @@ const Index = () => {
     }
   }, [st_addressCreateDone]);
 
+  // ********************** 배송지 삭제 후처리 *************************
+  useEffect(() => {
+    if (st_addressDeleteError) {
+      return message.error(st_addressDeleteError);
+    }
+    if (st_addressDeleteDone) {
+      dispatch({
+        type: ADDRESS_LIST_REQUEST,
+      });
+
+      return message.success("배송지가 삭제되었습니다.");
+    }
+  }, [st_addressDeleteError, st_addressDeleteDone]);
+
   ////// TOGGLE //////
   const cModalToggle = useCallback(() => {
     setCModal((prev) => !prev);
   }, [cModal]);
+
+  const uModalToggle = useCallback(
+    (snapshot = null) => {
+      if (snapshot) {
+        console.log(snapshot);
+        u_title.setValue(snapshot.title);
+      }
+
+      setUModal((prev) => !prev);
+    },
+    [uModal]
+  );
 
   const pModalToggle = useCallback(() => {
     setPModal((prev) => !prev);
@@ -106,7 +149,6 @@ const Index = () => {
     if (!title.value) {
       return message.error("명칭을 입력해주세요.");
     }
-
     if (!name.value) {
       return message.error("이름을 입력해주세요.");
     }
@@ -133,6 +175,88 @@ const Index = () => {
       },
     });
   }, [title, name, mobile, adrs, post, dadrs, normal]);
+
+  // 배송지 수정
+  const addressUpdateHandler = useCallback(() => {
+    if (!title.value) {
+      return message.error("명칭을 입력해주세요.");
+    }
+    if (!name.value) {
+      return message.error("이름을 입력해주세요.");
+    }
+    if (!mobile.value) {
+      return message.error("연락처를 입력해주세요.");
+    }
+    if (!adrs.value) {
+      return message.error("주소를 입력해주세요.");
+    }
+    if (!dadrs.value) {
+      return message.error("상세주소를 입력해주세요.");
+    }
+
+    dispatch({
+      type: ADDRESS_UPDATE_REQUEST,
+      data: {
+        id: data.id,
+        title: title.value,
+        name: name.value,
+        mobile: mobile.value,
+        post: post.value,
+        adrs: adrs.value,
+        dadrs: dadrs.value,
+        isBasic: normal,
+      },
+    });
+  }, [title, name, mobile, adrs, post, dadrs, normal]);
+
+  // 배송지 삭제
+  const deleteHandler = useCallback(() => {
+    if (currentCheck.length === 0) {
+      return message.error("삭제할 배송지를 선택해주세요.");
+    }
+
+    let addressIds = [];
+
+    currentCheck.map((data) => {
+      addressIds.push(data.id);
+    });
+
+    dispatch({
+      type: ADDRESS_DELETE_REQUEST,
+      data: {
+        ids: addressIds,
+      },
+    });
+  }, [currentCheck]);
+
+  // 하나씩체크
+  const checkHandler = useCallback(
+    (data) => {
+      let arr = currentCheck ? currentCheck.map((data) => data) : [];
+      const currentId = arr.findIndex((value) => value.id === data.id);
+
+      if (currentId === -1) {
+        arr.push(data);
+      } else {
+        arr.splice(currentId, 1);
+      }
+
+      setCurrentCheck(arr);
+    },
+    [currentCheck]
+  );
+
+  // 전체체크
+  const allCheckHandler = useCallback(() => {
+    if (allCheck) {
+      setAllCheck(false);
+      setCurrentCheck([]);
+    } else {
+      setAllCheck(true);
+      setCurrentCheck(addressList);
+    }
+  }, [addressList, allCheck]);
+
   ////// DATAVIEW //////
 
   return (
@@ -172,6 +296,7 @@ const Index = () => {
                     padding={`0`}
                     kindOf={`white`}
                     margin={`0 6px 0 0`}
+                    onClick={() => deleteHandler()}
                   >
                     삭제하기
                   </CommonButton>
@@ -188,50 +313,60 @@ const Index = () => {
 
               {width < 800 ? (
                 <Wrapper borderTop={`1px solid ${Theme.black_C}`}>
-                  <Wrapper
-                    borderBottom={`1px solid ${Theme.grey3_C}`}
-                    padding={`25px 0 20px`}
-                    al={`flex-start`}
-                  >
-                    <Wrapper dr={`row`} ju={`space-between`}>
-                      <Checkbox />
-                      <Wrapper width={`auto`} dr={`row`}>
-                        <CommonButton
-                          kindOf={`grey3`}
-                          width={`45px`}
-                          height={`30px`}
-                          padding={`0`}
-                          margin={`0 6px 0 0`}
-                        >
-                          삭제
-                        </CommonButton>
-                        <CommonButton
-                          kindOf={`grey`}
-                          width={`45px`}
-                          height={`30px`}
-                          padding={`0`}
-                        >
-                          수정
-                        </CommonButton>
-                      </Wrapper>
+                  {addressList && addressList.length === 0 ? (
+                    <Wrapper padding={`30px 0`}>
+                      <Empty description="배송지를 추가해주세요." />
                     </Wrapper>
-                    <Text
-                      margin={`12px 0 8px`}
-                      fontSize={`16px`}
-                      fontWeight={`600`}
-                    >
-                      판암동마루
-                    </Text>
-                    <Text margin={`0 0 8px`}>
-                      박마루
-                      <SpanText margin={`0 0 0 8px`} color={Theme.grey2_C}>
-                        010-0000-0000
-                      </SpanText>
-                    </Text>
-                    <Text>대전광역시 동구 뭐시깽이 OO로00-00 0000아파트</Text>
-                    <Text margin={`0 0 8px`}>000동 0000호</Text>
-                    <Radio>기본주소로 설정</Radio>
-                  </Wrapper>
+                  ) : (
+                    addressList.map((data) => {
+                      return (
+                        <Wrapper
+                          key={data.id}
+                          borderBottom={`1px solid ${Theme.grey3_C}`}
+                          padding={`25px 0 20px`}
+                          al={`flex-start`}
+                        >
+                          <Wrapper dr={`row`} ju={`space-between`}>
+                            <Checkbox
+                              onChange={() => checkHandler(data)}
+                              checked={currentCheck.find(
+                                (value) => value.id === data.id
+                              )}
+                            />
+                            <Wrapper width={`auto`} dr={`row`}>
+                              <CommonButton
+                                kindOf={`grey`}
+                                width={`45px`}
+                                height={`30px`}
+                                padding={`0`}
+                              >
+                                수정
+                              </CommonButton>
+                            </Wrapper>
+                          </Wrapper>
+                          <Text
+                            margin={`12px 0 8px`}
+                            fontSize={`16px`}
+                            fontWeight={`600`}
+                          >
+                            {data.title}
+                          </Text>
+                          <Text margin={`0 0 8px`}>
+                            {data.name}
+                            <SpanText
+                              margin={`0 0 0 8px`}
+                              color={Theme.grey2_C}
+                            >
+                              {data.mobile}
+                            </SpanText>
+                          </Text>
+                          <Text>{data.adrs}</Text>
+                          <Text margin={`0 0 8px`}>{data.dadrs}</Text>
+                          <Radio>기본주소로 설정</Radio>
+                        </Wrapper>
+                      );
+                    })
+                  )}
                 </Wrapper>
               ) : (
                 <>
@@ -243,7 +378,7 @@ const Index = () => {
                     borderBottom={`1px solid ${Theme.grey3_C}`}
                   >
                     <Wrapper width={`5%`}>
-                      <Checkbox />
+                      <Checkbox onChange={allCheckHandler} checked={allCheck} />
                     </Wrapper>
                     <Wrapper width={`15%`}>명칭</Wrapper>
                     <Wrapper width={`20%`}>성명/연락처</Wrapper>
@@ -266,7 +401,12 @@ const Index = () => {
                           borderBottom={`1px solid ${Theme.grey3_C}`}
                         >
                           <Wrapper width={`5%`}>
-                            <Checkbox />
+                            <Checkbox
+                              onChange={() => checkHandler(data)}
+                              checked={currentCheck.find(
+                                (value) => value.id === data.id
+                              )}
+                            />
                           </Wrapper>
                           <Wrapper
                             fontSize={`16px`}
@@ -288,7 +428,7 @@ const Index = () => {
                             <Text>{data.dadrs}</Text>
                           </Wrapper>
                           <Wrapper width={`15%`}>
-                            <Radio />
+                            <Radio checked={data.isBasic} />
                           </Wrapper>
                           <Wrapper width={`10%`}>
                             <CommonButton
@@ -296,6 +436,7 @@ const Index = () => {
                               width={`45px`}
                               height={`30px`}
                               padding={`0`}
+                              onClick={() => uModalToggle(data)}
                             >
                               수정
                             </CommonButton>
@@ -335,6 +476,7 @@ const Index = () => {
                 <TextInput
                   {...mobile}
                   placeholder="'-'를 제외한 연락처"
+                  type="number"
                   width={`100%`}
                   height={`50px`}
                   margin={`0 0 25px`}
@@ -374,7 +516,9 @@ const Index = () => {
                   margin={`0 0 25px`}
                 />
 
-                <Checkbox checked={normal}>기본주소로 설정</Checkbox>
+                <Checkbox checked={normal} onChange={() => setNormal(!normal)}>
+                  기본주소로 설정
+                </Checkbox>
               </Wrapper>
 
               <CommonButton
@@ -386,6 +530,83 @@ const Index = () => {
                 onClick={addressCreateHandler}
               >
                 추가하기
+              </CommonButton>
+            </Wrapper>
+          </Modal>
+
+          <Modal onCancel={uModalToggle} visible={uModal} footer={null}>
+            <Wrapper padding={width < 800 ? `30px 0` : `50px`}>
+              <Text fontSize={`28px`} fontWeight={`600`} margin={`0 0 30px`}>
+                배송지 수정
+              </Text>
+              <Wrapper al={`flex-start`}>
+                <Text margin={`0 0 8px`}>명칭</Text>
+                <TextInput
+                  placeholder="명칭"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                  {...u_title}
+                />
+                <Text margin={`0 0 8px`}>성명</Text>
+                <TextInput
+                  placeholder="성명"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                />
+                <Text margin={`0 0 8px`}>연락처</Text>
+                <TextInput
+                  placeholder="'-'를 제외한 연락처"
+                  type="number"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                />
+                <Text margin={`0 0 8px`}>주소</Text>
+                <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 8px`}>
+                  <TextInput
+                    placeholder="우편번호"
+                    width={`calc(100% - 130px)`}
+                    height={`50px`}
+                    readOnly
+                  />
+                  <CommonButton
+                    width={`120px`}
+                    fontSize={`16px`}
+                    fontWeight={`600`}
+                    height={`50px`}
+                    onClick={pModalToggle}
+                  >
+                    우편번호
+                  </CommonButton>
+                </Wrapper>
+                <TextInput
+                  placeholder="주소"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 8px`}
+                  readOnly
+                />
+                <TextInput
+                  placeholder="상세주소"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                />
+
+                <Checkbox checked={normal}>기본주소로 설정</Checkbox>
+              </Wrapper>
+
+              <CommonButton
+                width={`100%`}
+                fontSize={`16px`}
+                fontWeight={`600`}
+                height={`50px`}
+                margin={`15px 0 0`}
+                onClick={addressUpdateHandler}
+              >
+                수정하기
               </CommonButton>
             </Wrapper>
           </Modal>

@@ -20,6 +20,14 @@ import {
   ADDRESS_CREATE_REQUEST,
   ADDRESS_CREATE_SUCCESS,
   ADDRESS_CREATE_FAILURE,
+  //
+  ADDRESS_UPDATE_REQUEST,
+  ADDRESS_UPDATE_SUCCESS,
+  ADDRESS_UPDATE_FAILURE,
+  //
+  ADDRESS_DELETE_REQUEST,
+  ADDRESS_DELETE_SUCCESS,
+  ADDRESS_DELETE_FAILURE,
 } from "../reducers/mypage";
 
 // SAGA AREA ********************************************************************************************************
@@ -137,6 +145,52 @@ function* addressCreate(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function addressUpdateAPI(data) {
+  return await axios.post(`/api/mypage/address/update`, data);
+}
+
+function* addressUpdate(action) {
+  try {
+    const result = yield call(addressUpdateAPI, action.data);
+
+    yield put({
+      type: ADDRESS_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADDRESS_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function addressDeleteAPI(data) {
+  return await axios.post(`/api/mypage/address/delete`, data);
+}
+
+function* addressDelete(action) {
+  try {
+    const result = yield call(addressDeleteAPI, action.data);
+
+    yield put({
+      type: ADDRESS_DELETE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADDRESS_DELETE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 //////////////////////////////////////////////////////////////
 function* watchBoughtList() {
   yield takeLatest(BOUGHT_LIST_REQUEST, boughtList);
@@ -158,6 +212,14 @@ function* watchAddressCreate() {
   yield takeLatest(ADDRESS_CREATE_REQUEST, addressCreate);
 }
 
+function* watchAddressUpdate() {
+  yield takeLatest(ADDRESS_UPDATE_REQUEST, addressUpdate);
+}
+
+function* watchAddressDelete() {
+  yield takeLatest(ADDRESS_DELETE_REQUEST, addressDelete);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* mypageSaga() {
   yield all([
@@ -166,6 +228,8 @@ export default function* mypageSaga() {
     fork(watchWishList),
     fork(watchAddressList),
     fork(watchAddressCreate),
+    fork(watchAddressUpdate),
+    fork(watchAddressDelete),
 
     //
   ]);

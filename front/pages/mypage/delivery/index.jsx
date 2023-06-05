@@ -49,6 +49,8 @@ const Index = () => {
     st_addressBasicError,
   } = useSelector((state) => state.mypage);
 
+  console.log(addressList);
+
   const [uModal, setUModal] = useState(false);
   const [cModal, setCModal] = useState(false);
   const [pModal, setPModal] = useState(false);
@@ -285,7 +287,7 @@ const Index = () => {
       type: ADDRESS_BASIC_REQUEST,
       data: {
         id: data.id,
-        isBasic: data.isBasic,
+        isBasic: 1,
       },
     });
   }, []);

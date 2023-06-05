@@ -23,6 +23,7 @@ import styled from "styled-components";
 import { Checkbox, Empty, message, Modal, Radio } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  ADDRESS_BASIC_REQUEST,
   ADDRESS_CREATE_REQUEST,
   ADDRESS_DELETE_REQUEST,
   ADDRESS_LIST_REQUEST,
@@ -43,12 +44,16 @@ const Index = () => {
     //
     st_addressDeleteDone,
     st_addressDeleteError,
+    //
+    st_addressBasicDone,
+    st_addressBasicError,
   } = useSelector((state) => state.mypage);
 
   const [uModal, setUModal] = useState(false);
   const [cModal, setCModal] = useState(false);
   const [pModal, setPModal] = useState(false);
   const [normal, setNormal] = useState(false);
+  const [uNormal, setUNormal] = useState(false);
   const [allCheck, setAllCheck] = useState(false); // 전체체크
   const [currentCheck, setCurrentCheck] = useState([]); // 개별체크
 
@@ -122,6 +127,20 @@ const Index = () => {
     }
   }, [st_addressDeleteError, st_addressDeleteDone]);
 
+  // ********************** 기본배송지 변경 후처리 *************************
+  useEffect(() => {
+    if (st_addressBasicError) {
+      return message.error(st_addressBasicError);
+    }
+    if (st_addressBasicDone) {
+      dispatch({
+        type: ADDRESS_LIST_REQUEST,
+      });
+
+      return message.success("기본배송지가 변경되었습니다.");
+    }
+  }, [st_addressBasicError, st_addressBasicDone]);
+
   ////// TOGGLE //////
   const cModalToggle = useCallback(() => {
     setCModal((prev) => !prev);
@@ -130,8 +149,12 @@ const Index = () => {
   const uModalToggle = useCallback(
     (snapshot = null) => {
       if (snapshot) {
-        console.log(snapshot);
         u_title.setValue(snapshot.title);
+        u_name.setValue(snapshot.name);
+        u_mobile.setValue(snapshot.mobile);
+        u_post.setValue(snapshot.post);
+        u_adrs.setValue(snapshot.adrs);
+        u_dadrs.setValue(snapshot.dadrs);
       }
 
       setUModal((prev) => !prev);
@@ -178,36 +201,35 @@ const Index = () => {
 
   // 배송지 수정
   const addressUpdateHandler = useCallback(() => {
-    if (!title.value) {
+    if (!u_title.value) {
       return message.error("명칭을 입력해주세요.");
     }
-    if (!name.value) {
+    if (!u_name.value) {
       return message.error("이름을 입력해주세요.");
     }
-    if (!mobile.value) {
+    if (!u_mobile.value) {
       return message.error("연락처를 입력해주세요.");
     }
-    if (!adrs.value) {
+    if (!u_adrs.value) {
       return message.error("주소를 입력해주세요.");
     }
-    if (!dadrs.value) {
+    if (!u_dadrs.value) {
       return message.error("상세주소를 입력해주세요.");
     }
 
     dispatch({
       type: ADDRESS_UPDATE_REQUEST,
       data: {
-        id: data.id,
-        title: title.value,
-        name: name.value,
-        mobile: mobile.value,
-        post: post.value,
-        adrs: adrs.value,
-        dadrs: dadrs.value,
-        isBasic: normal,
+        title: u_title.value,
+        name: u_name.value,
+        mobile: u_mobile.value,
+        post: u_post.value,
+        adrs: u_adrs.value,
+        dadrs: u_dadrs.value,
+        isBasic: uNormal,
       },
     });
-  }, [title, name, mobile, adrs, post, dadrs, normal]);
+  }, [u_title, u_name, u_mobile, u_post, u_adrs, u_dadrs, uNormal]);
 
   // 배송지 삭제
   const deleteHandler = useCallback(() => {
@@ -256,6 +278,17 @@ const Index = () => {
       setCurrentCheck(addressList);
     }
   }, [addressList, allCheck]);
+
+  //기본배송지 변경
+  const basicHandler = useCallback((data) => {
+    dispatch({
+      type: ADDRESS_BASIC_REQUEST,
+      data: {
+        id: data.id,
+        isBasic: data.isBasic,
+      },
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -428,7 +461,10 @@ const Index = () => {
                             <Text>{data.dadrs}</Text>
                           </Wrapper>
                           <Wrapper width={`15%`}>
-                            <Radio checked={data.isBasic} />
+                            <Radio
+                              checked={data.isBasic}
+                              onChange={() => basicHandler(data)}
+                            />
                           </Wrapper>
                           <Wrapper width={`10%`}>
                             <CommonButton
@@ -550,6 +586,7 @@ const Index = () => {
                 />
                 <Text margin={`0 0 8px`}>성명</Text>
                 <TextInput
+                  {...u_name}
                   placeholder="성명"
                   width={`100%`}
                   height={`50px`}
@@ -557,6 +594,7 @@ const Index = () => {
                 />
                 <Text margin={`0 0 8px`}>연락처</Text>
                 <TextInput
+                  {...u_mobile}
                   placeholder="'-'를 제외한 연락처"
                   type="number"
                   width={`100%`}
@@ -566,6 +604,7 @@ const Index = () => {
                 <Text margin={`0 0 8px`}>주소</Text>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 8px`}>
                   <TextInput
+                    {...u_post}
                     placeholder="우편번호"
                     width={`calc(100% - 130px)`}
                     height={`50px`}
@@ -582,6 +621,7 @@ const Index = () => {
                   </CommonButton>
                 </Wrapper>
                 <TextInput
+                  {...u_adrs}
                   placeholder="주소"
                   width={`100%`}
                   height={`50px`}
@@ -589,6 +629,7 @@ const Index = () => {
                   readOnly
                 />
                 <TextInput
+                  {...u_dadrs}
                   placeholder="상세주소"
                   width={`100%`}
                   height={`50px`}

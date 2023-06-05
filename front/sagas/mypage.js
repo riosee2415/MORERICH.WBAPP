@@ -28,6 +28,10 @@ import {
   ADDRESS_DELETE_REQUEST,
   ADDRESS_DELETE_SUCCESS,
   ADDRESS_DELETE_FAILURE,
+  //
+  ADDRESS_BASIC_REQUEST,
+  ADDRESS_BASIC_SUCCESS,
+  ADDRESS_BASIC_FAILURE,
 } from "../reducers/mypage";
 
 // SAGA AREA ********************************************************************************************************
@@ -191,6 +195,29 @@ function* addressDelete(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function addressBasicAPI(data) {
+  return await axios.post(`/api/mypage/address/isBasicUpdate`, data);
+}
+
+function* addressBasic(action) {
+  try {
+    const result = yield call(addressBasicAPI, action.data);
+
+    yield put({
+      type: ADDRESS_BASIC_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADDRESS_BASIC_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 //////////////////////////////////////////////////////////////
 function* watchBoughtList() {
   yield takeLatest(BOUGHT_LIST_REQUEST, boughtList);
@@ -220,6 +247,10 @@ function* watchAddressDelete() {
   yield takeLatest(ADDRESS_DELETE_REQUEST, addressDelete);
 }
 
+function* watchAddressBasic() {
+  yield takeLatest(ADDRESS_BASIC_REQUEST, addressBasic);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* mypageSaga() {
   yield all([
@@ -230,6 +261,7 @@ export default function* mypageSaga() {
     fork(watchAddressCreate),
     fork(watchAddressUpdate),
     fork(watchAddressDelete),
+    fork(watchAddressBasic),
 
     //
   ]);

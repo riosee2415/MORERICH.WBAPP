@@ -4,6 +4,7 @@ export const initailState = {
   boughtList: [], // 구매내역
   boughtDetail: null, // 구매내역상세
   wishList: [], // 위시리스트
+  addressList: [], // 배송지리스트
 
   // 구매내역 가져오기
   st_boughtListLoading: false,
@@ -17,6 +18,14 @@ export const initailState = {
   st_wishListLoading: false,
   st_wishListDone: false,
   st_wishListError: null,
+  // 배송지리스트 가져오기
+  st_addressListLoading: false,
+  st_addressListDone: false,
+  st_addressListError: null,
+  // 배송지리스트 추가하기
+  st_addressCreateLoading: false,
+  st_addressCreateDone: false,
+  st_addressCreateError: null,
 };
 
 export const BOUGHT_LIST_REQUEST = "BOUGHT_LIST_REQUEST";
@@ -30,6 +39,14 @@ export const BOUGHT_DETAIL_FAILURE = "BOUGHT_DETAIL_FAILURE";
 export const WISH_LIST_REQUEST = "WISH_LIST_REQUEST";
 export const WISH_LIST_SUCCESS = "WISH_LIST_SUCCESS";
 export const WISH_LIST_FAILURE = "WISH_LIST_FAILURE";
+
+export const ADDRESS_LIST_REQUEST = "ADDRESS_LIST_REQUEST";
+export const ADDRESS_LIST_SUCCESS = "ADDRESS_LIST_SUCCESS";
+export const ADDRESS_LIST_FAILURE = "ADDRESS_LIST_FAILURE";
+
+export const ADDRESS_CREATE_REQUEST = "ADDRESS_CREATE_REQUEST";
+export const ADDRESS_CREATE_SUCCESS = "ADDRESS_CREATE_SUCCESS";
+export const ADDRESS_CREATE_FAILURE = "ADDRESS_CREATE_FAILURE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -93,6 +110,47 @@ const reducer = (state = initailState, action) =>
         draft.st_wishListLoading = false;
         draft.st_wishListDone = false;
         draft.st_wishListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case ADDRESS_LIST_REQUEST: {
+        draft.st_addressListLoading = true;
+        draft.st_addressListDone = false;
+        draft.st_addressListError = null;
+        break;
+      }
+      case ADDRESS_LIST_SUCCESS: {
+        draft.st_addressListLoading = false;
+        draft.st_addressListDone = true;
+        draft.st_addressListError = null;
+        draft.addressList = action.data;
+        break;
+      }
+      case ADDRESS_LIST_FAILURE: {
+        draft.st_addressListLoading = false;
+        draft.st_addressListDone = false;
+        draft.st_addressListError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case ADDRESS_CREATE_REQUEST: {
+        draft.st_addressCreateLoading = true;
+        draft.st_addressCreateDone = false;
+        draft.st_addressCreateError = null;
+        break;
+      }
+      case ADDRESS_CREATE_SUCCESS: {
+        draft.st_addressCreateLoading = false;
+        draft.st_addressCreateDone = true;
+        draft.st_addressCreateError = null;
+        break;
+      }
+      case ADDRESS_CREATE_FAILURE: {
+        draft.st_addressCreateLoading = false;
+        draft.st_addressCreateDone = false;
+        draft.st_addressCreateError = action.error;
         break;
       }
 

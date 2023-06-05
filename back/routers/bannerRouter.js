@@ -409,7 +409,20 @@ router.post("/list/slide", async (req, res, next) => {
           B.price,
           B.discount,
           CONCAT(FORMAT(B.price, 0), "원") AS viewPrice,
-          CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice
+          CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice,
+          ${
+            req.user
+              ? ` (
+              SELECT	id
+                FROM	wish	Z
+               WHERE	Z.UserId = ${req.user.id}
+                 AND	A.id = Z.ProductId 
+            )	AS exWish`
+              : `(
+              SELECT	null
+                FROM	dual
+            )	AS exWish`
+          }
   FROM	mainSlideProduct	A
   INNER
   JOIN	product 			B

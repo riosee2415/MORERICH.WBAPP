@@ -95,6 +95,7 @@ const Index = () => {
   // 좋아요
   const likeCreateHandler = useCallback(
     (data) => {
+      console.log(data);
       if (!me) {
         return message.error("로그인 후 이용할 수 있습니다.");
       }
@@ -242,13 +243,23 @@ const Index = () => {
                           <Text>{data.viewPrice}</Text>
                         </Wrapper>
                         <Wrapper dr={`row`} ju={`flex-start`}>
-                          <Image
-                            alt="heart icon"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                            width={`22px`}
-                            margin={`0 18px 0 0`}
-                            onClick={() => likeCreateHandler(data)}
-                          />
+                          {data.exWish ? (
+                            <Image
+                              alt="heart icon"
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                              width={`22px`}
+                              margin={`0 18px 0 0`}
+                              onClick={() => likeCreateHandler(data)}
+                            />
+                          ) : (
+                            <Image
+                              alt="heart icon"
+                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                              width={`22px`}
+                              margin={`0 18px 0 0`}
+                              onClick={() => likeCreateHandler(data)}
+                            />
+                          )}
                           {/* <Image
                             alt="cart icon"
                             src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}

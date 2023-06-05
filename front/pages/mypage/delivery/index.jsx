@@ -36,8 +36,7 @@ const Index = () => {
   const { addressList, st_addressCreateDone, st_addressCreateError } =
     useSelector((state) => state.mypage);
 
-  console.log(addressList);
-
+  const [uModal, setUModal] = useState(false);
   const [cModal, setCModal] = useState(false);
   const [pModal, setPModal] = useState(false);
   const [normal, setNormal] = useState(false);
@@ -95,6 +94,10 @@ const Index = () => {
   const cModalToggle = useCallback(() => {
     setCModal((prev) => !prev);
   }, [cModal]);
+
+  const uModalToggle = useCallback(() => {
+    setUModal((prev) => !prev);
+  }, [uModal]);
 
   const pModalToggle = useCallback(() => {
     setPModal((prev) => !prev);
@@ -296,6 +299,7 @@ const Index = () => {
                               width={`45px`}
                               height={`30px`}
                               padding={`0`}
+                              onClick={() => uModalToggle(data.id)}
                             >
                               수정
                             </CommonButton>
@@ -386,6 +390,80 @@ const Index = () => {
                 onClick={addressCreateHandler}
               >
                 추가하기
+              </CommonButton>
+            </Wrapper>
+          </Modal>
+
+          <Modal onCancel={uModalToggle} visible={uModal} footer={null}>
+            <Wrapper padding={width < 800 ? `30px 0` : `50px`}>
+              <Text fontSize={`28px`} fontWeight={`600`} margin={`0 0 30px`}>
+                배송지 수정
+              </Text>
+              <Wrapper al={`flex-start`}>
+                <Text margin={`0 0 8px`}>명칭</Text>
+                <TextInput
+                  placeholder="명칭"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                />
+                <Text margin={`0 0 8px`}>성명</Text>
+                <TextInput
+                  placeholder="성명"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                />
+                <Text margin={`0 0 8px`}>연락처</Text>
+                <TextInput
+                  placeholder="'-'를 제외한 연락처"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                />
+                <Text margin={`0 0 8px`}>주소</Text>
+                <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 8px`}>
+                  <TextInput
+                    placeholder="우편번호"
+                    width={`calc(100% - 130px)`}
+                    height={`50px`}
+                    readOnly
+                  />
+                  <CommonButton
+                    width={`120px`}
+                    fontSize={`16px`}
+                    fontWeight={`600`}
+                    height={`50px`}
+                    onClick={pModalToggle}
+                  >
+                    우편번호
+                  </CommonButton>
+                </Wrapper>
+                <TextInput
+                  placeholder="주소"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 8px`}
+                  readOnly
+                />
+                <TextInput
+                  placeholder="상세주소"
+                  width={`100%`}
+                  height={`50px`}
+                  margin={`0 0 25px`}
+                />
+
+                <Checkbox checked={normal}>기본주소로 설정</Checkbox>
+              </Wrapper>
+
+              <CommonButton
+                width={`100%`}
+                fontSize={`16px`}
+                fontWeight={`600`}
+                height={`50px`}
+                margin={`15px 0 0`}
+              >
+                수정하기
               </CommonButton>
             </Wrapper>
           </Modal>

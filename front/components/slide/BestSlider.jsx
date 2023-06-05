@@ -96,7 +96,7 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
         return message.error("로그인 후 이용할 수 있습니다.");
       }
 
-      if (likeId === data.ProductId) {
+      if (data.exWish !== null) {
         setLikeId(null);
       } else {
         setLikeId(data.ProductId);
@@ -106,7 +106,7 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
         type: LIKE_CREATE_REQUEST,
         data: {
           ProductId: data.ProductId,
-          id: data.id,
+          id: data.exWish,
         },
       });
     },

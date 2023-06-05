@@ -67,10 +67,13 @@ const Index = () => {
 
   useEffect(() => {
     if (st_likeCreateDone) {
-      if (likeId) {
-        return message.success("좋아요 목록에 추가되었습니다.");
-      } else {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+      });
+      if (likeId === null) {
         return message.success("좋아요가 취소되었습니다.");
+      } else {
+        return message.success("좋아요 목록에 추가되었습니다.");
       }
     }
 
@@ -95,20 +98,21 @@ const Index = () => {
   // 좋아요
   const likeCreateHandler = useCallback(
     (data) => {
-      console.log(data);
       if (!me) {
         return message.error("로그인 후 이용할 수 있습니다.");
       }
-      if (likeId === data.id) {
+
+      if (data.exWish !== null) {
         setLikeId(null);
       } else {
-        setLikeId(data.id);
+        setLikeId(data.ProductId);
       }
 
       dispatch({
         type: LIKE_CREATE_REQUEST,
         data: {
           ProductId: data.id,
+          id: data.exWish,
         },
       });
     },
@@ -203,7 +207,6 @@ const Index = () => {
                 </Wrapper>
               ) : (
                 products.map((data, idx) => {
-                  console.log(data);
                   return (
                     <ProductWrapper key={idx}>
                       <SquareBox

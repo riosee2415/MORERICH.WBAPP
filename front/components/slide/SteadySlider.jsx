@@ -95,7 +95,7 @@ const SteadySlider = ({ datum, likeId, setLikeId }) => {
         return message.error("로그인 후 이용할 수 있습니다.");
       }
 
-      if (likeId === data.ProductId) {
+      if (data.exWish !== null) {
         setLikeId(null);
       } else {
         setLikeId(data.ProductId);
@@ -105,6 +105,7 @@ const SteadySlider = ({ datum, likeId, setLikeId }) => {
         type: LIKE_CREATE_REQUEST,
         data: {
           ProductId: data.ProductId,
+          id: data.exWish,
         },
       });
     },
@@ -175,13 +176,23 @@ const SteadySlider = ({ datum, likeId, setLikeId }) => {
                     <Text>{data.viewCalcPrice}</Text>
                   </Wrapper>
                   <Wrapper dr={`row`} ju={`flex-start`}>
-                    <Image
-                      alt="heart icon"
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                      width={`22px`}
-                      margin={`0 18px 0 0`}
-                      onClick={() => likeHandler(data)}
-                    />
+                    {data.exWish !== null ? (
+                      <Image
+                        alt="heart icon"
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                        width={`22px`}
+                        margin={`0 18px 0 0`}
+                        onClick={() => likeHandler(data)}
+                      />
+                    ) : (
+                      <Image
+                        alt="heart icon"
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                        width={`22px`}
+                        margin={`0 18px 0 0`}
+                        onClick={() => likeHandler(data)}
+                      />
+                    )}
                     {/* <Image
                       alt="cart icon"
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}

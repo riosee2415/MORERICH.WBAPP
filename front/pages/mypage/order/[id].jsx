@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
@@ -21,17 +21,25 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { BOUGHT_DETAIL_REQUEST } from "../../../reducers/mypage";
 import { numberWithCommas } from "../../../components/commonUtils";
+import { message } from "antd";
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const { me } = useSelector((state) => state.user);
   const { boughtDetail } = useSelector((state) => state.mypage);
 
-  console.log(boughtDetail);
   ////// HOOKS //////
   const width = useWidth();
   const router = useRouter();
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (!me) {
+      router.push(`/user/login`);
+
+      return message.error("로그인이 필요한 서비스입니다.");
+    }
+  }, [me]);
   ////// TOGGLE //////
 
   ////// HANDLER //////

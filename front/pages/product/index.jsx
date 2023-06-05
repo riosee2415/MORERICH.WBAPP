@@ -202,6 +202,7 @@ const Index = () => {
                 </Wrapper>
               ) : (
                 products.map((data, idx) => {
+                  console.log(data);
                   return (
                     <ProductWrapper key={idx}>
                       <SquareBox

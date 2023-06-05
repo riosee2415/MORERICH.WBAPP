@@ -88,9 +88,6 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
   const dispatch = useDispatch();
 
   const { me } = useSelector((state) => state.user);
-  const { st_likeCreateDone, st_likeCreateError } = useSelector(
-    (state) => state.wish
-  );
 
   // 좋아요
   const likeHandler = useCallback(
@@ -109,6 +106,7 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
         type: LIKE_CREATE_REQUEST,
         data: {
           ProductId: data.ProductId,
+          id: data.id,
         },
       });
     },
@@ -180,13 +178,23 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
                     <Text>{data.viewCalcPrice}</Text>
                   </Wrapper>
                   <Wrapper dr={`row`} ju={`flex-start`}>
-                    <Image
-                      alt="heart icon"
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                      width={`22px`}
-                      margin={`0 18px 0 0`}
-                      onClick={() => likeHandler(data)}
-                    />
+                    {data.exWish !== null ? (
+                      <Image
+                        alt="heart icon"
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                        width={`22px`}
+                        margin={`0 18px 0 0`}
+                        onClick={() => likeHandler(data)}
+                      />
+                    ) : (
+                      <Image
+                        alt="heart icon"
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                        width={`22px`}
+                        margin={`0 18px 0 0`}
+                        onClick={() => likeHandler(data)}
+                      />
+                    )}
                     {/* <Image
                       alt="cart icon"
                       src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}

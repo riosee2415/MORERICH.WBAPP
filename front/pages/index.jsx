@@ -82,6 +82,9 @@ const Home = ({}) => {
 
   useEffect(() => {
     if (st_likeCreateDone) {
+      dispatch({
+        type: GET_SLIDE_REQUEST,
+      });
       if (likeId) {
         return message.success("좋아요 목록에 추가되었습니다.");
       } else {

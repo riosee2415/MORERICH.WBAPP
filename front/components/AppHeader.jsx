@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { LOGO_GET_REQUEST } from "../reducers/logo";
 import { useRouter } from "next/router";
 import useWidth from "../hooks/useWidth";
+import { CART_LIST_REQUEST } from "../reducers/cart";
 
 const MobileRow = styled(RowWrapper)`
   display: none;
@@ -57,6 +58,13 @@ const Menu = styled.h2`
 `;
 
 const AppHeader = ({}) => {
+  const {
+    cartList,
+    //
+    st_cartCreateDone,
+  } = useSelector((state) => state.cart);
+  const { logos } = useSelector((state) => state.logo);
+  const { me } = useSelector((state) => state.user);
   ////////////// - USE STATE- ///////////////
   const router = useRouter();
   const dispatch = useDispatch();
@@ -68,9 +76,6 @@ const AppHeader = ({}) => {
 
   const [drawar, setDrawar] = useState(false);
   const [subMenu, setSubMenu] = useState(``);
-
-  const { logos } = useSelector((state) => state.logo);
-  const { me } = useSelector((state) => state.user);
 
   ///////////// - EVENT HANDLER- ////////////
 
@@ -91,6 +96,14 @@ const AppHeader = ({}) => {
     document.addEventListener("scroll", handleScroll);
     return () => document.removeEventListener("scroll", handleScroll);
   }, [pageY]);
+
+  useEffect(() => {
+    if (me) {
+      dispatch({
+        type: CART_LIST_REQUEST,
+      });
+    }
+  }, [me]);
 
   useEffect(() => {
     dispatch({
@@ -179,17 +192,19 @@ const AppHeader = ({}) => {
                 </Text>
               </a>
             </Link>
-            <Wrapper
-              width={`auto`}
-              minWidth={`22px`}
-              padding={`2px 4px`}
-              radius={`100%`}
-              fontSize={`12px`}
-              bgColor={Theme.black_C}
-              color={Theme.white_C}
-            >
-              1
-            </Wrapper>
+            {me && (
+              <Wrapper
+                width={`auto`}
+                minWidth={`22px`}
+                padding={`2px 4px`}
+                radius={`100%`}
+                fontSize={`12px`}
+                bgColor={Theme.black_C}
+                color={Theme.white_C}
+              >
+                {cartList.length}
+              </Wrapper>
+            )}
           </Wrapper>
         </RsWrapper>
       </WholeWrapper>

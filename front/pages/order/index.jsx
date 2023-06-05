@@ -123,9 +123,10 @@ const Index = () => {
     }
 
     currentData.map((data) => {
+      console.log(data);
       boughtLists.push({
         productName: data.name,
-        price: data.price,
+        price: data.totalPrice,
         qun: data.qun,
         optionValue: data.optionName,
         thumbnail: data.thumbnail,

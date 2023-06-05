@@ -15,6 +15,10 @@ export const initailState = {
   st_loginDone: false,
   st_loginError: null,
   //
+  st_logoutLoading: false,
+  st_logoutDone: false,
+  st_logoutError: null,
+  //
   st_loginAdminLoading: false,
   st_loginAdminDone: false,
   st_loginAdminError: null,
@@ -82,6 +86,10 @@ export const initailState = {
   st_userModfiyUpdateLoading: false,
   st_userModfiyUpdateDone: false,
   st_userModfiyUpdateError: null,
+  // 회원정보수정
+  st_userUpdateLoading: false,
+  st_userUpdateDone: false,
+  st_userUpdateError: null,
   // 회원탈퇴
   st_userExitLoading: false,
   st_userExitDone: false,
@@ -91,6 +99,10 @@ export const initailState = {
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAILURE = "LOGIN_FAILURE";
+
+export const LOGOUT_REQUEST = "LOGOUT_REQUEST";
+export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
+export const LOGOUT_FAILURE = "LOGOUT_FAILURE";
 
 export const LOGIN_ADMIN_REQUEST = "LOGIN_ADMIN_REQUEST";
 export const LOGIN_ADMIN_SUCCESS = "LOGIN_ADMIN_SUCCESS";
@@ -164,6 +176,10 @@ export const USER_MODIFY_UPDATE_REQUEST = "USER_MODIFY_UPDATE_REQUEST";
 export const USER_MODIFY_UPDATE_SUCCESS = "USER_MODIFY_UPDATE_SUCCESS";
 export const USER_MODIFY_UPDATE_FAILURE = "USER_MODIFY_UPDATE_FAILURE";
 
+export const USER_UPDATE_REQUEST = "USER_UPDATE_REQUEST";
+export const USER_UPDATE_SUCCESS = "USER_UPDATE_SUCCESS";
+export const USER_UPDATE_FAILURE = "USER_UPDATE_FAILURE";
+
 export const USER_EXIT_REQUEST = "USER_EXIT_REQUEST";
 export const USER_EXIT_SUCCESS = "USER_EXIT_SUCCESS";
 export const USER_EXIT_FAILURE = "USER_EXIT_FAILURE";
@@ -216,6 +232,27 @@ const reducer = (state = initailState, action) =>
         draft.st_loginError = action.error;
         break;
       }
+      //////////////////////////////////////////////
+
+      case LOGOUT_REQUEST: {
+        draft.st_logoutLoading = true;
+        draft.st_logoutDone = false;
+        draft.st_logoutError = null;
+        break;
+      }
+      case LOGOUT_SUCCESS: {
+        draft.st_logoutLoading = false;
+        draft.st_logoutDone = true;
+        draft.st_logoutError = null;
+        break;
+      }
+      case LOGOUT_FAILURE: {
+        draft.st_logoutLoading = false;
+        draft.st_logoutDone = false;
+        draft.st_logoutError = action.error;
+        break;
+      }
+
       //////////////////////////////////////////////
       case LOGIN_ADMIN_REQUEST: {
         draft.st_loginAdminLoading = true;
@@ -568,6 +605,26 @@ const reducer = (state = initailState, action) =>
         draft.st_userModifyUpdateLoading = false;
         draft.st_userModifyUpdateDone = false;
         draft.st_userModifyUpdateError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case USER_UPDATE_REQUEST: {
+        draft.st_userUpdateLoading = true;
+        draft.st_userUpdateDone = false;
+        draft.st_userUpdateError = null;
+        break;
+      }
+      case USER_UPDATE_SUCCESS: {
+        draft.st_userUpdateLoading = false;
+        draft.st_userUpdateDone = true;
+        draft.st_userUpdateError = null;
+        break;
+      }
+      case USER_UPDATE_FAILURE: {
+        draft.st_userUpdateLoading = false;
+        draft.st_userUpdateDone = false;
+        draft.st_userUpdateError = action.error;
         break;
       }
       //////////////////////////////////////////////

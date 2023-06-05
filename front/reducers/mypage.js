@@ -4,6 +4,7 @@ export const initailState = {
   boughtList: [], // 구매내역
   boughtDetail: null, // 구매내역상세
   wishList: [], // 위시리스트
+
   // 구매내역 가져오기
   st_boughtListLoading: false,
   st_boughtListDone: false,

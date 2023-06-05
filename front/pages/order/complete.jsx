@@ -15,14 +15,34 @@ import {
   Wrapper,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { BOUGHT_DETAIL_REQUEST } from "../../reducers/mypage";
+import { useEffect } from "react";
 
 const Complete = () => {
   ////// GLOBAL STATE //////
+  const { boughtDetail } = useSelector((state) => state.mypage);
+  console.log(boughtDetail);
   ////// HOOKS //////
   const width = useWidth();
   ////// REDUX //////
+  const dispatch = useDispatch();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    const boughtHistoryId = sessionStorage.getItem("HISTORY")
+      ? JSON.parse(sessionStorage.getItem("HISTORY"))
+      : null;
+
+    if (boughtHistoryId) {
+      dispatch({
+        type: BOUGHT_DETAIL_REQUEST,
+        data: {
+          id: boughtHistoryId,
+        },
+      });
+    }
+  }, []);
   ////// TOGGLE //////
   ////// HANDLER //////
   ////// DATAVIEW //////
@@ -53,79 +73,97 @@ const Complete = () => {
               fontSize={`16px`}
               padding={`0 14px`}
             >
-              <Text margin={`0 16px 0 0`}>2023-05-23</Text>
-              <Text color={Theme.grey_C}>ORDER230137192783</Text>
+              <Text margin={`0 16px 0 0`}>
+                {boughtDetail && boughtDetail.viewCreatedAt}
+              </Text>
+              <Text color={Theme.grey_C}>
+                ORDER{boughtDetail && boughtDetail.sortCreatedAt}
+                {boughtDetail && boughtDetail.id}
+              </Text>
             </Wrapper>
-            <Wrapper borderBottom={`1px solid ${Theme.black_C}`} dr={`row`}>
-              <Wrapper
-                width={width < 900 ? `100%` : `80%`}
-                dr={`row`}
-                padding={`23px 14px`}
-              >
-                <Image
-                  alt="thumbnail"
-                  width={width < 900 ? `80px` : `112px`}
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
-                />
-                <Wrapper
-                  width={
-                    width < 900 ? `calc(100% - 80px)` : `calc(100% - 112px)`
-                  }
-                  padding={`0 0 0 14px`}
-                  al={`flex-start`}
-                >
-                  <Text
-                    fontSize={width < 900 ? `16px` : `18px`}
-                    fontWeight={`600`}
+            {boughtDetail &&
+              boughtDetail.connectArray.map((data) => {
+                console.log(data);
+                return (
+                  <Wrapper
+                    borderBottom={`1px solid ${Theme.black_C}`}
+                    dr={`row`}
                   >
-                    CASESTUDY
-                  </Text>
-                  <Text
-                    fontSize={width < 900 ? `14px` : `17px`}
-                    minHeight={`45px`}
-                  >
-                    [CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG
-                  </Text>
-                  <Wrapper width={`auto`} dr={`row`}>
-                    <Text
-                      fontSize={width < 900 ? `14px` : `15px`}
-                      color={Theme.grey_C}
-                      margin={`0 15px 0 0`}
+                    <Wrapper
+                      width={width < 900 ? `100%` : `80%`}
+                      dr={`row`}
+                      padding={`23px 14px`}
                     >
-                      옵션 : BLACK
-                    </Text>
-                    <Text
-                      fontSize={width < 900 ? `14px` : `15px`}
-                      color={Theme.grey_C}
+                      <Image
+                        alt="thumbnail"
+                        width={width < 900 ? `80px` : `112px`}
+                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
+                      />
+                      <Wrapper
+                        width={
+                          width < 900
+                            ? `calc(100% - 80px)`
+                            : `calc(100% - 112px)`
+                        }
+                        padding={`0 0 0 14px`}
+                        al={`flex-start`}
+                      >
+                        <Text
+                          fontSize={width < 900 ? `16px` : `18px`}
+                          fontWeight={`600`}
+                          minHeight={`45px`}
+                        >
+                          {data.productName}
+                        </Text>
+                        {/* <Text
+                          fontSize={width < 900 ? `14px` : `17px`}
+                          minHeight={`45px`}
+                        >
+                          {boughtDetail && boughtDetail.subname}
+                        </Text> */}
+                        <Wrapper width={`auto`} dr={`row`}>
+                          <Text
+                            fontSize={width < 900 ? `14px` : `15px`}
+                            color={Theme.grey_C}
+                            margin={`0 15px 0 0`}
+                          >
+                            옵션 : BLACK
+                          </Text>
+                          <Text
+                            fontSize={width < 900 ? `14px` : `15px`}
+                            color={Theme.grey_C}
+                          >
+                            수량 : 1개
+                          </Text>
+                        </Wrapper>
+                        {width < 900 && (
+                          <>
+                            <Text>1,100,000원</Text>
+                            <Text>입금 대기중</Text>
+                          </>
+                        )}
+                      </Wrapper>
+                    </Wrapper>
+                    <Wrapper
+                      width={`10%`}
+                      display={width < 900 ? `none` : `flex`}
+                      fontSize={`18px`}
+                      fontWeight={`600`}
                     >
-                      수량 : 1개
-                    </Text>
+                      1,100,000원
+                    </Wrapper>
+                    <Wrapper
+                      width={`10%`}
+                      display={width < 900 ? `none` : `flex`}
+                      fontSize={`18px`}
+                      fontWeight={`600`}
+                    >
+                      입금 대기중
+                    </Wrapper>
                   </Wrapper>
-                  {width < 900 && (
-                    <>
-                      <Text>1,100,000원</Text>
-                      <Text>입금 대기중</Text>
-                    </>
-                  )}
-                </Wrapper>
-              </Wrapper>
-              <Wrapper
-                width={`10%`}
-                display={width < 900 ? `none` : `flex`}
-                fontSize={`18px`}
-                fontWeight={`600`}
-              >
-                1,100,000원
-              </Wrapper>
-              <Wrapper
-                width={`10%`}
-                display={width < 900 ? `none` : `flex`}
-                fontSize={`18px`}
-                fontWeight={`600`}
-              >
-                입금 대기중
-              </Wrapper>
-            </Wrapper>
+                );
+              })}
+
             <Wrapper
               al={`flex-start`}
               margin={`80px 0 24px`}

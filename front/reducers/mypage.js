@@ -34,6 +34,10 @@ export const initailState = {
   st_addressDeleteLoading: false,
   st_addressDeleteDone: false,
   st_addressDeleteError: null,
+  // 배송지리스트 기본배송지
+  st_addressBasicLoading: false,
+  st_addressBasicDone: false,
+  st_addressBasicError: null,
 };
 
 export const BOUGHT_LIST_REQUEST = "BOUGHT_LIST_REQUEST";
@@ -63,6 +67,10 @@ export const ADDRESS_UPDATE_FAILURE = "ADDRESS_UPDATE_FAILURE";
 export const ADDRESS_DELETE_REQUEST = "ADDRESS_DELETE_REQUEST";
 export const ADDRESS_DELETE_SUCCESS = "ADDRESS_DELETE_SUCCESS";
 export const ADDRESS_DELETE_FAILURE = "ADDRESS_DELETE_FAILURE";
+
+export const ADDRESS_BASIC_REQUEST = "ADDRESS_BASIC_REQUEST";
+export const ADDRESS_BASIC_SUCCESS = "ADDRESS_BASIC_SUCCESS";
+export const ADDRESS_BASIC_FAILURE = "ADDRESS_BASIC_FAILURE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -207,6 +215,26 @@ const reducer = (state = initailState, action) =>
         draft.st_addressDeleteLoading = false;
         draft.st_addressDeleteDone = false;
         draft.st_addressDeleteError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case ADDRESS_BASIC_REQUEST: {
+        draft.st_addressBasicLoading = true;
+        draft.st_addressBasicDone = false;
+        draft.st_addressBasicError = null;
+        break;
+      }
+      case ADDRESS_BASIC_SUCCESS: {
+        draft.st_addressBasicLoading = false;
+        draft.st_addressBasicDone = true;
+        draft.st_addressBasicError = null;
+        break;
+      }
+      case ADDRESS_BASIC_FAILURE: {
+        draft.st_addressBasicLoading = false;
+        draft.st_addressBasicDone = false;
+        draft.st_addressBasicError = action.error;
         break;
       }
 

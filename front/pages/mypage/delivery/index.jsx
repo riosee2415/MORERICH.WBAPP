@@ -109,7 +109,6 @@ const Index = () => {
     if (!title.value) {
       return message.error("명칭을 입력해주세요.");
     }
-
     if (!name.value) {
       return message.error("이름을 입력해주세요.");
     }
@@ -191,50 +190,64 @@ const Index = () => {
 
               {width < 800 ? (
                 <Wrapper borderTop={`1px solid ${Theme.black_C}`}>
-                  <Wrapper
-                    borderBottom={`1px solid ${Theme.grey3_C}`}
-                    padding={`25px 0 20px`}
-                    al={`flex-start`}
-                  >
-                    <Wrapper dr={`row`} ju={`space-between`}>
-                      <Checkbox />
-                      <Wrapper width={`auto`} dr={`row`}>
-                        <CommonButton
-                          kindOf={`grey3`}
-                          width={`45px`}
-                          height={`30px`}
-                          padding={`0`}
-                          margin={`0 6px 0 0`}
-                        >
-                          삭제
-                        </CommonButton>
-                        <CommonButton
-                          kindOf={`grey`}
-                          width={`45px`}
-                          height={`30px`}
-                          padding={`0`}
-                        >
-                          수정
-                        </CommonButton>
-                      </Wrapper>
+                  {addressList && addressList.length === 0 ? (
+                    <Wrapper padding={`30px 0`}>
+                      <Empty description="배송지를 추가해주세요." />
                     </Wrapper>
-                    <Text
-                      margin={`12px 0 8px`}
-                      fontSize={`16px`}
-                      fontWeight={`600`}
-                    >
-                      판암동마루
-                    </Text>
-                    <Text margin={`0 0 8px`}>
-                      박마루
-                      <SpanText margin={`0 0 0 8px`} color={Theme.grey2_C}>
-                        010-0000-0000
-                      </SpanText>
-                    </Text>
-                    <Text>대전광역시 동구 뭐시깽이 OO로00-00 0000아파트</Text>
-                    <Text margin={`0 0 8px`}>000동 0000호</Text>
-                    <Radio>기본주소로 설정</Radio>
-                  </Wrapper>
+                  ) : (
+                    addressList.map((data) => {
+                      return (
+                        <Wrapper
+                          key={data.id}
+                          borderBottom={`1px solid ${Theme.grey3_C}`}
+                          padding={`25px 0 20px`}
+                          al={`flex-start`}
+                        >
+                          <Wrapper dr={`row`} ju={`space-between`}>
+                            <Checkbox />
+                            <Wrapper width={`auto`} dr={`row`}>
+                              <CommonButton
+                                kindOf={`grey3`}
+                                width={`45px`}
+                                height={`30px`}
+                                padding={`0`}
+                                margin={`0 6px 0 0`}
+                              >
+                                삭제
+                              </CommonButton>
+                              <CommonButton
+                                kindOf={`grey`}
+                                width={`45px`}
+                                height={`30px`}
+                                padding={`0`}
+                              >
+                                수정
+                              </CommonButton>
+                            </Wrapper>
+                          </Wrapper>
+                          <Text
+                            margin={`12px 0 8px`}
+                            fontSize={`16px`}
+                            fontWeight={`600`}
+                          >
+                            {data.title}
+                          </Text>
+                          <Text margin={`0 0 8px`}>
+                            {data.name}
+                            <SpanText
+                              margin={`0 0 0 8px`}
+                              color={Theme.grey2_C}
+                            >
+                              {data.mobile}
+                            </SpanText>
+                          </Text>
+                          <Text>{data.adrs}</Text>
+                          <Text margin={`0 0 8px`}>{data.dadrs}</Text>
+                          <Radio>기본주소로 설정</Radio>
+                        </Wrapper>
+                      );
+                    })
+                  )}
                 </Wrapper>
               ) : (
                 <>

@@ -49,8 +49,6 @@ const Index = () => {
     st_addressBasicError,
   } = useSelector((state) => state.mypage);
 
-  console.log(addressList);
-
   const [uModal, setUModal] = useState(false);
   const [cModal, setCModal] = useState(false);
   const [pModal, setPModal] = useState(false);
@@ -58,6 +56,8 @@ const Index = () => {
   const [uNormal, setUNormal] = useState(false);
   const [allCheck, setAllCheck] = useState(false); // 전체체크
   const [currentCheck, setCurrentCheck] = useState([]); // 개별체크
+
+  const [crData, setCrData] = useState(null);
 
   const title = useInput("");
   const name = useInput("");
@@ -151,6 +151,8 @@ const Index = () => {
   const uModalToggle = useCallback(
     (snapshot = null) => {
       if (snapshot) {
+        setCrData(snapshot);
+
         u_title.setValue(snapshot.title);
         u_name.setValue(snapshot.name);
         u_mobile.setValue(snapshot.mobile);
@@ -222,16 +224,16 @@ const Index = () => {
     dispatch({
       type: ADDRESS_UPDATE_REQUEST,
       data: {
+        id: crData.id,
         title: u_title.value,
         name: u_name.value,
         mobile: u_mobile.value,
         post: u_post.value,
         adrs: u_adrs.value,
         dadrs: u_dadrs.value,
-        isBasic: uNormal,
       },
     });
-  }, [u_title, u_name, u_mobile, u_post, u_adrs, u_dadrs, uNormal]);
+  }, [u_title, u_name, u_mobile, u_post, u_adrs, u_dadrs, crData]);
 
   // 배송지 삭제
   const deleteHandler = useCallback(() => {

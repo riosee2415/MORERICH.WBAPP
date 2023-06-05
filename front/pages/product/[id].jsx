@@ -66,21 +66,27 @@ const Index = () => {
 
   // 바로 구매
   const createHandler = useCallback(() => {
-    let currentCheck = [];
+    let qun = 0;
 
-    sessionStorage.setItem("BUY", JSON.stringify([productDetail]));
+    currentDatum.map((data) => {
+      qun = qun + data.qun;
+    });
+
+    sessionStorage.setItem("BUY", JSON.stringify(currentDatum));
     sessionStorage.setItem(
       "TOTAL",
       JSON.stringify({
-        totalPriceInt: resultPrice + 3500,
-        totalPrice: String(resultPrice + 3500).replace(
+        totalPriceInt: totalPrice + 3500,
+        totalPrice: String(totalPrice + 3500).replace(
           /\B(?=(\d{3})+(?!\d))/g,
           ","
         ),
-        qun: resultQun,
-        productprice: String(resultPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+        qun: qun,
+        productprice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })
     );
+
+    router.push(`/order`);
   }, [currentDatum]);
   console.log(currentDatum);
 
@@ -95,7 +101,7 @@ const Index = () => {
     currentDatum.map((data) => {
       products.push({
         ProductId: router.query.id,
-        ProductOptionId: data.id,
+        ProductOptionId: data.optionId,
         qun: data.qun,
       });
     });
@@ -136,11 +142,13 @@ const Index = () => {
       setTotalPrice(totalPrice + (productDetail && productDetail.calcPrice));
 
       let arr = currentDatum ? currentDatum.map((data) => data) : [];
-      const currentId = arr.findIndex((value) => value.id === data[0]);
+      const currentId = arr.findIndex((value) => value.optionId === data[0]);
 
       if (currentId === -1) {
         arr.push({
-          id: data[0],
+          ...productDetail,
+          optionId: data[0],
+          optionName: data[1],
           value: data[1],
           qun: 1,
         });
@@ -386,6 +394,7 @@ const Index = () => {
                 margin={`34px 0 10px`}
                 fontSize={width < 800 ? `14px` : `20px`}
                 fontWeight={`600`}
+                onClick={createHandler}
               >
                 바로구매
               </CommonButton>

@@ -15,7 +15,7 @@ import {
   CommonButton,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Checkbox, Empty, message, Select } from "antd";
+import { Checkbox, Empty, message } from "antd";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   CART_DELETE_REQUEST,
@@ -26,7 +26,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useCallback } from "react";
-import { BOUGHT_CREATE_REQUEST } from "../../reducers/store";
 import { useRouter } from "next/router";
 
 const Index = () => {
@@ -44,7 +43,7 @@ const Index = () => {
   const width = useWidth();
 
   const [resultPrice, setResultPrice] = useState(0); // 총 상품금액
-  const [allCheck, setAllCheck] = useState(false); // 전체체크
+  const [allCheck, setAllCheck] = useState(true); // 전체체크
   const [currentCheck, setCurrentCheck] = useState([]); // 개별체크
   const [resultQun, setResulQun] = useState(1); // 총 수량
   ////// REDUX //////
@@ -53,6 +52,12 @@ const Index = () => {
   const router = useRouter();
 
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (cartList) {
+      setCurrentCheck(cartList);
+    }
+  }, [cartList]);
 
   useEffect(() => {
     if (st_cartQunUpdateDone) {
@@ -106,6 +111,33 @@ const Index = () => {
   ////// TOGGLE //////
   ////// HANDLER //////
 
+  // 전체구매
+  const allCreateHandler = useCallback(() => {
+    if (cartList.length === 0) {
+      return message.error("구매할 상품이 없습니다.");
+    }
+
+    let result = 0;
+    let qun = 0;
+
+    cartList.map((data) => {
+      qun = qun + data.qun;
+      result = result + data.totalPrice;
+    });
+
+    sessionStorage.setItem("BUY", JSON.stringify(cartList));
+    sessionStorage.setItem(
+      "TOTAL",
+      JSON.stringify({
+        totalPriceInt: result + 3500,
+        totalPrice: String(result + 3500).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+        qun: qun,
+        productprice: String(result).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      })
+    );
+    router.push(`/order`);
+  }, [cartList]);
+
   // 선택구매
   const selectCreateHandler = useCallback(() => {
     if (currentCheck.length === 0) {
@@ -127,7 +159,6 @@ const Index = () => {
     );
     router.push(`/order`);
   }, [currentCheck, resultPrice, resultQun]);
-  
 
   // 장바구니 수량 수정
   const cartUpdateHandler = useCallback((data, num) => {
@@ -498,6 +529,7 @@ const Index = () => {
                 fontWeight={`600`}
                 height={`60px`}
                 margin={`0 0 0 5px`}
+                onClick={allCreateHandler}
               >
                 전체구매
               </CommonButton>

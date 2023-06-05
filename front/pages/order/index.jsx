@@ -125,7 +125,7 @@ const Index = () => {
     currentData.map((data) => {
       boughtLists.push({
         productName: data.name,
-        price: data.totalPrice,
+        price: data.price,
         qun: data.qun,
         optionValue: data.optionName,
         thumbnail: data.thumbnail,
@@ -263,7 +263,7 @@ const Index = () => {
                     {...mobileInput}
                   />
                 </Wrapper>
-                <Wrapper dr={`row`}>
+                {/* <Wrapper dr={`row`}>
                   <Text
                     width={width < 800 ? `100%` : `182px`}
                     lineHeight={`50px`}
@@ -288,7 +288,7 @@ const Index = () => {
                       </Select.Option>
                     </Select>
                   </CustomSelect>
-                </Wrapper>
+                </Wrapper> */}
               </Wrapper>
               <Wrapper
                 al={`flex-start`}
@@ -409,6 +409,7 @@ const Index = () => {
                   주문상품
                 </Wrapper>
                 {currentData.map((data) => {
+                  console.log(data);
                   return (
                     <Wrapper
                       key={data.id}

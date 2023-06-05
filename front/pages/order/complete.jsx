@@ -18,6 +18,7 @@ import Theme from "../../components/Theme";
 import { useDispatch, useSelector } from "react-redux";
 import { BOUGHT_DETAIL_REQUEST } from "../../reducers/mypage";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const Complete = () => {
   ////// GLOBAL STATE //////
@@ -27,6 +28,7 @@ const Complete = () => {
   const width = useWidth();
   ////// REDUX //////
   const dispatch = useDispatch();
+  const router = useRouter();
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -83,7 +85,6 @@ const Complete = () => {
             </Wrapper>
             {boughtDetail &&
               boughtDetail.connectArray.map((data) => {
-                console.log(data);
                 return (
                   <Wrapper
                     borderBottom={`1px solid ${Theme.black_C}`}
@@ -127,18 +128,18 @@ const Complete = () => {
                             color={Theme.grey_C}
                             margin={`0 15px 0 0`}
                           >
-                            옵션 : BLACK
+                            옵션 : {data.optionValue}
                           </Text>
                           <Text
                             fontSize={width < 900 ? `14px` : `15px`}
                             color={Theme.grey_C}
                           >
-                            수량 : 1개
+                            수량 : {data.qun}개
                           </Text>
                         </Wrapper>
                         {width < 900 && (
                           <>
-                            <Text>1,100,000원</Text>
+                            <Text>{data.viewCalcPrice}</Text>
                             <Text>입금 대기중</Text>
                           </>
                         )}
@@ -150,7 +151,7 @@ const Complete = () => {
                       fontSize={`18px`}
                       fontWeight={`600`}
                     >
-                      1,100,000원
+                      {data.viewCalcPrice}
                     </Wrapper>
                     <Wrapper
                       width={`10%`}
@@ -176,6 +177,7 @@ const Complete = () => {
               borderTop={`1px solid ${Theme.black_C}`}
               padding={`35px 0 0`}
               dr={`row`}
+              ju={`flex-start`}
             >
               <Wrapper
                 width={width < 900 ? `100%` : `50%`}
@@ -186,7 +188,7 @@ const Complete = () => {
                   주문자명
                 </Text>
                 <Text width={`70%`} fontSize={`16px`}>
-                  김아무개
+                  {boughtDetail && boughtDetail.username}
                 </Text>
               </Wrapper>
               <Wrapper
@@ -198,7 +200,7 @@ const Complete = () => {
                   연락처
                 </Text>
                 <Text width={`70%`} fontSize={`16px`}>
-                  010-0000-0000
+                  {boughtDetail && boughtDetail.mobile}
                 </Text>
               </Wrapper>
               <Wrapper
@@ -210,18 +212,21 @@ const Complete = () => {
                   배송지
                 </Text>
                 <Wrapper fontSize={`16px`} width={`70%`} al={`flex-start`}>
-                  <Text>주소가 들어올 곳입니다.</Text>
-                  <Text>상세주소</Text>
+                  <Text>
+                    ({boughtDetail && boughtDetail.post})
+                    {boughtDetail && boughtDetail.adrs}
+                  </Text>
+                  <Text> {boughtDetail && boughtDetail.dadrs}</Text>
                 </Wrapper>
               </Wrapper>
-              <Wrapper width={width < 900 ? `100%` : `50%`} dr={`row`}>
+              {/* <Wrapper width={width < 900 ? `100%` : `50%`} dr={`row`}>
                 <Text color={Theme.grey_C} width={`30%`}>
                   배송시 유의사항
                 </Text>
                 <Text width={`70%`} fontSize={`16px`}>
                   배송전 연락부탁드립니다.
                 </Text>
-              </Wrapper>
+              </Wrapper> */}
             </Wrapper>
             <Wrapper
               al={`flex-start`}
@@ -284,7 +289,7 @@ const Complete = () => {
                   상품금액
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                  000,000원
+                  {boughtDetail && boughtDetail.boughtPrice}원
                 </Text>
               </Wrapper>
               <Wrapper dr={`row`} margin={`0 0 20px`}>
@@ -292,7 +297,7 @@ const Complete = () => {
                   배송비
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                  0,000원
+                  2,500원
                 </Text>
               </Wrapper>
 
@@ -301,7 +306,7 @@ const Complete = () => {
                   상품수량
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                  00개
+                  {boughtDetail && boughtDetail.boughtQun}개
                 </Text>
               </Wrapper>
               <Wrapper dr={`row`}>
@@ -323,6 +328,7 @@ const Complete = () => {
               height={`60px`}
               fontSize={width < 900 ? `16px` : `20px`}
               fontWeight={`600`}
+              onClick={() => router.push(`/`)}
             >
               메인으로
             </CommonButton>

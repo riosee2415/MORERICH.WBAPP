@@ -76,6 +76,18 @@ import {
   USER_MODIFY_UPDATE_REQUEST,
   USER_MODIFY_UPDATE_SUCCESS,
   USER_MODIFY_UPDATE_FAILURE,
+  //
+  USER_EXIT_REQUEST,
+  USER_EXIT_SUCCESS,
+  USER_EXIT_FAILURE,
+  //
+  LOGOUT_REQUEST,
+  LOGOUT_SUCCESS,
+  LOGOUT_FAILURE,
+  //
+  USER_UPDATE_REQUEST,
+  USER_UPDATE_SUCCESS,
+  USER_UPDATE_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -586,6 +598,87 @@ function* modifyUpdate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function userExitAPI(data) {
+  return await axios.post(`/api/user/exit/update`, data);
+}
+
+function* userExit(action) {
+  try {
+    const result = yield call(userExitAPI, action.data);
+
+    yield put({
+      type: USER_EXIT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_EXIT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function userUpdateAPI(data) {
+  return await axios.post(`/api/user/me/update`, data);
+}
+
+function* userUpdate(action) {
+  try {
+    const result = yield call(userUpdateAPI, action.data);
+
+    yield put({
+      type: USER_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: USER_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function logoutAPI(data) {
+  return await axios.get(`/api/user/logout`, data);
+}
+
+function* logout(action) {
+  try {
+    const result = yield call(logoutAPI, action.data);
+    yield put({
+      type: LOGOUT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOGOUT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -594,6 +687,10 @@ function* watchLoadMyInfo() {
 
 function* watchSignin() {
   yield takeLatest(LOGIN_REQUEST, signin);
+}
+
+function* watchLogout() {
+  yield takeLatest(LOGOUT_REQUEST, logout);
 }
 
 function* watchSigninAdmin() {
@@ -664,10 +761,19 @@ function* watchUserModfiyUpdate() {
   yield takeLatest(USER_MODIFY_UPDATE_REQUEST, modifyUpdate);
 }
 
+function* watchUserUpdate() {
+  yield takeLatest(USER_UPDATE_REQUEST, userUpdate);
+}
+
+function* watchUserExit() {
+  yield takeLatest(USER_EXIT_REQUEST, userExit);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
     fork(watchLoadMyInfo),
+    fork(watchLogout),
     fork(watchSignin),
     fork(watchSigninAdmin),
     fork(watchSignUp),
@@ -686,6 +792,8 @@ export default function* userSaga() {
     fork(watchUserFindPw),
     fork(watchCheckSecret),
     fork(watchUserModfiyUpdate),
+    fork(watchUserExit),
+    fork(watchUserUpdate),
     //
   ]);
 }

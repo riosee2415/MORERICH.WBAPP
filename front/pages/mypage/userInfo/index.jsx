@@ -1,8 +1,13 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
-import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
+import {
+  LOAD_MY_INFO_REQUEST,
+  LOGOUT_REQUEST,
+  USER_EXIT_REQUEST,
+  USER_UPDATE_REQUEST,
+} from "../../../reducers/user";
 import axios from "axios";
 import { END } from "redux-saga";
 import useWidth from "../../../hooks/useWidth";
@@ -11,8 +16,6 @@ import {
   Text,
   WholeWrapper,
   Wrapper,
-  Image,
-  CustomPage,
   CommonButton,
   TextInput,
   SpanText,
@@ -20,20 +23,132 @@ import {
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";
 import styled from "styled-components";
-import { Checkbox, Modal, Radio } from "antd";
+import { message, Modal } from "antd";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import useInput from "../../../hooks/useInput";
 
 const Index = () => {
   ////// GLOBAL STATE //////
+  const {
+    me,
+    //
+    st_userExitError,
+    st_userExitDone,
+    //
+    st_userUpdateError,
+    st_userUpdateDone,
+  } = useSelector((state) => state.user);
   const [cModal, setCModal] = useState(false);
+
+  const exitPassword = useInput(``);
+  const password = useInput(``);
+  const mobile = useInput(me && me.mobile);
+  const email = useInput(me && me.email);
+
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (!me) {
+      router.push(`/user/login`);
+
+      return message.error("로그인이 필요한 서비스입니다.");
+    }
+  }, [me]);
+
+  // ********************** 회원정보 수정 후처리 *************************
+
+  useEffect(() => {
+    if (st_userUpdateError) {
+      return message.error(st_userUpdateError);
+    }
+  }, [st_userUpdateError]);
+
+  useEffect(() => {
+    if (st_userUpdateDone) {
+      password.setValue(``);
+
+      dispatch({
+        type: LOAD_MY_INFO_REQUEST,
+      });
+
+      return message.success("회원정보가 수정되었습니다.");
+    }
+  }, [st_userUpdateDone]);
+
+  // ********************** 회원탈퇴 후처리 *************************
+
+  useEffect(() => {
+    if (st_userExitError) {
+      return message.error(st_userExitError);
+    }
+  }, [st_userExitError]);
+
+  useEffect(() => {
+    if (st_userExitDone) {
+      router.push(`/`);
+
+      dispatch({
+        type: LOGOUT_REQUEST,
+      });
+
+      return message.success("탈퇴되었습니다.");
+    }
+  }, [st_userExitDone]);
+
   ////// TOGGLE //////
   const cModalToggle = useCallback(() => {
     setCModal((prev) => !prev);
   }, [cModal]);
   ////// HANDLER //////
+
+  // 회원정보수정
+  const userModifyHandler = useCallback(() => {
+    if (!mobile.value) {
+      return message.error("전화번호를 입력해주세요.");
+    }
+
+    if (!email.value) {
+      return message.error("이메일을 입력해주세요.");
+    }
+
+    if (!password.value || password.value.trim() === "") {
+      return message.error("비밀번호를 입력해주세요.");
+    }
+    //
+    if (email.value === me.email && mobile.value === me.mobile) {
+      return message.error("변경할 정보가 없습니다.");
+    }
+
+    dispatch({
+      type: USER_UPDATE_REQUEST,
+      data: {
+        password: password.value,
+        email: email.value,
+        mobile: mobile.value,
+      },
+    });
+  }, [password.value, email.value, mobile.value]);
+
+  // 회원탈퇴
+  const exitHandler = useCallback(() => {
+    if (!exitPassword.value || exitPassword.value.trim() === "") {
+      return message.error("비밀번호를 입력해주세요.");
+    }
+
+    dispatch({
+      type: USER_EXIT_REQUEST,
+      data: {
+        password: exitPassword.value,
+      },
+    });
+  }, [exitPassword.value]);
+
   ////// DATAVIEW //////
 
   return (
@@ -78,6 +193,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   readOnly
+                  value={me && me.userId}
                 />
                 <Text margin={`0 0 8px`}>
                   <SpanText>*</SpanText>비밀번호
@@ -88,6 +204,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   type={`password`}
+                  {...password}
                 />
                 <Text margin={`0 0 8px`}>
                   <SpanText>*</SpanText>성함
@@ -98,6 +215,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   readOnly
+                  value={me && me.username}
                 />
                 <Text margin={`0 0 8px`}>연락처</Text>
                 <TextInput
@@ -105,6 +223,7 @@ const Index = () => {
                   width={`100%`}
                   height={`50px`}
                   margin={`0 0 25px`}
+                  {...mobile}
                 />
                 <Text margin={`0 0 8px`}>
                   <SpanText>*</SpanText>이메일
@@ -114,9 +233,9 @@ const Index = () => {
                   width={`100%`}
                   height={`50px`}
                   margin={`0 0 25px`}
-                  readOnly
+                  {...email}
                 />
-                <Text margin={`0 0 8px`}>주소</Text>
+                {/* <Text margin={`0 0 8px`}>주소</Text>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 8px`}>
                   <TextInput
                     placeholder="'-'를 제외한 연락처"
@@ -143,7 +262,7 @@ const Index = () => {
                   width={`100%`}
                   height={`50px`}
                   margin={`0 0 28px`}
-                />
+                /> */}
 
                 <Wrapper al={`flex-end`}>
                   <Text isHover color={Theme.grey_C} onClick={cModalToggle}>
@@ -156,6 +275,7 @@ const Index = () => {
                   fontWeight={`600`}
                   height={`50px`}
                   margin={`15px 0 0`}
+                  onClick={userModifyHandler}
                 >
                   회원정보수정
                 </CommonButton>
@@ -184,6 +304,7 @@ const Index = () => {
                   height={`50px`}
                   margin={`0 0 25px`}
                   type={`password`}
+                  {...exitPassword}
                 />
               </Wrapper>
               <Wrapper dr={`row`} ju={`space-between`}>
@@ -193,6 +314,7 @@ const Index = () => {
                   fontWeight={`600`}
                   height={`50px`}
                   kindOf={`white`}
+                  onClick={exitHandler}
                 >
                   탈퇴하기
                 </CommonButton>

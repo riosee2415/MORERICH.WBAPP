@@ -382,7 +382,7 @@ const Index = () => {
                 >
                   이전으로
                 </CommonButton>
-                <Link href={`/mypage/order/cancel`}>
+                <Link href={`/mypage/cancel/${drData && drData.id}`}>
                   <a>
                     <CommonButton
                       width={width < 800 ? `130px` : `170px`}

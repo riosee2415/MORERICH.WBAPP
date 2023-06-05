@@ -17,13 +17,19 @@ import {
   TextInput,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
-import { Checkbox, Modal, Select } from "antd";
+import { Select } from "antd";
 import Link from "next/dist/client/link";
+import { useSelector } from "react-redux";
+import { PRODUCT_DETAIL_REQUEST } from "../../../reducers/store";
 
 const Cancel = () => {
   ////// GLOBAL STATE //////
+  const { productDetail } = useSelector((state) => state.store);
+
+  console.log(productDetail);
   ////// HOOKS //////
   const width = useWidth();
+
   ////// REDUX //////
   ////// USEEFFECT //////
   ////// TOGGLE //////
@@ -201,13 +207,13 @@ const Cancel = () => {
                       fontSize={width < 900 ? `16px` : `18px`}
                       fontWeight={`600`}
                     >
-                      CASESTUDY
+                      {productDetail && productDetail.name}
                     </Text>
                     <Text
                       fontSize={width < 900 ? `14px` : `17px`}
                       minHeight={`45px`}
                     >
-                      [CASESTUDY GOLF CLUB X BALANSA] BALANSA BAG
+                      {productDetail && productDetail.subName}
                     </Text>
                     <Wrapper dr={`row`} ju={`space-between`}>
                       <Wrapper width={`auto`} dr={`row`}>
@@ -216,7 +222,7 @@ const Cancel = () => {
                           color={Theme.grey_C}
                           margin={`0 15px 0 0`}
                         >
-                          옵션 : BLACK
+                          옵션 :{" "}
                         </Text>
                         <Text
                           fontSize={width < 900 ? `14px` : `15px`}
@@ -328,6 +334,13 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: PRODUCT_DETAIL_REQUEST,
+      data: {
+        id: context.query.id,
+      },
     });
 
     // 구현부 종료

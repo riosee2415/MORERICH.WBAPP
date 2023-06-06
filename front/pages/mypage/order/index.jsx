@@ -233,12 +233,13 @@ const Index = () => {
                                       : item.deliveryNo}
                                   </Text>
                                 </Wrapper>
-                                <Wrapper dr={`row`}>
+                                <Wrapper dr={`row`} ju={`flex-start`}>
                                   <CommonButton
                                     width={`32%`}
                                     height={`30px`}
                                     kindOf={`grey3`}
                                     padding={`0`}
+                                    margin={`0 2px 0`}
                                     onClick={() =>
                                       movelinkHandler(
                                         `/mypage/order/${item.id}`
@@ -247,17 +248,20 @@ const Index = () => {
                                   >
                                     주문리스트
                                   </CommonButton>
-
-                                  <CommonButton
-                                    width={`32%`}
-                                    height={`30px`}
-                                    kindOf={`grey3`}
-                                    padding={`0`}
-                                    margin={`0 4px`}
-                                    onClick={() => dModalToggle(item)}
-                                  >
-                                    {item.status <= 2 ? "취소요청" : "환불요청"}
-                                  </CommonButton>
+                                  {item.status < 4 && (
+                                    <CommonButton
+                                      width={`32%`}
+                                      height={`30px`}
+                                      kindOf={`grey3`}
+                                      padding={`0`}
+                                      margin={`0 2px 0`}
+                                      onClick={() => dModalToggle(item)}
+                                    >
+                                      {item.status <= 2
+                                        ? "취소요청"
+                                        : "환불요청"}
+                                    </CommonButton>
+                                  )}
                                   <CommonButton
                                     width={`32%`}
                                     height={`30px`}
@@ -326,7 +330,7 @@ const Index = () => {
                           >
                             주문리스트
                           </CommonButton>
-                          {item.status < 3 && (
+                          {item.status < 4 && (
                             <CommonButton
                               width={`78px`}
                               height={`30px`}

@@ -158,7 +158,7 @@ const Index = () => {
               <Wrapper
                 al={`flex-start`}
                 margin={`80px 0 24px`}
-                fontSize={`26px`}
+                fontSize={width < 900 ? `20px` : `26px`}
                 fontWeight={`bold`}
               >
                 배송지 정보
@@ -215,7 +215,7 @@ const Index = () => {
                   <Wrapper
                     al={`flex-start`}
                     margin={`80px 0 24px`}
-                    fontSize={`26px`}
+                    fontSize={width < 900 ? `20px` : `26px`}
                     fontWeight={`bold`}
                   >
                     취소/환불 신청 내역
@@ -245,13 +245,27 @@ const Index = () => {
                         color={Theme.grey_C}
                         width={width < 900 ? `30%` : `15%`}
                       >
-                        은행/계좌번호
+                        계좌주명
                       </Text>
                       <Text
                         width={width < 900 ? `70%` : `85%`}
                         fontSize={`16px`}
                       >
                         {boughtDetail && boughtDetail.returnAccountName}
+                      </Text>
+                    </Wrapper>
+                    <Wrapper dr={`row`} margin={`0 0 20px`}>
+                      <Text
+                        color={Theme.grey_C}
+                        width={width < 900 ? `30%` : `15%`}
+                      >
+                        은행/계좌번호
+                      </Text>
+                      <Text
+                        width={width < 900 ? `70%` : `85%`}
+                        fontSize={`16px`}
+                      >
+                        {boughtDetail && boughtDetail.returnBankName} /&nbsp;
                         {boughtDetail && boughtDetail.returnAccountNum}
                       </Text>
                     </Wrapper>
@@ -262,7 +276,7 @@ const Index = () => {
               <Wrapper
                 al={`flex-start`}
                 margin={`80px 0 24px`}
-                fontSize={`26px`}
+                fontSize={width < 900 ? `20px` : `26px`}
                 fontWeight={`bold`}
               >
                 결제금액 정보

@@ -117,9 +117,9 @@ const Index = () => {
       return message.error("이메일을 입력해주세요.");
     }
 
-    if (!password.value || password.value.trim() === "") {
-      return message.error("비밀번호를 입력해주세요.");
-    }
+    // if (!password.value || password.value.trim() === "") {
+    //   return message.error("비밀번호를 입력해주세요.");
+    // }
     //
     if (email.value === me.email && mobile.value === me.mobile) {
       return message.error("변경할 정보가 없습니다.");
@@ -195,9 +195,7 @@ const Index = () => {
                   readOnly
                   value={me && me.userId}
                 />
-                <Text margin={`0 0 8px`}>
-                  <SpanText>*</SpanText>비밀번호
-                </Text>
+                <Text margin={`0 0 8px`}>비밀번호</Text>
                 <TextInput
                   placeholder="비밀번호"
                   width={`100%`}
@@ -223,6 +221,7 @@ const Index = () => {
                   width={`100%`}
                   height={`50px`}
                   margin={`0 0 25px`}
+                  type="number"
                   {...mobile}
                 />
                 <Text margin={`0 0 8px`}>

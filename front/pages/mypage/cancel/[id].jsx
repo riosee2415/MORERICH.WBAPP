@@ -236,6 +236,7 @@ const Cancel = () => {
                     {...returnAccountNum}
                     margin={`10px 0 0`}
                     width={`100%`}
+                    type="number"
                     height={`50px`}
                     placeholder="'-'없이 숫자만 입력해주세요."
                   />

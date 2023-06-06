@@ -32,6 +32,10 @@ import {
   ADDRESS_BASIC_REQUEST,
   ADDRESS_BASIC_SUCCESS,
   ADDRESS_BASIC_FAILURE,
+  //
+  GET_CACEL_REQUEST,
+  GET_CACEL_SUCCESS,
+  GET_CACEL_FAILURE,
 } from "../reducers/mypage";
 
 // SAGA AREA ********************************************************************************************************
@@ -219,6 +223,31 @@ function* addressBasic(action) {
 }
 
 //////////////////////////////////////////////////////////////
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function getCancelDataAPI(data) {
+  return await axios.post(`/api/store/boughtlist/target`, data);
+}
+
+function* getCancelData(action) {
+  try {
+    const result = yield call(getCancelDataAPI, action.data);
+
+    yield put({
+      type: GET_CACEL_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: GET_CACEL_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+//////////////////////////////////////////////////////////////
 function* watchBoughtList() {
   yield takeLatest(BOUGHT_LIST_REQUEST, boughtList);
 }
@@ -251,6 +280,10 @@ function* watchAddressBasic() {
   yield takeLatest(ADDRESS_BASIC_REQUEST, addressBasic);
 }
 
+function* watchGetCancelData() {
+  yield takeLatest(GET_CACEL_REQUEST, getCancelData);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* mypageSaga() {
   yield all([
@@ -262,6 +295,7 @@ export default function* mypageSaga() {
     fork(watchAddressUpdate),
     fork(watchAddressDelete),
     fork(watchAddressBasic),
+    fork(watchGetCancelData),
 
     //
   ]);

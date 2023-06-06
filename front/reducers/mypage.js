@@ -5,6 +5,7 @@ export const initailState = {
   boughtDetail: null, // 구매내역상세
   wishList: [], // 위시리스트
   addressList: [], // 배송지리스트
+  cancelData: null, // 취소데이터
 
   // 구매내역 가져오기
   st_boughtListLoading: false,
@@ -38,6 +39,10 @@ export const initailState = {
   st_addressBasicLoading: false,
   st_addressBasicDone: false,
   st_addressBasicError: null,
+  // 주문취소 시 필요한 데이터
+  st_getCancelDataLoading: false,
+  st_getCancelDataDone: false,
+  st_getCancelDataError: null,
 };
 
 export const BOUGHT_LIST_REQUEST = "BOUGHT_LIST_REQUEST";
@@ -71,6 +76,10 @@ export const ADDRESS_DELETE_FAILURE = "ADDRESS_DELETE_FAILURE";
 export const ADDRESS_BASIC_REQUEST = "ADDRESS_BASIC_REQUEST";
 export const ADDRESS_BASIC_SUCCESS = "ADDRESS_BASIC_SUCCESS";
 export const ADDRESS_BASIC_FAILURE = "ADDRESS_BASIC_FAILURE";
+
+export const GET_CACEL_REQUEST = "SET_CACEL_REQUEST";
+export const GET_CACEL_SUCCESS = "DEL_CACEL_SUCCESS";
+export const GET_CACEL_FAILURE = "DEL_CACEL_FAILURE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -237,6 +246,30 @@ const reducer = (state = initailState, action) =>
         draft.st_addressBasicError = action.error;
         break;
       }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case GET_CACEL_REQUEST: {
+        draft.st_getCancelDataLoading = true;
+        draft.st_getCancelDataDone = false;
+        draft.st_getCancelDataError = null;
+        break;
+      }
+      case GET_CACEL_SUCCESS: {
+        draft.st_getCancelDataLoading = false;
+        draft.st_getCancelDataDone = true;
+        draft.st_getCancelDataError = null;
+        draft.cancelData = action.data[0];
+        break;
+      }
+      case GET_CACEL_FAILURE: {
+        draft.st_getCancelDataLoading = false;
+        draft.st_getCancelDataDone = false;
+        draft.st_getCancelDataError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
 
       ///////////////////////////////////////////////////////
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ClientLayout from "../../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../../store/configureStore";
@@ -20,18 +20,20 @@ import Theme from "../../../components/Theme";
 import { Select } from "antd";
 import Link from "next/dist/client/link";
 import { useSelector } from "react-redux";
-import { PRODUCT_DETAIL_REQUEST } from "../../../reducers/store";
+import { GET_CACEL_REQUEST } from "../../../reducers/mypage";
 
 const Cancel = () => {
   ////// GLOBAL STATE //////
-  const { productDetail } = useSelector((state) => state.store);
+  const { cancelData } = useSelector((state) => state.mypage);
 
-  console.log(productDetail);
   ////// HOOKS //////
   const width = useWidth();
 
+  console.log(cancelData);
+
   ////// REDUX //////
   ////// USEEFFECT //////
+
   ////// TOGGLE //////
 
   ////// HANDLER //////
@@ -95,14 +97,14 @@ const Cancel = () => {
                   fontWeight={`600`}
                   margin={`0 0 34px`}
                 >
-                  취소 사유
+                  취소/환불 사유
                 </Wrapper>
                 <Wrapper dr={`row`}>
                   <Text
                     width={width < 800 ? `100%` : `182px`}
                     lineHeight={`50px`}
                   >
-                    교환사유
+                    사유입력
                   </Text>
                   <CustomSelect
                     width={width < 800 ? `100%` : `calc(100% - 182px)`}
@@ -110,8 +112,19 @@ const Cancel = () => {
                     sBorder={`1px solid ${Theme.black_C}`}
                   >
                     <Select placeholder="선택해주세요.">
-                      <Select.Option></Select.Option>
-                      <Select.Option></Select.Option>
+                      <Select.Option value="옵션 선택이 잘못되었어요.">
+                        옵션 선택이 잘못되었어요.
+                      </Select.Option>
+                      <Select.Option value="단순 변심으로 인한 취소에요.">
+                        단순 변심으로 인한 취소에요.
+                      </Select.Option>
+                      <Select.Option value="취소 후 재주문 할게요.">
+                        취소 후 재주문 할게요.
+                      </Select.Option>
+                      <Select.Option value="구매품에 하자가 있어요.">
+                        구매품에 하자가 있어요.
+                      </Select.Option>
+                      <Select.Option value="기타">기타</Select.Option>
                     </Select>
                   </CustomSelect>
                 </Wrapper>
@@ -207,13 +220,14 @@ const Cancel = () => {
                       fontSize={width < 900 ? `16px` : `18px`}
                       fontWeight={`600`}
                     >
-                      {productDetail && productDetail.name}
+                      ddd
                     </Text>
                     <Text
                       fontSize={width < 900 ? `14px` : `17px`}
                       minHeight={`45px`}
                     >
-                      {productDetail && productDetail.subName}
+                      {/* {productDetail && productDetail.subName} */}
+                      ddd
                     </Text>
                     <Wrapper dr={`row`} ju={`space-between`}>
                       <Wrapper width={`auto`} dr={`row`}>
@@ -337,9 +351,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: PRODUCT_DETAIL_REQUEST,
+      type: GET_CACEL_REQUEST,
       data: {
-        id: context.query.id,
+        targetId: context.query.id,
       },
     });
 

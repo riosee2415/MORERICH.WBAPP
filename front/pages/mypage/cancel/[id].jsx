@@ -15,28 +15,86 @@ import {
   Image,
   CommonButton,
   TextInput,
+  SpanText,
 } from "../../../components/commonComponents";
 import Theme from "../../../components/Theme";
-import { Select } from "antd";
+import { message, Select } from "antd";
 import Link from "next/dist/client/link";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GET_CACEL_REQUEST } from "../../../reducers/mypage";
+import { numberWithCommas } from "../../../components/commonUtils";
+import useInput from "../../../hooks/useInput";
+import { useCallback } from "react";
+import { useRouter } from "next/router";
+import { CANCEL_BOUGHT_REQUEST } from "../../../reducers/store";
 
 const Cancel = () => {
   ////// GLOBAL STATE //////
+  const { me } = useSelector((state) => state.user);
   const { cancelData } = useSelector((state) => state.mypage);
+  const { st_cancelBoughtDone, st_cancelBoughtError } = useSelector(
+    (state) => state.store
+  );
+
+  const returnAccountName = useInput(``);
+  const returnBankName = useInput(``);
+  const returnAccountNum = useInput(``);
+
+  const [reason, setReason] = useState(null);
 
   ////// HOOKS //////
   const width = useWidth();
-
-  console.log(cancelData);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   ////// REDUX //////
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (!me) {
+      router.push(`/user/login`);
+
+      return message.error("로그인이 필요한 서비스입니다.");
+    }
+  }, [me]);
+
+  // ********************** 취소/환불 후처리 *************************
+  useEffect(() => {
+    if (st_cancelBoughtError) {
+      return message.error(st_cancelBoughtError);
+    }
+    if (st_cancelBoughtDone) {
+      router.push(`/mypage/order`);
+
+      return message.success("취소/환불 처리되었습니다.");
+    }
+  }, [st_cancelBoughtError, st_cancelBoughtDone]);
 
   ////// TOGGLE //////
 
   ////// HANDLER //////
+  const cancelHandler = useCallback(() => {
+    if (!reason) {
+      return message.error("사유를 선택해주세요.");
+    }
+
+    dispatch({
+      type: CANCEL_BOUGHT_REQUEST,
+      data: {
+        id: cancelData && cancelData.id,
+        reason,
+        returnAccountName: returnAccountName.value,
+        returnBankName: returnBankName.value,
+        returnAccountNum: returnAccountNum.value,
+      },
+    });
+  }, [reason, returnAccountName, returnBankName, returnAccountNum]);
+
+  const reasonHandler = useCallback(
+    (data) => {
+      setReason(data);
+    },
+    [reason]
+  );
   ////// DATAVIEW //////
 
   return (
@@ -104,14 +162,18 @@ const Cancel = () => {
                     width={width < 800 ? `100%` : `182px`}
                     lineHeight={`50px`}
                   >
-                    사유입력
+                    사유선택
                   </Text>
                   <CustomSelect
                     width={width < 800 ? `100%` : `calc(100% - 182px)`}
                     height={`50px`}
                     sBorder={`1px solid ${Theme.black_C}`}
                   >
-                    <Select placeholder="선택해주세요.">
+                    <Select
+                      placeholder="선택해주세요."
+                      value={reason}
+                      onChange={reasonHandler}
+                    >
                       <Select.Option value="옵션 선택이 잘못되었어요.">
                         옵션 선택이 잘못되었어요.
                       </Select.Option>
@@ -146,6 +208,7 @@ const Cancel = () => {
                   계좌주명
                 </Text>
                 <TextInput
+                  {...returnAccountName}
                   width={width < 800 ? `100%` : `calc(100% - 182px)`}
                   placeholder="계좌주명"
                   height={`50px`}
@@ -163,17 +226,14 @@ const Cancel = () => {
                   dr={`row`}
                   ju={`space-between`}
                 >
-                  <CustomSelect
-                    width={`100%`}
-                    height={`50px`}
-                    sBorder={`1px solid ${Theme.black_C}`}
-                  >
-                    <Select placeholder="은행명을 선택해주세요.">
-                      <Select.Option></Select.Option>
-                      <Select.Option></Select.Option>
-                    </Select>
-                  </CustomSelect>
                   <TextInput
+                    {...returnBankName}
+                    width={`100%`}
+                    placeholder="은행명"
+                    height={`50px`}
+                  />
+                  <TextInput
+                    {...returnAccountNum}
                     margin={`10px 0 0`}
                     width={`100%`}
                     height={`50px`}
@@ -207,7 +267,8 @@ const Cancel = () => {
                   <Image
                     alt="thumbnail"
                     width={width < 900 ? `80px` : `112px`}
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
+                    height={width < 900 ? `80px` : `112px`}
+                    src={cancelData && cancelData.connectArray[0].thumbnail}
                   />
                   <Wrapper
                     width={
@@ -220,15 +281,17 @@ const Cancel = () => {
                       fontSize={width < 900 ? `16px` : `18px`}
                       fontWeight={`600`}
                     >
-                      ddd
+                      {cancelData && cancelData.connectArray.length < 2 ? (
+                        cancelData.connectArray[0].productName
+                      ) : (
+                        <>
+                          {cancelData && cancelData.connectArray[0].productName}{" "}
+                          외 &nbsp;
+                          {cancelData && cancelData.connectArray.length}개
+                        </>
+                      )}
                     </Text>
-                    <Text
-                      fontSize={width < 900 ? `14px` : `17px`}
-                      minHeight={`45px`}
-                    >
-                      {/* {productDetail && productDetail.subName} */}
-                      ddd
-                    </Text>
+
                     <Wrapper dr={`row`} ju={`space-between`}>
                       <Wrapper width={`auto`} dr={`row`}>
                         <Text
@@ -236,20 +299,37 @@ const Cancel = () => {
                           color={Theme.grey_C}
                           margin={`0 15px 0 0`}
                         >
-                          옵션 :{" "}
+                          옵션 :&nbsp;
+                          {cancelData &&
+                            cancelData.connectArray.map((data) => {
+                              return (
+                                <SpanText key={data.id} margin={`0 5px 0 0`}>
+                                  {data.optionValue}
+                                </SpanText>
+                              );
+                            })}
                         </Text>
                         <Text
                           fontSize={width < 900 ? `14px` : `15px`}
                           color={Theme.grey_C}
                         >
-                          수량 : 1개
+                          수량 : {cancelData && cancelData.connectArray.length}
+                          개
                         </Text>
                       </Wrapper>
                       <Text
                         fontSize={width < 800 ? `15px` : `18px`}
                         fontWeight={`600`}
                       >
-                        1,100,000원
+                        {cancelData &&
+                          numberWithCommas(
+                            cancelData.connectArray.reduce((sum, currValue) => {
+                              let a = parseInt(sum + currValue.price);
+
+                              return a;
+                            }, 0)
+                          )}
+                        원
                       </Text>
                     </Wrapper>
                   </Wrapper>
@@ -277,7 +357,15 @@ const Cancel = () => {
                     fontSize={width < 800 ? `15px` : `18px`}
                     fontWeight={`600`}
                   >
-                    1,100,000원
+                    {cancelData &&
+                      numberWithCommas(
+                        cancelData.connectArray.reduce((sum, currValue) => {
+                          let a = parseInt(sum + currValue.price);
+
+                          return a;
+                        }, 0)
+                      )}
+                    원
                   </Text>
                 </Wrapper>
                 <Wrapper dr={`row`} ju={`space-between`} margin={`16px 0`}>
@@ -288,7 +376,7 @@ const Cancel = () => {
                     fontSize={width < 800 ? `15px` : `18px`}
                     fontWeight={`600`}
                   >
-                    1개
+                    {cancelData && cancelData.connectArray.length}개
                   </Text>
                 </Wrapper>
                 <Wrapper dr={`row`} ju={`space-between`}>
@@ -299,7 +387,7 @@ const Cancel = () => {
                     fontSize={width < 800 ? `15px` : `18px`}
                     fontWeight={`600`}
                   >
-                    3,500원
+                    2,500원
                   </Text>
                 </Wrapper>
                 <Wrapper
@@ -314,7 +402,15 @@ const Cancel = () => {
                     fontSize={width < 800 ? `20px` : `28px`}
                     fontWeight={`bold`}
                   >
-                    1,103,500원
+                    {cancelData &&
+                      numberWithCommas(
+                        cancelData.connectArray.reduce((sum, currValue) => {
+                          let a = parseInt(sum + currValue.price);
+
+                          return a;
+                        }, 0) + 2500
+                      )}
+                    원
                   </Text>
                 </Wrapper>
                 <CommonButton
@@ -323,8 +419,9 @@ const Cancel = () => {
                   fontSize={width < 800 ? `16px` : `20px`}
                   fontWeight={`600`}
                   margin={`28px 0 0`}
+                  onClick={cancelHandler}
                 >
-                  취소요청하기
+                  취소/환불 요청하기
                 </CommonButton>
               </Wrapper>
             </Wrapper>

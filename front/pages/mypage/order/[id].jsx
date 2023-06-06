@@ -210,65 +210,55 @@ const Index = () => {
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
-              {/* <Wrapper
-                al={`flex-start`}
-                margin={`80px 0 24px`}
-                fontSize={`26px`}
-                fontWeight={`bold`}
-              >
-                무통장입금 정보
-              </Wrapper>
-              <Wrapper
-                borderTop={`1px solid ${Theme.black_C}`}
-                padding={`35px 0 0`}
-                dr={`row`}
-              >
-                <Wrapper dr={`row`} margin={`0 0 20px`}>
-                  <Text
-                    color={Theme.grey_C}
-                    width={width < 900 ? `30%` : `15%`}
+              {boughtDetail && boughtDetail.reason && (
+                <>
+                  <Wrapper
+                    al={`flex-start`}
+                    margin={`80px 0 24px`}
+                    fontSize={`26px`}
+                    fontWeight={`bold`}
                   >
-                    입금은행
-                  </Text>
-                  <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                    {boughtDetail && boughtDetail.returnAccountName}{" "}
-                    {boughtDetail && boughtDetail.returnAccountNum}
-                  </Text>
-                </Wrapper>
-                <Wrapper dr={`row`} margin={`0 0 20px`}>
-                  <Text
-                    color={Theme.grey_C}
-                    width={width < 900 ? `30%` : `15%`}
+                    취소/환불 신청 내역
+                  </Wrapper>
+                  <Wrapper
+                    borderTop={`1px solid ${Theme.black_C}`}
+                    padding={`35px 0 0`}
+                    dr={`row`}
                   >
-                    입금금액
-                  </Text>
-                  <Text
-                    width={width < 900 ? `70%` : `85%`}
-                    fontSize={`16px`}
-                    color={Theme.red_C}
-                  >
-                    {numberWithCommas(
-                      boughtDetail &&
-                        boughtDetail.connectArray.reduce((sum, currValue) => {
-                          return sum + currValue.price;
-                        }, 0)
-                    )}
-                    원
-                  </Text>
-                </Wrapper>
+                    <Wrapper dr={`row`} margin={`0 0 20px`}>
+                      <Text
+                        color={Theme.grey_C}
+                        width={width < 900 ? `30%` : `15%`}
+                      >
+                        취소/환불 사유
+                      </Text>
+                      <Text
+                        width={width < 900 ? `70%` : `85%`}
+                        fontSize={`16px`}
+                        color={Theme.red_C}
+                      >
+                        {boughtDetail && boughtDetail.reason}
+                      </Text>
+                    </Wrapper>
+                    <Wrapper dr={`row`} margin={`0 0 20px`}>
+                      <Text
+                        color={Theme.grey_C}
+                        width={width < 900 ? `30%` : `15%`}
+                      >
+                        은행/계좌번호
+                      </Text>
+                      <Text
+                        width={width < 900 ? `70%` : `85%`}
+                        fontSize={`16px`}
+                      >
+                        {boughtDetail && boughtDetail.returnAccountName}
+                        {boughtDetail && boughtDetail.returnAccountNum}
+                      </Text>
+                    </Wrapper>
+                  </Wrapper>
+                </>
+              )}
 
-                <Wrapper dr={`row`}>
-                  <Text
-                    color={Theme.grey_C}
-                    width={width < 900 ? `30%` : `15%`}
-                  >
-                    입금기한
-                  </Text>
-                  <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                    5/31
-                  </Text>
-                </Wrapper>
-              </Wrapper> */}
               <Wrapper
                 al={`flex-start`}
                 margin={`80px 0 24px`}

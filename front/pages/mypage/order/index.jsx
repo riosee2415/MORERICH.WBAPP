@@ -247,6 +247,7 @@ const Index = () => {
                                   >
                                     주문리스트
                                   </CommonButton>
+
                                   <CommonButton
                                     width={`32%`}
                                     height={`30px`}
@@ -318,22 +319,26 @@ const Index = () => {
                             height={`30px`}
                             kindOf={`grey3`}
                             padding={`0`}
+                            margin={`0 0 3px`}
                             onClick={() =>
                               movelinkHandler(`/mypage/order/${item.id}`)
                             }
                           >
                             주문리스트
                           </CommonButton>
-                          <CommonButton
-                            width={`78px`}
-                            height={`30px`}
-                            kindOf={`grey3`}
-                            padding={`0`}
-                            margin={`6px 0`}
-                            onClick={() => dModalToggle(item)}
-                          >
-                            {item.status <= 2 ? "취소요청" : "환불요청"}
-                          </CommonButton>
+                          {item.status < 3 && (
+                            <CommonButton
+                              width={`78px`}
+                              height={`30px`}
+                              kindOf={`grey3`}
+                              padding={`0`}
+                              margin={`0 0 3px`}
+                              onClick={() => dModalToggle(item)}
+                            >
+                              {item.status <= 2 ? "취소요청" : "환불요청"}
+                            </CommonButton>
+                          )}
+
                           <CommonButton
                             width={`78px`}
                             height={`30px`}

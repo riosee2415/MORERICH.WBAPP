@@ -73,6 +73,10 @@ const Index = () => {
       qun = qun + data.qun;
     });
 
+    if (currentDatum.length === 0) {
+      return message.error("옵션을 선택해주세요");
+    }
+
     sessionStorage.setItem("BUY", JSON.stringify(currentDatum));
     sessionStorage.setItem(
       "TOTAL",
@@ -88,6 +92,7 @@ const Index = () => {
     );
 
     router.push(`/order`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentDatum]);
 
   // 장바구니 담기

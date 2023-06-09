@@ -535,7 +535,7 @@ const Index = () => {
                     fontSize={width < 800 ? `15px` : `18px`}
                     fontWeight={`600`}
                   >
-                    3,500원
+                    2,500원
                   </Text>
                 </Wrapper>
                 <Wrapper

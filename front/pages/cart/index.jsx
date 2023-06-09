@@ -129,8 +129,8 @@ const Index = () => {
     sessionStorage.setItem(
       "TOTAL",
       JSON.stringify({
-        totalPriceInt: result + 3500,
-        totalPrice: String(result + 3500).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+        totalPriceInt: result + 2500,
+        totalPrice: String(result + 2500).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         qun: qun,
         productprice: String(result).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })
@@ -148,8 +148,8 @@ const Index = () => {
     sessionStorage.setItem(
       "TOTAL",
       JSON.stringify({
-        totalPriceInt: resultPrice + 3500,
-        totalPrice: String(resultPrice + 3500).replace(
+        totalPriceInt: resultPrice + 2500,
+        totalPrice: String(resultPrice + 2500).replace(
           /\B(?=(\d{3})+(?!\d))/g,
           ","
         ),
@@ -424,7 +424,7 @@ const Index = () => {
                       fontSize={`18px`}
                       fontWeight={`600`}
                     >
-                      3,500원
+                      2,500원
                     </Wrapper>
                   </Wrapper>
                 );
@@ -465,7 +465,7 @@ const Index = () => {
                   fontSize={width < 900 ? `16px` : `28px`}
                   fontWeight={`600`}
                 >
-                  3,500원
+                  2,500원
                 </Text>
                 <Wrapper
                   width={width < 900 ? `25px` : `40px`}
@@ -502,7 +502,7 @@ const Index = () => {
                   fontSize={width < 900 ? `16px` : `28px`}
                   fontWeight={`600`}
                 >
-                  {String(resultPrice + 3500).replace(
+                  {String(resultPrice + 2500).replace(
                     /\B(?=(\d{3})+(?!\d))/g,
                     ","
                   )}

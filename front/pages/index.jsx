@@ -27,6 +27,7 @@ import { useCallback } from "react";
 import { CART_LIST_REQUEST } from "../reducers/cart";
 import { LIKE_CREATE_REQUEST } from "../reducers/wish";
 import { message } from "antd";
+import { NEW_BANNER_REQUEST } from "../reducers/newbanner";
 
 const Box = styled(Wrapper)`
   width: calc(100% / 3);
@@ -67,6 +68,7 @@ const Box = styled(Wrapper)`
 const Home = ({}) => {
   ////// GLOBAL STATE //////
   const { slides } = useSelector((state) => state.banner);
+  const { banners } = useSelector((state) => state.newbanner);
   const { st_likeCreateDone, st_likeCreateError } = useSelector(
     (state) => state.wish
   );
@@ -145,7 +147,7 @@ const Home = ({}) => {
               <Box>
                 <Image
                   alt="thubnail"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_1.png`}
+                  src={banners[0] && banners[0].imagePath}
                 />
                 <Wrapper
                   bgColor={`rgba(0, 0, 0, 0.3)`}
@@ -159,14 +161,14 @@ const Home = ({}) => {
                   padding={`40px`}
                 >
                   <Text fontSize={`24px`} fontWeight={`600`}>
-                    hover 시 문구가 들어오는 곳입니다.
+                    {banners[0] && banners[0].info}
                   </Text>
                 </Wrapper>
               </Box>
               <Box>
                 <Image
                   alt="thubnail"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img2.png`}
+                  src={banners[1] && banners[1].imagePath}
                 />
                 <Wrapper
                   bgColor={`rgba(0, 0, 0, 0.3)`}
@@ -180,14 +182,14 @@ const Home = ({}) => {
                   padding={`40px`}
                 >
                   <Text fontSize={`24px`} fontWeight={`600`}>
-                    hover 시 문구가 들어오는 곳입니다.
+                    {banners[1] && banners[1].info}
                   </Text>
                 </Wrapper>
               </Box>
               <Box>
                 <Image
                   alt="thubnail"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img3.png`}
+                  src={banners[2] && banners[2].imagePath}
                 />
                 <Wrapper
                   bgColor={`rgba(0, 0, 0, 0.3)`}
@@ -201,14 +203,14 @@ const Home = ({}) => {
                   padding={`40px`}
                 >
                   <Text fontSize={`24px`} fontWeight={`600`}>
-                    hover 시 문구가 들어오는 곳입니다.
+                    {banners[2] && banners[2].info}
                   </Text>
                 </Wrapper>
               </Box>
               <Box>
                 <Image
                   alt="thubnail"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img4.png`}
+                  src={banners[3] && banners[3].imagePath}
                 />
                 <Wrapper
                   bgColor={`rgba(0, 0, 0, 0.3)`}
@@ -222,14 +224,14 @@ const Home = ({}) => {
                   padding={`40px`}
                 >
                   <Text fontSize={`24px`} fontWeight={`600`}>
-                    hover 시 문구가 들어오는 곳입니다.
+                    {banners[3] && banners[3].info}
                   </Text>
                 </Wrapper>
               </Box>
               <Box>
                 <Image
                   alt="thubnail"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img5.png`}
+                  src={banners[4] && banners[4].imagePath}
                 />
                 <Wrapper
                   bgColor={`rgba(0, 0, 0, 0.3)`}
@@ -243,14 +245,14 @@ const Home = ({}) => {
                   padding={`40px`}
                 >
                   <Text fontSize={`24px`} fontWeight={`600`}>
-                    hover 시 문구가 들어오는 곳입니다.
+                    {banners[4] && banners[4].info}
                   </Text>
                 </Wrapper>
               </Box>
               <Box>
                 <Image
                   alt="thubnail"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img6.png`}
+                  src={banners[5] && banners[5].imagePath}
                 />
                 <Wrapper
                   bgColor={`rgba(0, 0, 0, 0.3)`}
@@ -264,7 +266,7 @@ const Home = ({}) => {
                   padding={`40px`}
                 >
                   <Text fontSize={`24px`} fontWeight={`600`}>
-                    hover 시 문구가 들어오는 곳입니다.
+                    {banners[5] && banners[5].info}
                   </Text>
                 </Wrapper>
               </Box>
@@ -307,6 +309,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
       type: GET_SLIDE_REQUEST,
     });
 
+    context.store.dispatch({
+      type: NEW_BANNER_REQUEST,
+    });
     // 구현부 종료
     context.store.dispatch(END);
     console.log("🍀 SERVER SIDE PROPS END");

@@ -68,6 +68,11 @@ export const items = {
       link: "/admin/banner/popup",
       useYn: true,
     },
+    {
+      name: "new배너관리",
+      link: "/admin/banner/newbanner",
+      useYn: true,
+    },
   ],
   게시판관리: [
     {

@@ -163,7 +163,10 @@ const Index = () => {
                             alt="thumbnail"
                             width={width < 900 ? `80px` : `112px`}
                             height={width < 900 ? `80px` : `112px`}
-                            src={item.connectArray[0].thumbnail}
+                            src={
+                              item.connectArray[0] &&
+                              item.connectArray[0].thumbnail
+                            }
                           />
                           <Wrapper
                             width={
@@ -179,10 +182,13 @@ const Index = () => {
                               fontWeight={`600`}
                             >
                               {item.connectArray.length < 2 ? (
+                                item.connectArray[0] &&
                                 item.connectArray[0].productName
                               ) : (
                                 <>
-                                  {item.connectArray[0].productName} 외 &nbsp;
+                                  {item.connectArray[0] &&
+                                    item.connectArray[0].productName}{" "}
+                                  외 &nbsp;
                                   {item.connectArray.length}개
                                 </>
                               )}

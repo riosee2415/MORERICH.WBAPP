@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BOUGHT_CREATE_REQUEST } from "../../reducers/store";
 import { useRouter } from "next/router";
 import { CART_DELETE_REQUEST } from "../../reducers/cart";
+import { ADDRESS_LIST_REQUEST } from "../../reducers/mypage";
 
 const style = {
   overflow: "hidden",
@@ -37,6 +38,7 @@ const Index = () => {
   const { boughtHistoryId, st_boughtCreateDone, st_boughtCreateError } =
     useSelector((state) => state.store);
   const { me } = useSelector((state) => state.user);
+  const { addressList } = useSelector((state) => state.mypage);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -62,6 +64,17 @@ const Index = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   ////// USEEFFECT //////
+
+  useEffect(() => {
+    if (addressList.find((value) => value.isBasic)) {
+      postcodeInput.setValue(addressList.find((value) => value.isBasic).post);
+      addressInput.setValue(addressList.find((value) => value.isBasic).adrs);
+      detailAddressInput.setValue(
+        addressList.find((value) => value.isBasic).dadrs
+      );
+      mobileInput.setValue(addressList.find((value) => value.isBasic).mobile);
+    }
+  }, [addressList]);
 
   useEffect(() => {
     if (st_boughtCreateDone && boughtHistoryId) {
@@ -627,6 +640,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: ADDRESS_LIST_REQUEST,
     });
 
     // 구현부 종료

@@ -37,6 +37,7 @@ const wish = require("./wish");
 const boughthistory = require("./boughthistory");
 const boughtList = require("./boughtlist");
 const cart = require("./cart");
+const newbanner = require("./newbanner");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -90,6 +91,8 @@ db.Wish = wish;
 db.BoughtHistory = boughthistory;
 db.BoughtList = boughtList;
 db.Cart = cart;
+
+db.NewBanner = newbanner;
 
 Object.keys(db).forEach((modelName) => {
   db[modelName].init(sequelize);

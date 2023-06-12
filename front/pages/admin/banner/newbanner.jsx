@@ -2,18 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Popover,
-  Table,
-  message,
-  Form,
-  Input,
-  Button,
-  Image,
-  Modal,
-  Popconfirm,
-  Switch,
-} from "antd";
+import { Popover, Table, message, Form, Input, Button, Image } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -26,10 +15,6 @@ import {
   OtherMenu,
   GuideUl,
   GuideLi,
-  SortView,
-  UpBtn,
-  DownBtn,
-  DelBtn,
 } from "../../../components/commonComponents";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import {} from "../../../reducers/banner";
@@ -141,7 +126,11 @@ const MainBanner = ({}) => {
 
       message.success("이미지가 수정되었습니다.");
     }
-  }, [st_bannerUploadDone]);
+
+    if (st_bannerUploadError) {
+      return message.error(st_bannerUploadError);
+    }
+  }, [st_bannerUploadDone, st_bannerUploadError]);
 
   useEffect(() => {
     if (st_newBannerUpdateDone) {
@@ -409,11 +398,11 @@ const MainBanner = ({}) => {
                     <Input size="small" allowClear readOnly />
                   </Form.Item>
 
-                  <Form.Item label="최근 작업일" name="viewUpdatedAt">
+                  <Form.Item label="최근 작업일" name="updatedAt">
                     <Input size="small" allowClear readOnly />
                   </Form.Item>
 
-                  <Form.Item label="생성일" name="creaviewCreatedAttedAt">
+                  <Form.Item label="생성일" name="createdAt">
                     <Input size="small" allowClear readOnly />
                   </Form.Item>
 

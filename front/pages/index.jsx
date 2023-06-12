@@ -101,7 +101,9 @@ const Home = ({}) => {
 
   ////// TOGGLE //////
   ////// HANDLER //////
-
+  const moveLinkHandler = useCallback((link) => {
+    window.open(link);
+  }, []);
   ////// DATAVIEW //////
 
   return (
@@ -144,132 +146,33 @@ const Home = ({}) => {
               setLikeId={setLikeId}
             />
             <Wrapper dr={`row`} margin={`120px 0`}>
-              <Box>
-                <Image
-                  alt="thubnail"
-                  src={banners[0] && banners[0].imagePath}
-                />
-                <Wrapper
-                  bgColor={`rgba(0, 0, 0, 0.3)`}
-                  color={Theme.white_C}
-                  position={`absolute`}
-                  top={`0`}
-                  left={`0`}
-                  height={`100%`}
-                  al={`flex-start`}
-                  ju={`flex-end`}
-                  padding={`40px`}
-                >
-                  <Text fontSize={`24px`} fontWeight={`600`}>
-                    {banners[0] && banners[0].info}
-                  </Text>
-                </Wrapper>
-              </Box>
-              <Box>
-                <Image
-                  alt="thubnail"
-                  src={banners[1] && banners[1].imagePath}
-                />
-                <Wrapper
-                  bgColor={`rgba(0, 0, 0, 0.3)`}
-                  color={Theme.white_C}
-                  position={`absolute`}
-                  top={`0`}
-                  left={`0`}
-                  height={`100%`}
-                  al={`flex-start`}
-                  ju={`flex-end`}
-                  padding={`40px`}
-                >
-                  <Text fontSize={`24px`} fontWeight={`600`}>
-                    {banners[1] && banners[1].info}
-                  </Text>
-                </Wrapper>
-              </Box>
-              <Box>
-                <Image
-                  alt="thubnail"
-                  src={banners[2] && banners[2].imagePath}
-                />
-                <Wrapper
-                  bgColor={`rgba(0, 0, 0, 0.3)`}
-                  color={Theme.white_C}
-                  position={`absolute`}
-                  top={`0`}
-                  left={`0`}
-                  height={`100%`}
-                  al={`flex-start`}
-                  ju={`flex-end`}
-                  padding={`40px`}
-                >
-                  <Text fontSize={`24px`} fontWeight={`600`}>
-                    {banners[2] && banners[2].info}
-                  </Text>
-                </Wrapper>
-              </Box>
-              <Box>
-                <Image
-                  alt="thubnail"
-                  src={banners[3] && banners[3].imagePath}
-                />
-                <Wrapper
-                  bgColor={`rgba(0, 0, 0, 0.3)`}
-                  color={Theme.white_C}
-                  position={`absolute`}
-                  top={`0`}
-                  left={`0`}
-                  height={`100%`}
-                  al={`flex-start`}
-                  ju={`flex-end`}
-                  padding={`40px`}
-                >
-                  <Text fontSize={`24px`} fontWeight={`600`}>
-                    {banners[3] && banners[3].info}
-                  </Text>
-                </Wrapper>
-              </Box>
-              <Box>
-                <Image
-                  alt="thubnail"
-                  src={banners[4] && banners[4].imagePath}
-                />
-                <Wrapper
-                  bgColor={`rgba(0, 0, 0, 0.3)`}
-                  color={Theme.white_C}
-                  position={`absolute`}
-                  top={`0`}
-                  left={`0`}
-                  height={`100%`}
-                  al={`flex-start`}
-                  ju={`flex-end`}
-                  padding={`40px`}
-                >
-                  <Text fontSize={`24px`} fontWeight={`600`}>
-                    {banners[4] && banners[4].info}
-                  </Text>
-                </Wrapper>
-              </Box>
-              <Box>
-                <Image
-                  alt="thubnail"
-                  src={banners[5] && banners[5].imagePath}
-                />
-                <Wrapper
-                  bgColor={`rgba(0, 0, 0, 0.3)`}
-                  color={Theme.white_C}
-                  position={`absolute`}
-                  top={`0`}
-                  left={`0`}
-                  height={`100%`}
-                  al={`flex-start`}
-                  ju={`flex-end`}
-                  padding={`40px`}
-                >
-                  <Text fontSize={`24px`} fontWeight={`600`}>
-                    {banners[5] && banners[5].info}
-                  </Text>
-                </Wrapper>
-              </Box>
+              {banners &&
+                banners.map((data) => {
+                  return (
+                    <Box
+                      key={data.id}
+                      onClick={() => moveLinkHandler(data.url)}
+                    >
+                      <Image alt="thubnail" src={data.imagePath} />
+
+                      <Wrapper
+                        bgColor={`rgba(0, 0, 0, 0.3)`}
+                        color={Theme.white_C}
+                        position={`absolute`}
+                        top={`0`}
+                        left={`0`}
+                        height={`100%`}
+                        al={`flex-start`}
+                        ju={`flex-end`}
+                        padding={`40px`}
+                      >
+                        <Text fontSize={`24px`} fontWeight={`600`}>
+                          {data.info}
+                        </Text>
+                      </Wrapper>
+                    </Box>
+                  );
+                })}
             </Wrapper>
 
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>

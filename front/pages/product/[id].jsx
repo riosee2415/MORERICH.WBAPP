@@ -463,7 +463,10 @@ const Index = () => {
                   height={`50px`}
                   kindOf={`white`}
                   margin={`0 4px 0 0`}
-                  onClick={() => router.push(`/cart`)}
+                  onClick={() => [
+                    router.push(`/cart`),
+                    window.scrollTo({ top: 0, behavior: "smooth" }),
+                  ]}
                 >
                   카트 바로가기
                 </CommonButton>

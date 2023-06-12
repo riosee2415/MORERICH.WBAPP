@@ -141,7 +141,10 @@ const NewSlider = ({ datum, likeId, setLikeId }) => {
               >
                 <Wrapper al={`flex-start`}>
                   <SquareBox
-                    onClick={() => router.push(`/product/${data.ProductId}`)}
+                    onClick={() => [
+                      router.push(`/product/${data.ProductId}`),
+                      window.scrollTo({ top: 0, behavior: "smooth" }),
+                    ]}
                   >
                     <Image alt="thumbnail" src={data.thumbnail} />
                   </SquareBox>

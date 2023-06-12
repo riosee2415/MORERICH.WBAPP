@@ -79,6 +79,7 @@ const Index = () => {
   useEffect(() => {
     if (st_boughtCreateDone && boughtHistoryId) {
       router.push(`/order/complete`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
       sessionStorage.setItem("HISTORY", JSON.stringify(boughtHistoryId));
       sessionStorage.removeItem("BUY");
       sessionStorage.removeItem("TOTAL");

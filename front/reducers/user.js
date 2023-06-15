@@ -10,6 +10,11 @@ export const initailState = {
   joinSet: null,
   findId: null, // 아이디찾기
 
+  acceptData: 0, // 오늘 접속자
+  userData: 0, // 오늘 가입자
+  productData: 0, // 총 등록된 상품
+  boughtData: 0, // 오늘 구매자
+
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -94,6 +99,10 @@ export const initailState = {
   st_userExitLoading: false,
   st_userExitDone: false,
   st_userExitError: null,
+
+  st_adminMainLoading: false, // 관리자 메인
+  st_adminMainDone: false,
+  st_adminMainError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -183,6 +192,10 @@ export const USER_UPDATE_FAILURE = "USER_UPDATE_FAILURE";
 export const USER_EXIT_REQUEST = "USER_EXIT_REQUEST";
 export const USER_EXIT_SUCCESS = "USER_EXIT_SUCCESS";
 export const USER_EXIT_FAILURE = "USER_EXIT_FAILURE";
+
+export const ADMIN_MAIN_CNT_REQUEST = "ADMIN_MAIN_CNT_REQUEST";
+export const ADMIN_MAIN_CNT_SUCCESS = "ADMIN_MAIN_CNT_SUCCESS";
+export const ADMIN_MAIN_CNT_FAILURE = "ADMIN_MAIN_CNT_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -645,6 +658,30 @@ const reducer = (state = initailState, action) =>
         draft.st_userExitLoading = false;
         draft.st_userExitDone = false;
         draft.st_userExitError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case ADMIN_MAIN_CNT_REQUEST: {
+        draft.st_adminMainLoading = true;
+        draft.st_adminMainDone = null;
+        draft.st_adminMainError = false;
+        break;
+      }
+      case ADMIN_MAIN_CNT_SUCCESS: {
+        draft.st_adminMainLoading = false;
+        draft.st_adminMainDone = true;
+        draft.st_adminMainError = null;
+        draft.acceptData = action.data.acceptData;
+        draft.userData = action.data.userData;
+        draft.productData = action.data.productData;
+        draft.boughtData = action.data.boughtData;
+        break;
+      }
+      case ADMIN_MAIN_CNT_FAILURE: {
+        draft.st_adminMainLoading = false;
+        draft.st_adminMainDone = false;
+        draft.st_adminMainError = action.error;
         break;
       }
       //////////////////////////////////////////////

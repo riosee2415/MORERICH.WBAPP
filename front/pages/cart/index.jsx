@@ -277,7 +277,6 @@ const Index = () => {
               </Wrapper>
             ) : (
               cartList.map((data) => {
-                console.log(data);
                 return (
                   <Wrapper
                     key={data.id}

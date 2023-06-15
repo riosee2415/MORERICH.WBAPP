@@ -88,6 +88,10 @@ import {
   USER_UPDATE_REQUEST,
   USER_UPDATE_SUCCESS,
   USER_UPDATE_FAILURE,
+  //
+  ADMIN_MAIN_CNT_REQUEST,
+  ADMIN_MAIN_CNT_SUCCESS,
+  ADMIN_MAIN_CNT_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -679,6 +683,33 @@ function* logout(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function adminMainAPI(data) {
+  return await axios.post("/api/user/admin/main", data);
+}
+
+function* adminMain(action) {
+  try {
+    const result = yield call(adminMainAPI, action.data);
+    yield put({
+      type: ADMIN_MAIN_CNT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADMIN_MAIN_CNT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -769,6 +800,10 @@ function* watchUserExit() {
   yield takeLatest(USER_EXIT_REQUEST, userExit);
 }
 
+function* watchAdminMain() {
+  yield takeLatest(ADMIN_MAIN_CNT_REQUEST, adminMain);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -794,6 +829,7 @@ export default function* userSaga() {
     fork(watchUserModfiyUpdate),
     fork(watchUserExit),
     fork(watchUserUpdate),
+    fork(watchAdminMain),
     //
   ]);
 }

@@ -249,7 +249,7 @@ const Index = () => {
                           {data.exWish ? (
                             <Image
                               alt="heart icon"
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                              src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
                               width={`22px`}
                               margin={`0 18px 0 0`}
                               onClick={() => likeCreateHandler(data)}
@@ -257,7 +257,7 @@ const Index = () => {
                           ) : (
                             <Image
                               alt="heart icon"
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                              src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
                               width={`22px`}
                               margin={`0 18px 0 0`}
                               onClick={() => likeCreateHandler(data)}
@@ -265,7 +265,7 @@ const Index = () => {
                           )}
                           {/* <Image
                             alt="cart icon"
-                            src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
+                            src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
                             width={`22px`}
                           /> */}
                         </Wrapper>

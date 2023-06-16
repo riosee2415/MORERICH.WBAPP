@@ -183,7 +183,7 @@ const Notice = () => {
                   <Image
                     width={`18px`}
                     alt="icon"
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cs-center/icon_search.png`}
+                    src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cs-center/icon_search.png`}
                   />
                 </Wrapper>
               </Wrapper>

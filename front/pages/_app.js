@@ -53,19 +53,24 @@ const Fourleaf = ({ Component }) => {
 
         <meta name="author" content="4LEAF SOFTWARE <4leaf.ysh@gmail.com>" />
         {/* <!-- OG tag  --> */}
+        <meta name="subject" content="MoreRich" />
+        <meta name="title" content="MoreRich" />
+        {/* <!-- OG tag  --> */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.sample.com/" />
+        <meta property="og:url" content="https://divine-store.co.kr/" />
         <meta property="og:image:width" content="800" />
         <meta property="og:image:height" content="400" />
         <meta property="og:image" content="./og_img.png" />
+        <meta property="og:title" content="MoreRich"></meta>
+        <meta property="og:site_name" content="MoreRich" />
         <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://www.sample.com" />
+        <link rel="canonical" href="https://divine-store.co.kr" />
 
-        <meta name="keywords" content="MoreRich" />
-        <meta property="og:keywords" content="MoreRich" />
+        <meta name="keywords" content="" />
+        <meta property="og:keywords" content="" />
 
-        <meta property="og:description" content="MoreRich" />
-        <meta name="description" content="MoreRich" />
+        <meta property="og:description" content="" />
+        <meta name="description" content="" />
 
         {/* 프리텐다드 폰트 */}
         <link

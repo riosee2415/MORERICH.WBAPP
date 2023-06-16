@@ -163,7 +163,7 @@ const Login = () => {
                   width={`19px`}
                   margin={`0 6px 0 0`}
                   alt="kakao"
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_kakao_h.png`}
+                  src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_kakao_h.png`}
                 />
                 카카오로 로그인
               </CommonButton> */}

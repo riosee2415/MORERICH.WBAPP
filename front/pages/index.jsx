@@ -131,8 +131,8 @@ const Home = ({}) => {
               alt="banner img"
               src={
                 width < 700
-                  ? `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban_m.png`
-                  : `https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban.png`
+                  ? `https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban_m.png`
+                  : `https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban.png`
               }
             />
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>

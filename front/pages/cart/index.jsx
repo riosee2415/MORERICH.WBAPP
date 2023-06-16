@@ -474,7 +474,7 @@ const Index = () => {
                 >
                   <Image
                     alt="plus icon"
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cart-page/icon_plus.png`}
+                    src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cart-page/icon_plus.png`}
                   />
                 </Wrapper>
               </Wrapper>
@@ -489,7 +489,7 @@ const Index = () => {
                 >
                   <Image
                     alt="equal icon"
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cart-page/icon_equal.png`}
+                    src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cart-page/icon_equal.png`}
                   />
                 </Wrapper>
                 <Text

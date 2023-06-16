@@ -44,7 +44,7 @@ const BestSliderWrapper = styled(Wrapper)`
       height: 33px;
       transform: translate(-50%, -50%);
       background-size: cover;
-      background-image: url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg");
+      background-image: url("https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg");
     }
   }
   .ant-carousel .slick-next {
@@ -62,7 +62,7 @@ const BestSliderWrapper = styled(Wrapper)`
       height: 33px;
       transform: translate(-50%, -50%);
       background-size: cover;
-      background-image: url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_next.svg");
+      background-image: url("https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_next.svg");
     }
   }
 
@@ -184,7 +184,7 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
                     {data.exWish !== null ? (
                       <Image
                         alt="heart icon"
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                        src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
                         width={`22px`}
                         margin={`0 18px 0 0`}
                         onClick={() => likeHandler(data)}
@@ -192,7 +192,7 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
                     ) : (
                       <Image
                         alt="heart icon"
-                        src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                        src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
                         width={`22px`}
                         margin={`0 18px 0 0`}
                         onClick={() => likeHandler(data)}
@@ -200,7 +200,7 @@ const BestSlider = ({ datum, likeId, setLikeId }) => {
                     )}
                     {/* <Image
                       alt="cart icon"
-                      src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
+                      src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
                       width={`22px`}
                     /> */}
                   </Wrapper>

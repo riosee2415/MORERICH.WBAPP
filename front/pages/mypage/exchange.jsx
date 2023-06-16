@@ -46,7 +46,7 @@ const Exchange = () => {
             <Wrapper dr={`row`} ju={`flex-start`} margin={`40px 0 80px`}>
               <Image
                 alt="icon"
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg`}
+                src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg`}
                 width={`14px`}
                 margin={`0 14px 0 0`}
               />
@@ -320,7 +320,7 @@ const Exchange = () => {
                   <Image
                     alt="thumbnail"
                     width={width < 900 ? `80px` : `112px`}
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
+                    src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
                   />
                   <Wrapper
                     width={

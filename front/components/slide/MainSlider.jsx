@@ -40,7 +40,7 @@ const MainSliderWrapper = styled(RowWrapper)`
       height: 33px;
       background-size: contain;
       background-repeat: no-repeat;
-      background-image: url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg");
+      background-image: url("https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg");
     }
 
     @media (max-width: 800px) {
@@ -60,7 +60,7 @@ const MainSliderWrapper = styled(RowWrapper)`
       height: 33px;
       background-size: contain;
       background-repeat: no-repeat;
-      background-image: url("https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_next.svg");
+      background-image: url("https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_next.svg");
     }
     @media (max-width: 800px) {
       right: 10px;

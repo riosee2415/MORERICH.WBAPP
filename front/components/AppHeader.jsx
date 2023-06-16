@@ -231,7 +231,7 @@ const AppHeader = ({}) => {
             <Link href={`/cart`}>
               <a>
                 <Image
-                  src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_cart.png`}
+                  src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_cart.png`}
                   width={`20px`}
                   margin={`0 20px 0 0`}
                   alt="cart icon"
@@ -291,7 +291,7 @@ const AppHeader = ({}) => {
               <Link href={me ? `/mypage/order` : `/user/login`}>
                 <a>
                   <Image
-                    src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_login_m.png`}
+                    src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_login_m.png`}
                     width={`20px`}
                     margin={`0 30px 0 0`}
                     alt="login icon"
@@ -300,7 +300,7 @@ const AppHeader = ({}) => {
               </Link>
 
               <Image
-                src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_close_m.png`}
+                src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/header/icon_close_m.png`}
                 width={`20px`}
                 alt="close icon"
                 onClick={drawarToggle}

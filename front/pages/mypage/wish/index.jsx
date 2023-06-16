@@ -193,7 +193,7 @@ const Index = () => {
                           <Wrapper dr={`row`} ju={`flex-start`}>
                             <Image
                               alt="heart icon"
-                              src={`https://4leaf-s3.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                              src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
                               width={`22px`}
                               margin={`0 18px 0 0`}
                               onClick={() => likeCreateHandler(data)}

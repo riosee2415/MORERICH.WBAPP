@@ -137,7 +137,6 @@ const Index = () => {
     }
 
     currentData.map((data) => {
-      console.log(data);
       boughtLists.push({
         productName: data.name,
         price: data.calcPrice,
@@ -424,7 +423,6 @@ const Index = () => {
                   주문상품
                 </Wrapper>
                 {currentData.map((data) => {
-                  console.log(data);
                   return (
                     <Wrapper
                       key={data.id}

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Wrapper, Image, Text } from "./commonComponents";
 import Theme from "./Theme";
 import AdminMenuBox from "./AdminMenuBox";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { ADMIN_MAIN_CNT_REQUEST } from "../reducers/user";
 
 const AdminHeader = styled(Wrapper)`
   transition: 0.6s;
@@ -27,7 +28,7 @@ export const items = {
     {
       name: "월별 매출통계",
       link: "/",
-      useYn: true,
+      useYn: false,
     },
   ],
   기초정보관리: [
@@ -182,8 +183,17 @@ export const items = {
 };
 
 const AdminLayout = ({ children }) => {
-  const { me } = useSelector((s) => s.user);
+  const { me, acceptData, userData, productData, boughtData } = useSelector(
+    (s) => s.user
+  );
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({
+      type: ADMIN_MAIN_CNT_REQUEST,
+    });
+  }, []);
 
   return (
     <Wrapper className="whole__admin__wrapper">
@@ -215,7 +225,7 @@ const AdminLayout = ({ children }) => {
               padding={`2px 15px`}
               radius={`6px`}
             >
-              ㅇㅇㅇ 최고관리자님, 환영합니다.
+              관리자님, 환영합니다.
             </Text>
           </Wrapper>
         </Wrapper>
@@ -235,8 +245,19 @@ const AdminLayout = ({ children }) => {
               borderBottom={`0.5px solid ${Theme.adminTheme_3}`}
               margin={`0px 0px 5px 0px`}
             >
+              <Text>오늘 접속자 통계</Text>
+              <Text>{acceptData && acceptData.cnt}건</Text>
+            </Wrapper>
+
+            <Wrapper
+              dr={`row`}
+              ju={`space-between`}
+              padding={`0px 5px`}
+              borderBottom={`0.5px solid ${Theme.adminTheme_3}`}
+              margin={`0px 0px 5px 0px`}
+            >
               <Text>오늘 가입한 회원</Text>
-              <Text>1건</Text>
+              <Text>{userData && userData.cnt}명</Text>
             </Wrapper>
 
             <Wrapper
@@ -246,8 +267,8 @@ const AdminLayout = ({ children }) => {
               borderBottom={`0.5px solid ${Theme.adminTheme_3}`}
               margin={`0px 0px 5px 0px`}
             >
-              <Text>오늘 접수된 문의사항</Text>
-              <Text>1건</Text>
+              <Text>총 상품 갯수</Text>
+              <Text>{productData && productData.cnt}명</Text>
             </Wrapper>
 
             <Wrapper
@@ -257,19 +278,8 @@ const AdminLayout = ({ children }) => {
               borderBottom={`0.5px solid ${Theme.adminTheme_3}`}
               margin={`0px 0px 5px 0px`}
             >
-              <Text>오늘 새로 등록된 공지사항</Text>
-              <Text>1건</Text>
-            </Wrapper>
-
-            <Wrapper
-              dr={`row`}
-              ju={`space-between`}
-              padding={`0px 5px`}
-              borderBottom={`0.5px solid ${Theme.adminTheme_3}`}
-              margin={`0px 0px 5px 0px`}
-            >
-              <Text>오늘 어쩌구 저쩌구 저쩌구 저쩌구</Text>
-              <Text>1건</Text>
+              <Text>오늘 상품 구매건</Text>
+              <Text>{boughtData && boughtData.cnt}건</Text>
             </Wrapper>
           </Wrapper>
         </Wrapper>

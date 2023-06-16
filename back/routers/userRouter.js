@@ -959,6 +959,58 @@ router.post("/exit/update", isLoggedIn, async (req, res, next) => {
 });
 
 /**
+ * SUBJECT : 관리자 헤더 정보 가져오기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 김동현
+ * DEV DATE : 2023/06/15
+ */
+router.post("/admin/main", async (req, res, next) => {
+  const acceptQuery = `
+  SELECT  COUNT(id)    AS cnt
+    FROM  acceptRecords
+   WHERE  DATE_FORMAT(createdAt, "%Y-%m-%d") = DATE_FORMAT(NOW(), "%Y-%m-%d")
+  `;
+
+  const userQuery = `
+  SELECT  COUNT(id)   AS cnt
+    FROM  users
+   WHERE  DATE_FORMAT(createdAt, "%Y-%m-%d") = DATE_FORMAT(NOW(), "%Y-%m-%d")
+     AND  isExit = 0
+`;
+
+  const productQuery = `
+  SELECT  COUNT(id)    AS cnt
+    FROM  product
+   WHERE  isDelete = 0
+  `;
+
+  const boughtQuery = `
+  SELECT  COUNT(id)   AS cnt
+    FROM  boughtHistory
+   WHERE  DATE_FORMAT(createdAt, "%Y-%m-%d") = DATE_FORMAT(NOW(), "%Y-%m-%d")
+  `;
+
+  try {
+    const acceptData = await models.sequelize.query(acceptQuery);
+    const userData = await models.sequelize.query(userQuery);
+    const productData = await models.sequelize.query(productQuery);
+    const boughtData = await models.sequelize.query(boughtQuery);
+
+    return res.status(200).json({
+      acceptData: acceptData[0][0],
+      userData: userData[0][0],
+      productData: productData[0][0],
+      boughtData: boughtData[0][0],
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(401).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
  * SUBJECT : 유저 주소 가져오기
  * PARAMETERS : -
  * ORDER BY : -

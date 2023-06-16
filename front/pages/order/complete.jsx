@@ -24,7 +24,6 @@ import { numberWithCommas } from "../../components/commonUtils";
 const Complete = () => {
   ////// GLOBAL STATE //////
   const { boughtDetail } = useSelector((state) => state.mypage);
-  console.log(boughtDetail);
   ////// HOOKS //////
   const width = useWidth();
   ////// REDUX //////

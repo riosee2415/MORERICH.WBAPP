@@ -380,7 +380,7 @@ const Cancel = () => {
                     {cancelData && cancelData.connectArray.length}개
                   </Text>
                 </Wrapper>
-                <Wrapper dr={`row`} ju={`space-between`}>
+                {/* <Wrapper dr={`row`} ju={`space-between`}>
                   <Text fontSize={`15px`} color={Theme.grey_C}>
                     배송비
                   </Text>
@@ -390,7 +390,7 @@ const Cancel = () => {
                   >
                     2,500원
                   </Text>
-                </Wrapper>
+                </Wrapper> */}
                 <Wrapper
                   dr={`row`}
                   ju={`space-between`}
@@ -409,7 +409,7 @@ const Cancel = () => {
                           let a = parseInt(sum + currValue.price);
 
                           return a;
-                        }, 0) + 2500
+                        }, 0)
                       )}
                     원
                   </Text>

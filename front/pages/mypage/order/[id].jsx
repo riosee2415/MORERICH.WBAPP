@@ -305,7 +305,7 @@ const Index = () => {
                     원
                   </Text>
                 </Wrapper>
-                <Wrapper dr={`row`} margin={`0 0 20px`}>
+                {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
                   <Text
                     color={Theme.grey_C}
                     width={width < 900 ? `30%` : `15%`}
@@ -315,7 +315,7 @@ const Index = () => {
                   <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
                     2,500원
                   </Text>
-                </Wrapper>
+                </Wrapper> */}
 
                 <Wrapper dr={`row`} margin={`0 0 20px`}>
                   <Text
@@ -342,7 +342,7 @@ const Index = () => {
                           let a = parseInt(sum + currValue.price);
 
                           return a;
-                        }, 0) + 2500
+                        }, 0)
                       )}
                     원
                   </Text>

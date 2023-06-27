@@ -129,8 +129,8 @@ const Index = () => {
     sessionStorage.setItem(
       "TOTAL",
       JSON.stringify({
-        totalPriceInt: result + 2500,
-        totalPrice: String(result + 2500).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+        totalPriceInt: result,
+        totalPrice: String(result).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         qun: qun,
         productprice: String(result).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })
@@ -148,11 +148,8 @@ const Index = () => {
     sessionStorage.setItem(
       "TOTAL",
       JSON.stringify({
-        totalPriceInt: resultPrice + 2500,
-        totalPrice: String(resultPrice + 2500).replace(
-          /\B(?=(\d{3})+(?!\d))/g,
-          ","
-        ),
+        totalPriceInt: resultPrice,
+        totalPrice: String(resultPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         qun: resultQun,
         productprice: String(resultPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })
@@ -265,9 +262,6 @@ const Index = () => {
               </Wrapper>
               <Wrapper width={`14%`} display={width < 900 ? `none` : `flex`}>
                 가격
-              </Wrapper>
-              <Wrapper width={`14%`} display={width < 900 ? `none` : `flex`}>
-                배송비
               </Wrapper>
             </Wrapper>
 
@@ -450,7 +444,7 @@ const Index = () => {
                   {String(resultPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원
                 </Text>
               </Wrapper>
-              <Wrapper
+              {/* <Wrapper
                 width={width < 900 ? `50%` : `calc(100% / 3)`}
                 position={`relative`}
               >
@@ -476,7 +470,7 @@ const Index = () => {
                     src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/cart-page/icon_plus.png`}
                   />
                 </Wrapper>
-              </Wrapper>
+              </Wrapper> */}
               <Wrapper
                 width={width < 900 ? `100%` : `calc(100% / 3)`}
                 position={`relative`}
@@ -501,11 +495,7 @@ const Index = () => {
                   fontSize={width < 900 ? `16px` : `28px`}
                   fontWeight={`600`}
                 >
-                  {String(resultPrice + 2500).replace(
-                    /\B(?=(\d{3})+(?!\d))/g,
-                    ","
-                  )}
-                  원
+                  {String(resultPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원
                 </Text>
               </Wrapper>
             </Wrapper>

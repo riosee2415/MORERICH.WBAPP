@@ -17,10 +17,11 @@ export const ManageButton = styled(Button)`
   width: ${(props) => props.width || ""};
   padding: 0px 10px;
   height: 24px;
+  margin-bottom: 5px;
 
-  &:not(:last-child) {
+  /* &:not(:last-child) {
     margin-right: 4px;
-  }
+  } */
 `;
 
 export const ManageDelButton = styled(Button)`

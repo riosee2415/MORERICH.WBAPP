@@ -400,24 +400,41 @@ const Bought = ({}) => {
 
         if (row.status === 1) {
           return (
-            <ManageButton
-              type="dashed"
-              onClick={() => changeStatusHandler(row.id, 2)}
-            >{`-> 배송중`}</ManageButton>
+            <Wrapper>
+              <ManageButton
+                type="dashed"
+                onClick={() => changeStatusHandler(row.id, 0)}
+              >{`<- 상품 준비중`}</ManageButton>
+              <ManageButton
+                type="dashed"
+                onClick={() => changeStatusHandler(row.id, 2)}
+              >{`-> 배송중`}</ManageButton>
+            </Wrapper>
           );
         }
 
         if (row.status === 2) {
           return (
-            <ManageButton
-              type="dashed"
-              onClick={() => changeStatusHandler(row.id, 3)}
-            >{`-> 배송완료`}</ManageButton>
+            <Wrapper>
+              <ManageButton
+                type="dashed"
+                onClick={() => changeStatusHandler(row.id, 1)}
+              >{`<- 배송 준비중`}</ManageButton>
+              <ManageButton
+                type="dashed"
+                onClick={() => changeStatusHandler(row.id, 3)}
+              >{`-> 배송완료`}</ManageButton>
+            </Wrapper>
           );
         }
 
         if (row.status === 3) {
-          return <Text>-</Text>;
+          return (
+            <ManageButton
+              type="dashed"
+              onClick={() => changeStatusHandler(row.id, 2)}
+            >{`<- 배송중`}</ManageButton>
+          );
         }
       },
     },

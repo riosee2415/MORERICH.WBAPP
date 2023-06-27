@@ -7,6 +7,7 @@ import axios from "axios";
 import wrapper from "../store/configureStore";
 import { END } from "redux-saga";
 import {
+  ATag,
   Image,
   RsWrapper,
   Text,
@@ -126,15 +127,18 @@ const Home = ({}) => {
               likeId={likeId}
               setLikeId={setLikeId}
             />
-            <Image
-              margin={`120px 0`}
-              alt="banner img"
-              src={
-                width < 700
-                  ? `https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban_m.png`
-                  : `https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban.png`
-              }
-            />
+
+            <ATag target="_blank" href="https://morerich.co.kr/customer/1">
+              <Image
+                margin={`120px 0`}
+                alt="banner img"
+                src={
+                  width < 700
+                    ? `https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban_m.png`
+                    : `https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/main-page/img_ad-ban.png`
+                }
+              />
+            </ATag>
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>
               <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
                 {slides[1] && slides[1].title}

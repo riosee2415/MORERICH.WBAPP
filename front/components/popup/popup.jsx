@@ -48,7 +48,7 @@ const Popup = ({ cookies }) => {
               key={data.id}
               id={`popup-${data.id}-js`}
               position={`absolute`}
-              top={width > 900 ? `150px` : `70px`}
+              top={`150px`}
               right={`50%`}
               zIndex={`${9999 - idx}`}
               shadow={`0px 5px 10px ${Theme.lightGrey_C}`}

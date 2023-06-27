@@ -26,6 +26,8 @@ import {
 } from "../../reducers/store";
 import { useRouter } from "next/router";
 import { LIKE_CREATE_REQUEST } from "../../reducers/wish";
+import { LOGO_GET_REQUEST } from "../../reducers/logo";
+import { COMPANY_GET_REQUEST } from "../../reducers/company";
 
 const CateBtn = styled(Wrapper)`
   padding: 0 14px;
@@ -83,6 +85,14 @@ const Index = () => {
   }, [st_likeCreateDone, st_likeCreateError]);
 
   useEffect(() => {
+    if (router.query.target) {
+      setType(parseInt(router.query.target));
+    } else {
+      return;
+    }
+  }, [router.query.target]);
+
+  useEffect(() => {
     dispatch({
       type: GET_PRODUCT_REQUEST,
       data: {
@@ -121,7 +131,8 @@ const Index = () => {
 
   const typeHandler = useCallback(
     (data) => {
-      setType(data);
+      router.push(`/product?target=${data}`);
+      setType(parseInt(data));
     },
     [type]
   );
@@ -298,11 +309,15 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: GET_PRODUCT_REQUEST,
+      type: GET_PRODUCTTYPE_REQUEST,
     });
 
     context.store.dispatch({
-      type: GET_PRODUCTTYPE_REQUEST,
+      type: LOGO_GET_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: COMPANY_GET_REQUEST,
     });
 
     // 구현부 종료

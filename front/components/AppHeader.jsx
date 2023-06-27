@@ -19,6 +19,7 @@ import { LOGO_GET_REQUEST } from "../reducers/logo";
 import { useRouter } from "next/router";
 import useWidth from "../hooks/useWidth";
 import { CART_LIST_REQUEST } from "../reducers/cart";
+import { GET_PRODUCTTYPE_REQUEST } from "../reducers/store";
 
 const MobileRow = styled(RowWrapper)`
   display: none;
@@ -36,12 +37,26 @@ const MobileRow = styled(RowWrapper)`
   }
 `;
 
+const SubMenu = styled(Wrapper)`
+  position: absolute;
+  top: 120px;
+  left: 0;
+  background: ${(props) => props.theme.white_C};
+  padding: 10px;
+
+  opacity: 0;
+  visibility: hidden;
+`;
+
 const Menu = styled.h2`
   font-size: 17px;
   font-weight: 600;
-  text-align: center;
   position: relative;
-  margin: ${(props) => props.margin || `0 44px 0 0`};
+  width: ${(props) => props.width || `80px`};
+  line-height: 120px;
+  height: 120px;
+  margin: 0;
+  text-align: center;
   text-decoration: ${(props) => (props.isActive ? `underline` : ``)};
 
   &:hover {
@@ -49,11 +64,20 @@ const Menu = styled.h2`
     transition: 0.3s;
 
     text-decoration: underline;
+
+    ${SubMenu} {
+      opacity: 1;
+      visibility: visible;
+    }
   }
 
   @media (max-width: 800px) {
     font-size: 16px;
     margin: 0;
+    line-height: 1;
+    height: auto;
+    width: 100%;
+    text-align: left;
   }
 `;
 
@@ -63,6 +87,7 @@ const AppHeader = ({}) => {
     //
     st_cartCreateDone,
   } = useSelector((state) => state.cart);
+  const { productTypes } = useSelector((state) => state.store);
   const { logos } = useSelector((state) => state.logo);
   const { me } = useSelector((state) => state.user);
   ////////////// - USE STATE- ///////////////
@@ -91,6 +116,11 @@ const AppHeader = ({}) => {
     setPageY(pageYOffset);
   });
 
+  const moveProduct = useCallback((target) => {
+    router.push(`/product?target=${target}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   ////////////// - USE EFFECT- //////////////
   useEffect(() => {
     document.addEventListener("scroll", handleScroll);
@@ -108,6 +138,9 @@ const AppHeader = ({}) => {
   useEffect(() => {
     dispatch({
       type: LOGO_GET_REQUEST,
+    });
+    dispatch({
+      type: GET_PRODUCTTYPE_REQUEST,
     });
   }, []);
   return (
@@ -143,11 +176,33 @@ const AppHeader = ({}) => {
                   <Menu isActive={router.pathname === `/best`}>BEST</Menu>
                 </a>
               </Link>
-              <Link href={`/product`}>
-                <a>
-                  <Menu isActive={router.pathname === `/product`}>PRODUCT</Menu>
-                </a>
-              </Link>
+              <Menu width={`120px`} isActive={router.pathname === `/product`}>
+                <Link href={`/product`}>
+                  <a>PRODUCT</a>
+                </Link>
+                <SubMenu>
+                  {productTypes && productTypes.length === 0 ? (
+                    <Wrapper fontSize={`16px`} color={Theme.grey_C}>
+                      조회된 카테고리가 없습니다.
+                    </Wrapper>
+                  ) : (
+                    productTypes.map((data) => {
+                      return (
+                        <Text
+                          isHover
+                          lineHeight={`30px`}
+                          fontSize={`16px`}
+                          fontWeight={`500`}
+                          onClick={() => moveProduct(data.id)}
+                          key={data.id}
+                        >
+                          {data.value}
+                        </Text>
+                      );
+                    })
+                  )}
+                </SubMenu>
+              </Menu>
 
               <Link href={`/customer/notice`}>
                 <a>
@@ -339,6 +394,35 @@ const AppHeader = ({}) => {
                 </Menu>
               </ATag>
             </Link>
+            <Wrapper
+              padding={`20px`}
+              bgColor={Theme.lightGrey2_C}
+              ju={`flex-start`}
+              fontSize={`16px`}
+              color={Theme.darkGrey_C}
+              fontWeight={`600`}
+              dr={`row`}
+            >
+              {productTypes && productTypes.length === 0 ? (
+                <Wrapper fontSize={`16px`} color={Theme.grey_C}>
+                  조회된 카테고리가 없습니다.
+                </Wrapper>
+              ) : (
+                productTypes.map((data) => {
+                  return (
+                    <Text
+                      width={`calc(100% / 3)`}
+                      isHover
+                      onClick={() => [moveProduct(data.id), drawarToggle()]}
+                      key={data.id}
+                      lineHeight={`30px`}
+                    >
+                      {data.value}
+                    </Text>
+                  );
+                })
+              )}
+            </Wrapper>
             <Link href={`/customer/notice`}>
               <ATag height={`70px`} ju={`flex-start`}>
                 <Menu

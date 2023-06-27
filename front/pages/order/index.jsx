@@ -110,6 +110,11 @@ const Index = () => {
       ? JSON.parse(sessionStorage.getItem("TOTAL"))
       : [];
 
+    if (!me) {
+      message.error("로그인한 사용자만 구매 할 수 있습니다.");
+      return router.push(`/user/login`);
+    }
+
     if (data && total && me) {
       setCurrentData(data);
       setTotalData(total);
@@ -319,7 +324,7 @@ const Index = () => {
                 fontWeight={`600`}
                 kindOf={`white`}
               >
-                무통장 입금
+                카카오톡 채팅
               </CommonButton>
               {/* <Wrapper
                 al={`flex-start`}
@@ -526,7 +531,7 @@ const Index = () => {
                     {totalData.qun}개
                   </Text>
                 </Wrapper>
-                <Wrapper dr={`row`} ju={`space-between`}>
+                {/* <Wrapper dr={`row`} ju={`space-between`}>
                   <Text fontSize={`15px`} color={Theme.grey_C}>
                     배송비
                   </Text>
@@ -536,7 +541,7 @@ const Index = () => {
                   >
                     2,500원
                   </Text>
-                </Wrapper>
+                </Wrapper> */}
                 <Wrapper
                   dr={`row`}
                   ju={`space-between`}

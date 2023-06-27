@@ -20,6 +20,7 @@ import { BOUGHT_DETAIL_REQUEST } from "../../reducers/mypage";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { numberWithCommas } from "../../components/commonUtils";
+import moment from "moment";
 
 const Complete = () => {
   ////// GLOBAL STATE //////
@@ -258,7 +259,17 @@ const Complete = () => {
                   fontSize={`16px`}
                   color={Theme.red_C}
                 >
-                  000,000원
+                  {numberWithCommas(
+                    String(
+                      boughtDetail &&
+                        boughtDetail.connectArray.reduce((sum, currValue) => {
+                          let a = sum + currValue.price;
+
+                          return a;
+                        }, 0)
+                    )
+                  )}
+                  원
                 </Text>
               </Wrapper>
 
@@ -267,7 +278,7 @@ const Complete = () => {
                   입금기한
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                  5/31
+                  {moment().format("MM/DD")}
                 </Text>
               </Wrapper>
             </Wrapper>
@@ -302,14 +313,14 @@ const Complete = () => {
                   원
                 </Text>
               </Wrapper>
-              <Wrapper dr={`row`} margin={`0 0 20px`}>
+              {/* <Wrapper dr={`row`} margin={`0 0 20px`}>
                 <Text color={Theme.grey_C} width={width < 900 ? `30%` : `15%`}>
                   배송비
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
                   2,500원
                 </Text>
-              </Wrapper>
+              </Wrapper> */}
 
               <Wrapper dr={`row`} margin={`0 0 20px`}>
                 <Text color={Theme.grey_C} width={width < 900 ? `30%` : `15%`}>
@@ -334,7 +345,7 @@ const Complete = () => {
                           let a = sum + currValue.price;
 
                           return a;
-                        }, 0) + 2500
+                        }, 0)
                     )
                   )}
                   원

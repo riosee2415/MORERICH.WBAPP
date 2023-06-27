@@ -18,7 +18,7 @@ import {
 import Theme from "../../components/Theme";
 import { message, Modal, Select } from "antd";
 import styled from "styled-components";
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { CloseOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useCallback } from "react";
 import { PRODUCT_DETAIL_REQUEST } from "../../reducers/store";
@@ -64,6 +64,18 @@ const Index = () => {
     setCartModal((prev) => !prev);
   }, [cartModal]);
   ////// HANDLER //////
+
+  // 옵션 삭제
+  const optionDeleteHandler = useCallback(
+    (data) => {
+      const arr = currentDatum ? currentDatum.map((data) => data) : [];
+      const currentId = arr.findIndex((value) => value.id === data.id);
+
+      arr.splice(currentId, 1);
+      setcurrentDatum(arr);
+    },
+    [currentDatum]
+  );
 
   // 바로 구매
   const createHandler = useCallback(() => {
@@ -207,7 +219,8 @@ const Index = () => {
                 src={productDetail && productDetail.thumbnail}
               />
 
-              {productDetail &&
+              {width > 700 &&
+                productDetail &&
                 productDetail.connectArray &&
                 productDetail.connectArray.map((data, idx) => {
                   return (
@@ -222,10 +235,10 @@ const Index = () => {
             </Wrapper>
             <Wrapper
               width={width < 1100 ? (width < 800 ? `100%` : `70%`) : `50%`}
-              position={`sticky`}
+              position={width < 700 ? `` : `sticky`}
               top={`120px`}
               right={`0`}
-              padding={width < 800 ? `30px 0 0` : `0 0 0 40px`}
+              padding={width < 800 ? `30px 0` : `0 0 0 40px`}
               al={`flex-start`}
             >
               <Text fontSize={width < 800 ? `16px` : `20px`} fontWeight={`600`}>
@@ -330,13 +343,19 @@ const Index = () => {
                   <Wrapper
                     key={data.id}
                     bgColor={Theme.lightGrey2_C}
-                    padding={width < 800 ? `20px 15px` : `30px 20px`}
+                    padding={width < 800 ? `20px 15px` : `20px`}
                     al={`flex-start`}
                     margin={`0 0 32px`}
                   >
-                    <Text fontSize={width < 800 ? `14px` : `16px`}>
-                      {productDetail && productDetail.name} - {data.value}
-                    </Text>
+                    <Wrapper dr={`row`} ju={`space-between`}>
+                      <Text fontSize={width < 800 ? `14px` : `16px`}>
+                        {productDetail && productDetail.name} - {data.value}
+                      </Text>
+
+                      <Text isHover onClick={() => optionDeleteHandler(data)}>
+                        <CloseOutlined />
+                      </Text>
+                    </Wrapper>
                     <Wrapper
                       dr={`row`}
                       ju={`space-between`}
@@ -396,7 +415,7 @@ const Index = () => {
               <Wrapper dr={`row`} ju={`space-between`}>
                 <Text fontSize={width < 800 ? `14px` : `20px`}>Total</Text>
                 <Text
-                  fontSize={width < 800 ? `16px` : `28px`}
+                  fontSize={width < 800 ? `16px` : `24px`}
                   fontWeight={`bold`}
                 >
                   {currentDatum.length === 0
@@ -445,6 +464,20 @@ const Index = () => {
                 </CommonButton>
               </Wrapper>
             </Wrapper>
+
+            {width < 700 &&
+              productDetail &&
+              productDetail.connectArray &&
+              productDetail.connectArray.map((data, idx) => {
+                return (
+                  <Image
+                    key={idx}
+                    alt="thumbnail"
+                    margin={`0 0 20px`}
+                    src={data.filepath}
+                  />
+                );
+              })}
           </RsWrapper>
 
           <Modal onCancel={cartModalToggle} visible={cartModal} footer={null}>

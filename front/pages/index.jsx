@@ -115,9 +115,12 @@ const Home = ({}) => {
 
       <ClientLayout>
         <WholeWrapper>
-          <RsWrapper padding={`0 0 120px`}>
+          <RsWrapper padding={width < 800 ? `0 0 50px` : `0 0 100px`}>
             <Mainslider />
-            <Wrapper al={`flex-start`} margin={`103px 0 30px`}>
+            <Wrapper
+              al={`flex-start`}
+              margin={width < 800 ? `50px 0 30px` : `80px 0 30px`}
+            >
               <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
                 {slides[0] && slides[0].title}
               </Text>
@@ -130,7 +133,7 @@ const Home = ({}) => {
 
             <ATag target="_blank" href="https://morerich.co.kr/customer/1">
               <Image
-                margin={`120px 0`}
+                margin={width < 800 ? `50px 0` : `90px 0`}
                 alt="banner img"
                 src={
                   width < 700
@@ -149,9 +152,9 @@ const Home = ({}) => {
               likeId={likeId}
               setLikeId={setLikeId}
             />
-            <Wrapper dr={`row`} margin={`120px 0`}>
-              {banners &&
-                banners.map((data) => {
+            {banners && (
+              <Wrapper dr={`row`} margin={width < 800 ? `50px 0` : `90px 0`}>
+                {banners.map((data) => {
                   return (
                     <Box
                       key={data.id}
@@ -168,16 +171,20 @@ const Home = ({}) => {
                         height={`100%`}
                         al={`flex-start`}
                         ju={`flex-end`}
-                        padding={`40px`}
+                        padding={width < 900 ? `15px` : `40px`}
                       >
-                        <Text fontSize={`24px`} fontWeight={`600`}>
+                        <Text
+                          fontSize={width < 900 ? `15px` : `24px`}
+                          fontWeight={`600`}
+                        >
                           {data.info}
                         </Text>
                       </Wrapper>
                     </Box>
                   );
                 })}
-            </Wrapper>
+              </Wrapper>
+            )}
 
             <Wrapper al={`flex-start`} margin={`0 0 30px`}>
               <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>

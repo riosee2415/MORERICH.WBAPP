@@ -80,6 +80,12 @@ const SliderWrapper = styled(Carousel)`
     height: 488px;
     width: auto;
   }
+
+  @media (max-width: 900px) {
+    & .slick-list {
+      height: 420px;
+    }
+  }
 `;
 
 const BestSlider = ({ datum, likeId, setLikeId }) => {

@@ -402,7 +402,7 @@ function* saveThumbnail(action) {
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
 async function uploadDetailImageAPI(data) {
-  return await axios.post(`/api/store/image`, data);
+  return await axios.post(`/api/store/images`, data);
 }
 
 function* uploadDetailImage(action) {

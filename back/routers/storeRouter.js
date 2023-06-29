@@ -601,6 +601,15 @@ router.post(
   }
 );
 
+router.post(
+  "/images",
+  isAdminCheck,
+  upload.array("image"),
+  async (req, res, next) => {
+    return res.json(req.files);
+  }
+);
+
 /**
  * SUBJECT : 상품 썸네일 적용
  * PARAMETERS : {id,thumbnailPath}

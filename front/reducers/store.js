@@ -489,7 +489,7 @@ const reducer = (state = initailState, action) =>
         draft.st_uploadDetailImageLoading = false;
         draft.st_uploadDetailImageDone = true;
         draft.st_uploadDetailImageError = null;
-        draft.detailImagePath = action.data.path;
+        draft.detailImagePath = action.data;
         break;
       }
 

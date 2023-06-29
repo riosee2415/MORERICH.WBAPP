@@ -182,13 +182,15 @@ const Product = ({}) => {
 
   useEffect(() => {
     if (detailImagePath) {
-      dispatch({
-        type: ADD_DETAIL_REQUEST,
-        data: {
-          ProductId: crData.id,
-          filepath: detailImagePath,
-        },
-      });
+      for (let i = 0; i < detailImagePath.length; i++) {
+        dispatch({
+          type: ADD_DETAIL_REQUEST,
+          data: {
+            filepath: detailImagePath[i].location,
+            ProductId: crData.id,
+          },
+        });
+      }
     }
   }, [detailImagePath]);
 
@@ -1255,7 +1257,7 @@ const Product = ({}) => {
                 type="file"
                 name="image"
                 accept=".png, .jpg"
-                // multiple
+                multiple={true}
                 hidden
                 ref={detailImageRef}
                 onChange={onChangeImages2}

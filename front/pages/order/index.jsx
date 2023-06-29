@@ -28,6 +28,33 @@ import { BOUGHT_CREATE_REQUEST } from "../../reducers/store";
 import { useRouter } from "next/router";
 import { CART_DELETE_REQUEST } from "../../reducers/cart";
 import { ADDRESS_LIST_REQUEST } from "../../reducers/mypage";
+import styled from "styled-components";
+
+const Tab = styled(Wrapper)`
+  width: 50%;
+  height: 60px;
+  font-size: 20px;
+  font-weight: 600;
+  border: 1px solid ${Theme.black_C};
+  cursor: pointer;
+
+  &:hover {
+    color: ${Theme.white_C};
+    background: ${Theme.black_C};
+  }
+
+  ${(props) =>
+    props.isActive &&
+    `
+    color: ${Theme.white_C};
+    background: ${Theme.black_C};
+  
+  `};
+
+  @media (max-width: 800px) {
+    font-size: 16px;
+  }
+`;
 
 const style = {
   overflow: "hidden",
@@ -49,6 +76,7 @@ const Index = () => {
   // DATA
   const [totalData, setTotalData] = useState(0); // 최종결제금액
   const [currentData, setCurrentData] = useState([]); // 구매할 상품
+  const [isPayType, setIsPayType] = useState(1); // 결제수단
 
   // INPUT
   const nameInput = useInput(``);
@@ -78,7 +106,7 @@ const Index = () => {
 
   useEffect(() => {
     if (st_boughtCreateDone && boughtHistoryId) {
-      router.push(`/order/complete`);
+      router.push(`/order/complete?type=${isPayType}`);
       window.scrollTo({ top: 0, behavior: "smooth" });
       sessionStorage.setItem("HISTORY", JSON.stringify(boughtHistoryId));
       sessionStorage.removeItem("BUY");
@@ -317,15 +345,14 @@ const Index = () => {
               >
                 결제수단
               </Wrapper>
-              <CommonButton
-                width={`100%`}
-                height={`60px`}
-                fontSize={width < 800 ? `16px` : `20px`}
-                fontWeight={`600`}
-                kindOf={`white`}
-              >
-                카카오톡 채팅
-              </CommonButton>
+              <Wrapper dr={`row`}>
+                <Tab isActive={isPayType === 1} onClick={() => setIsPayType(1)}>
+                  무통장입금
+                </Tab>
+                <Tab isActive={isPayType === 2} onClick={() => setIsPayType(2)}>
+                  카드결제
+                </Tab>
+              </Wrapper>
               {/* <Wrapper
                 al={`flex-start`}
                 margin={`34px 0 24px`}

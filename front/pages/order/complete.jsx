@@ -7,6 +7,7 @@ import axios from "axios";
 import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
 import {
+  ATag,
   CommonButton,
   Image,
   RsWrapper,
@@ -67,6 +68,29 @@ const Complete = () => {
             >
               Thank you
             </Text>
+
+            {router.query.type === "2" && (
+              <Wrapper margin={`0 0 60px`}>
+                <Text
+                  fontSize={width < 700 ? `16px` : `20px`}
+                  color={Theme.darkGrey_C}
+                  margin={`0 0 10px`}
+                >
+                  카드결제는 카카오톡 채팅을 이용해주시기 바랍니다.
+                </Text>
+
+                <ATag target="_blank" href="http://pf.kakao.com/_mNWhG">
+                  <CommonButton
+                    width={width < 700 ? `150px` : `200px`}
+                    height={width < 700 ? `50px` : `60px`}
+                    fontSize={width < 700 ? `16px` : `20px`}
+                    kindOf={`kakao`}
+                  >
+                    카카오톡 채팅
+                  </CommonButton>
+                </ATag>
+              </Wrapper>
+            )}
             <Wrapper
               borderTop={`1px solid ${Theme.black_C}`}
               height={`50px`}

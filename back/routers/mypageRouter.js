@@ -216,7 +216,7 @@ router.post("/wish/list", isLoggedIn, async (req, res, next) => {
             B.subName,
             B.price,
             CONCAT(FORMAT(B.price, 0), "원") 			AS viewPrice,
-            CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice,
+            CONCAT(FORMAT(B.price - B.discount, 0), "원")  AS viewCalcPrice,
             B.detail,
             B.infoType,
             B.infoConsist,
@@ -224,6 +224,7 @@ router.post("/wish/list", isLoggedIn, async (req, res, next) => {
             B.infoSize,
             B.infoFrom,
             B.discount,
+            CONCAT(FORMAT(B.discount, 0), "원") 			AS viewDiscount,
             B.isNew,
             B.isBest,
             B.isRecomm,
@@ -252,7 +253,7 @@ router.post("/wish/list", isLoggedIn, async (req, res, next) => {
             B.subName,
             B.price,
             CONCAT(FORMAT(B.price, 0), "원") 			AS viewPrice,
-            CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice,
+            CONCAT(FORMAT(B.price - B.discount, 0), "원")  AS viewCalcPrice,
             B.detail,
             B.infoType,
             B.infoConsist,
@@ -260,6 +261,7 @@ router.post("/wish/list", isLoggedIn, async (req, res, next) => {
             B.infoSize,
             B.infoFrom,
             B.discount,
+            CONCAT(FORMAT(B.discount, 0), "원") 			AS viewDiscount,
             B.isNew,
             B.isBest,
             B.isRecomm,
@@ -278,6 +280,8 @@ router.post("/wish/list", isLoggedIn, async (req, res, next) => {
         ON	B.ProductTypeId = C.id
      WHERE  A.UserId = ${req.user.id}
      ORDER  BY A.createdAt DESC
+     LIMIT  ${LIMIT}
+    OFFSET  ${OFFSET}
 
     `;
 

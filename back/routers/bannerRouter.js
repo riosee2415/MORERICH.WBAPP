@@ -409,7 +409,8 @@ router.post("/list/slide", async (req, res, next) => {
           B.price,
           B.discount,
           CONCAT(FORMAT(B.price, 0), "원") AS viewPrice,
-          CONCAT(FORMAT(B.price - (B.discount / 100 * B.price), 0), "원")  AS viewCalcPrice,
+          CONCAT(FORMAT(B.discount, 0), "원") AS viewDiscount,
+          CONCAT(FORMAT(B.price - B.discount, 0), "원")  AS viewCalcPrice,
           ${
             req.user
               ? ` (

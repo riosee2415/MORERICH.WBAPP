@@ -10,6 +10,10 @@ module.exports = class Cart extends Model {
           defaultValue: 1,
           allowNull: false,
         },
+        etcOption: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
       },
       {
         modelName: "Cart",

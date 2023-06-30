@@ -23,6 +23,10 @@ module.exports = class BoughtList extends Model {
           allowNull: false, // 필수
           defaultValue: "-",
         },
+        etcOption: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+        },
         thumbnail: {
           type: DataTypes.STRING(3000),
           allowNull: false, // 필수

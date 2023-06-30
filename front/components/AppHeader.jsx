@@ -73,7 +73,7 @@ const Menu = styled.h2`
 
   @media (max-width: 800px) {
     font-size: 16px;
-    margin: 0;
+    margin: ${(props) => props.margin || `0`};
     line-height: 1;
     height: auto;
     width: 100%;
@@ -296,29 +296,27 @@ const AppHeader = ({}) => {
             <MenuOutlined onClick={drawarToggle} />
           </Wrapper>
         </Wrapper>
-        <Wrapper dr={`row`} ju={`space-between`} padding={`20px 0`}>
-          <Link href={`/new`}>
-            <a>
-              <Menu isActive={router.pathname === `/new`}>NEW</Menu>
-            </a>
-          </Link>
-          <Link href={`/best`}>
-            <a>
-              <Menu isActive={router.pathname === `/best`}>BEST</Menu>
-            </a>
-          </Link>
-          <Link href={`/product`}>
-            <a>
-              <Menu isActive={router.pathname === `/product`}>PRODUCT</Menu>
-            </a>
-          </Link>
-          <Link href={`/customer/notice`}>
-            <a>
-              <Menu isActive={router.pathname.includes(`/customer`)}>
-                고객센터
-              </Menu>
-            </a>
-          </Link>
+        <Wrapper padding={`20px 0`} overflow={`auto`} al={`flex-start`}>
+          <Wrapper
+            minWidth={`${productTypes.length * 60}px`}
+            width={`auto`}
+            wrap={`nowrap`}
+            dr={`row`}
+            ju={`flex-start`}
+          >
+            {productTypes.map((data) => {
+              return (
+                <Menu
+                  width={`auto !important`}
+                  margin={`0 10px 0 0`}
+                  isActive={router.query.target === String(data.id)}
+                  onClick={() => moveProduct(data.id)}
+                >
+                  {data.value}
+                </Menu>
+              );
+            })}
+          </Wrapper>
         </Wrapper>
         <Drawer
           placement="right"

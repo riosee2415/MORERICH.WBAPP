@@ -93,11 +93,8 @@ const Index = () => {
     sessionStorage.setItem(
       "TOTAL",
       JSON.stringify({
-        totalPriceInt: totalPrice + 3500,
-        totalPrice: String(totalPrice + 3500).replace(
-          /\B(?=(\d{3})+(?!\d))/g,
-          ","
-        ),
+        totalPriceInt: totalPrice,
+        totalPrice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         qun: qun,
         productprice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })

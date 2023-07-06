@@ -171,7 +171,7 @@ const Index = () => {
     currentData.map((data) => {
       boughtLists.push({
         productName: data.name,
-        price: data.totalPrice,
+        price: data.price,
         qun: data.qun,
         etcOption: data.etcOption,
         optionValue: data.optionName,

@@ -129,7 +129,6 @@ const Index = () => {
         totalPriceInt: totalPrice,
         totalPrice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         qun: qun,
-        etcOption: etcOption,
         productprice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })
     );
@@ -204,6 +203,7 @@ const Index = () => {
           optionName: data[1],
           value: data[1],
           qun: 1,
+          etcOption: "-",
         });
       } else {
         arr[currentId].qun = arr[currentId].qun + 1;

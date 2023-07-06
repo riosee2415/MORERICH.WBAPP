@@ -36,6 +36,10 @@ module.exports = class MainBanner extends Model {
           type: DataTypes.STRING(1000),
           allowNull: false, // 필수
         },
+        mobileURL: {
+          type: DataTypes.STRING(1000),
+          allowNull: false, // 필수
+        },
         sort: {
           type: DataTypes.INTEGER,
           allowNull: false, // 필수

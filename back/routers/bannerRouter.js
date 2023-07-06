@@ -64,15 +64,16 @@ router.post("/list", async (req, res, next) => {
   const selectQ = `
   SELECT	A.id,
           A.title,
-          A.titleUseYn ,
-          A.content ,
-          A.contentUseYn ,
-          A.imageURL ,
+          A.titleUseYn,
+          A.content,
+          A.contentUseYn,
+          A.imageURL,
+          A.mobileURL,
           A.sort,
           A.link,
           A.linkUseYn,
           DATE_FORMAT(A.createdAt, "%Y년 %m월 %d일")	AS viewCreatedAt,
-          DATE_FORMAT(A.updatedAt , "%Y년 %m월 %d일")	AS updatedAt,
+          DATE_FORMAT(A.updatedAt, "%Y년 %m월 %d일")	AS updatedAt,
           B.username,
           ROW_NUMBER() OVER(ORDER BY A.sort) AS num
     FROM	mainBanners A 
@@ -172,11 +173,12 @@ router.post("/update", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/imageUpdate", isAdminCheck, async (req, res, next) => {
-  const { id, imageURL, title } = req.body;
+  const { id, imageURL, mobileURL, title } = req.body;
 
   const updateQ = `
   UPDATE  mainBanners
      SET  imageURL = "${imageURL}",
+          mobileURL = "${mobileURL}",
           updatedAt = now(),
           updator = ${req.user.id}
    WHERE  id = ${id}
@@ -205,13 +207,14 @@ router.post("/imageUpdate", isAdminCheck, async (req, res, next) => {
 });
 
 router.post("/create", isAdminCheck, async (req, res, next) => {
-  const { title, content, imagePath } = req.body;
+  const { title, content, imagePath, mobileURL } = req.body;
 
   try {
     const createResult = await MainBanner.create({
       title,
       content,
       imagePath,
+      mobileURL,
     });
 
     return res.status(201).json({ result: true });
@@ -308,8 +311,15 @@ router.post("/updateUseYn", isAdminCheck, async (req, res, next) => {
 
 router.post("/fastCreate", isAdminCheck, async (req, res, next) => {
   const insertQ = `
-    INSERT INTO mainBanners (title, imageURL, updator, createdAt, updatedAt) VALUES
-    ("New Banner", "https://via.placeholder.com/1000x300?text=please%20upload%20your%20image", ${req.user.id}, now(), now())
+    INSERT INTO mainBanners (title, imageURL, mobileURL, updator, createdAt, updatedAt) VALUES
+    (
+      "New Banner", 
+      "https://via.placeholder.com/1000x300?text=please%20upload%20your%20image",
+      "https://via.placeholder.com/350x400?text=please%20upload%20your%20image",
+      ${req.user.id}, 
+      now(), 
+      now()
+    )
   `;
 
   const insertQuery2 = `

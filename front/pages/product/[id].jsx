@@ -19,7 +19,13 @@ import {
 import Theme from "../../components/Theme";
 import { message, Modal, Select } from "antd";
 import styled from "styled-components";
-import { CloseOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  CloseOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useState } from "react";
 import { useCallback } from "react";
 import { PRODUCT_DETAIL_REQUEST } from "../../reducers/store";
@@ -27,6 +33,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { CART_CREATE_REQUEST } from "../../reducers/cart";
 import { useEffect } from "react";
+
+const LineText = styled(Text)`
+  color: ${(props) => props.theme.grey4_C};
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-word;
+  font-size: 16px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: ${(props) => props.line}; // 원하는 라인수
+  -webkit-box-orient: vertical;
+`;
 
 const Index = () => {
   ////// GLOBAL STATE //////
@@ -43,6 +61,7 @@ const Index = () => {
   const [currentDatum, setcurrentDatum] = useState([]); // 상품 선택
   const [optionData, setOptionData] = useState(null); // 옵션 데이터
   const [totalPrice, setTotalPrice] = useState(0); // 상품금액
+  const [isMore, setIsMore] = useState(false); // 상품금액
   ////// REDUX //////
   const dispatch = useDispatch();
   const router = useRouter();
@@ -64,6 +83,10 @@ const Index = () => {
   const cartModalToggle = useCallback(() => {
     setCartModal((prev) => !prev);
   }, [cartModal]);
+
+  const moreToggle = useCallback(() => {
+    setIsMore((prev) => !prev);
+  }, [isMore]);
   ////// HANDLER //////
 
   // 옵션 삭제
@@ -181,6 +204,10 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  const backHandler = useCallback(() => {
+    window.history.back();
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -198,8 +225,10 @@ const Index = () => {
                 src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg`}
                 width={`14px`}
                 margin={`0 14px 0 0`}
+                onClick={backHandler}
               />
               <Text
+                onClick={backHandler}
                 isHover
                 fontSize={width < 800 ? `16px` : `28px`}
                 fontWeight={`600`}
@@ -239,9 +268,9 @@ const Index = () => {
             </Wrapper>
             <Wrapper
               width={width < 1100 ? (width < 800 ? `100%` : `70%`) : `50%`}
-              // position={width < 700 ? `` : `sticky`}
-              // top={`120px`}
-              // right={`0`}
+              position={width < 700 ? `` : `sticky`}
+              top={`120px`}
+              right={`0`}
               padding={width < 800 ? `30px 0` : `0 0 0 40px`}
               al={`flex-start`}
             >
@@ -315,9 +344,23 @@ const Index = () => {
                 padding={`0 0 36px`}
                 al={`flex-start`}
               >
-                <Text fontSize={width < 800 ? `14px` : `18px`}>
+                <LineText
+                  fontSize={width < 800 ? `14px` : `18px`}
+                  line={isMore ? `` : `4`}
+                >
                   {productDetail && productDetail.detail}
-                </Text>
+                </LineText>
+                <Wrapper al={`flex-end`} onClick={moreToggle}>
+                  {isMore ? (
+                    <Text td={`underline`} isHover>
+                      설명 접기 <CaretUpOutlined />
+                    </Text>
+                  ) : (
+                    <Text td={`underline`} isHover>
+                      설명 더보기 <CaretDownOutlined />
+                    </Text>
+                  )}
+                </Wrapper>
               </Wrapper>
               <CustomSelect
                 width={`100%`}

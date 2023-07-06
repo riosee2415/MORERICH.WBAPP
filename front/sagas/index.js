@@ -15,6 +15,7 @@ import cartSaga from "./cart";
 import wishSaga from "./wish";
 import mypageSaga from "./mypage";
 import newbannerSaga from "./newbanner";
+import mainDesignSaga from "./mainDesign";
 //
 import axios from "axios";
 import backURL from "../config/config";
@@ -40,6 +41,7 @@ export default function* rootSaga() {
     fork(wishSaga),
     fork(mypageSaga),
     fork(newbannerSaga),
+    fork(mainDesignSaga),
     //
   ]);
 }

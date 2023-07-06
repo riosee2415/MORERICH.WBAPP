@@ -74,6 +74,11 @@ export const items = {
       link: "/admin/banner/newbanner",
       useYn: true,
     },
+    {
+      name: "메인카테고리관리",
+      link: "/admin/banner/cate",
+      useYn: true,
+    },
   ],
   게시판관리: [
     {

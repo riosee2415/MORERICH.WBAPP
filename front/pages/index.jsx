@@ -25,10 +25,10 @@ import NewSlider from "../components/slide/NewSlider";
 import SteadySlider from "../components/slide/SteadySlider";
 import { GET_SLIDE_REQUEST } from "../reducers/banner";
 import { useCallback } from "react";
-import { CART_LIST_REQUEST } from "../reducers/cart";
-import { LIKE_CREATE_REQUEST } from "../reducers/wish";
+
 import { message } from "antd";
 import { NEW_BANNER_REQUEST } from "../reducers/newbanner";
+import { MAIN_DESIGN_REQUEST } from "../reducers/mainDesign";
 
 const Box = styled(Wrapper)`
   width: calc(100% / 3);
@@ -66,9 +66,40 @@ const Box = styled(Wrapper)`
   }
 `;
 
+const DesignWrapper = styled(Wrapper)`
+  width: 100px;
+  margin: 0 15px 15px;
+
+  & img {
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+  }
+
+  &:hover {
+    cursor: pointer;
+
+    p {
+      font-weight: bold;
+    }
+  }
+
+  @media (max-width: 800px) {
+    width: 65px;
+    margin: 0 6px;
+    font-size: 12px;
+
+    & img {
+      width: 65px;
+      height: 65px;
+    }
+  }
+`;
+
 const Home = ({}) => {
   ////// GLOBAL STATE //////
   const { slides } = useSelector((state) => state.banner);
+  const { mainList } = useSelector((state) => state.mainDesign);
   const { banners } = useSelector((state) => state.newbanner);
   const { st_likeCreateDone, st_likeCreateError } = useSelector(
     (state) => state.wish
@@ -117,9 +148,34 @@ const Home = ({}) => {
         <WholeWrapper>
           <RsWrapper padding={width < 800 ? `0 0 50px` : `0 0 100px`}>
             <Mainslider />
+
+            {mainList && (
+              <Wrapper
+                dr={`row`}
+                margin={`50px 0 0`}
+                al={`flex-start`}
+                ju={width < 800 && `flex-start`}
+                wrap={width < 800 && `nowrap`}
+                overflow={width < 800 && `auto`}
+              >
+                {mainList.map((data) => {
+                  return (
+                    <DesignWrapper
+                      key={data.id}
+                      onClick={() => moveLinkHandler(data.link)}
+                    >
+                      <Image alt="thumbnail" src={data.imagePath} />
+                      <Text margin={`14px 0 0`} color={Theme.darkGrey_C}>
+                        {data.title}
+                      </Text>
+                    </DesignWrapper>
+                  );
+                })}
+              </Wrapper>
+            )}
             <Wrapper
               al={`flex-start`}
-              margin={width < 800 ? `50px 0 30px` : `80px 0 30px`}
+              margin={width < 800 ? `50px 0 30px` : `50px 0 30px`}
             >
               <Text isPoppins fontSize={width < 900 ? `22px` : `34px`}>
                 {slides[0] && slides[0].title}
@@ -225,6 +281,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: NEW_BANNER_REQUEST,
+    });
+
+    context.store.dispatch({
+      type: MAIN_DESIGN_REQUEST,
     });
     // 구현부 종료
     context.store.dispatch(END);

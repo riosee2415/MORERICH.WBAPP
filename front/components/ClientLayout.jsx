@@ -6,6 +6,7 @@ import { withResizeDetector } from "react-resize-detector";
 import AppHeader from "./AppHeader";
 import AppFooter from "./AppFooter";
 import { WholeWrapper } from "./commonComponents";
+import FixedNav from "./FixedNav";
 
 const ClientLayout = ({ children, width }) => {
   return (
@@ -13,7 +14,10 @@ const ClientLayout = ({ children, width }) => {
       {/* HEADER */}
       <AppHeader />
       {/* content */}
-      <WholeWrapper padding={`120px 0 0`}>{children}</WholeWrapper>
+      <WholeWrapper padding={`120px 0 0`}>
+        {children}
+        <FixedNav />
+      </WholeWrapper>
       {/* Footer */}
       <AppFooter />
     </section>

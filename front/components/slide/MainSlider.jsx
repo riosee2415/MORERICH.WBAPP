@@ -91,7 +91,7 @@ const MainSlider = () => {
     <MainSliderWrapper>
       <Carousel
         autoplay={true}
-        speed={3000}
+        speed={1000}
         arrows={true}
         dots={false}
         autoplaySpeed={5000}
@@ -103,7 +103,11 @@ const MainSlider = () => {
                 key={idx}
                 span={24}
                 height={width < 800 ? `400px` : `500px`}
-                bgImg={`url(${data.imageURL})`}
+                bgImg={
+                  width < 700
+                    ? `url(${data.mobileURL})`
+                    : `url(${data.imageURL})`
+                }
                 position={`relative`}
                 display={`flex !important`}
                 cursor={data.linkUseYn ? `pointer` : ``}

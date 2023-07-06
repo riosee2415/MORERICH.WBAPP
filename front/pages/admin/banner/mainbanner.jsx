@@ -595,6 +595,12 @@ const MainBanner = ({}) => {
             이미지는 화면 디자인 크기에 알맞게 자동으로 조정됩니다. 비율이
             상이할 경우 이미지가 늘어나 보일 수 있습니다.
           </GuideLi>
+          <GuideLi isImpo={true}>
+            PC 이미지 사이즈는 1350X500(px)입니다.
+          </GuideLi>
+          <GuideLi isImpo={true}>
+            MOBILE 이미지 사이즈는 355X400(px)입니다.
+          </GuideLi>
         </GuideUl>
       </Wrapper>
 

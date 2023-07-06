@@ -232,9 +232,9 @@ const Index = () => {
             </Wrapper>
             <Wrapper
               width={width < 1100 ? (width < 800 ? `100%` : `70%`) : `50%`}
-              position={width < 700 ? `` : `sticky`}
-              top={`120px`}
-              right={`0`}
+              // position={width < 700 ? `` : `sticky`}
+              // top={`120px`}
+              // right={`0`}
               padding={width < 800 ? `30px 0` : `0 0 0 40px`}
               al={`flex-start`}
             >

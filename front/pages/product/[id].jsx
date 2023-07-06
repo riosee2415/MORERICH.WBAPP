@@ -14,6 +14,7 @@ import {
   Wrapper,
   Image,
   CommonButton,
+  ATag,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { message, Modal, Select } from "antd";
@@ -174,6 +175,12 @@ const Index = () => {
     },
     [currentDatum, productDetail, totalPrice]
   );
+
+  const movelinkHandler = useCallback((link) => {
+    router.push(link);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   ////// DATAVIEW //////
 
   return (
@@ -441,24 +448,37 @@ const Index = () => {
                 >
                   장바구니
                 </CommonButton>
-                <CommonButton
+                <ATag
                   width={`32%`}
-                  height={`60px`}
-                  fontSize={width < 800 ? `14px` : `20px`}
-                  fontWeight={`600`}
-                  kindOf={`white`}
+                  target="_blank"
+                  href="http://pf.kakao.com/_mNWhG"
                 >
-                  1:1 채팅
-                </CommonButton>
-                <CommonButton
+                  <CommonButton
+                    width={`100%`}
+                    height={`60px`}
+                    fontSize={width < 800 ? `14px` : `20px`}
+                    fontWeight={`600`}
+                    kindOf={`white`}
+                  >
+                    1:1 채팅
+                  </CommonButton>
+                </ATag>
+
+                <ATag
                   width={`32%`}
-                  height={`60px`}
-                  fontSize={width < 800 ? `14px` : `20px`}
-                  fontWeight={`600`}
-                  kindOf={`white`}
+                  target="_blank"
+                  href="http://pf.kakao.com/_mNWhG"
                 >
-                  카카오톡 상담
-                </CommonButton>
+                  <CommonButton
+                    width={`100%`}
+                    height={`60px`}
+                    fontSize={width < 800 ? `14px` : `20px`}
+                    fontWeight={`600`}
+                    kindOf={`white`}
+                  >
+                    카카오톡 상담
+                  </CommonButton>
+                </ATag>
               </Wrapper>
             </Wrapper>
 

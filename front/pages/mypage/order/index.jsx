@@ -268,14 +268,21 @@ const Index = () => {
                                         : "환불요청"}
                                     </CommonButton>
                                   )}
-                                  <CommonButton
+
+                                  <ATag
                                     width={`32%`}
-                                    height={`30px`}
-                                    kindOf={`grey3`}
-                                    padding={`0`}
+                                    target="_blank"
+                                    href="http://pf.kakao.com/_mNWhG"
                                   >
-                                    1:1 채팅
-                                  </CommonButton>
+                                    <CommonButton
+                                      width={`100%`}
+                                      height={`30px`}
+                                      kindOf={`grey3`}
+                                      padding={`0`}
+                                    >
+                                      1:1 채팅
+                                    </CommonButton>
+                                  </ATag>
                                 </Wrapper>
                               </>
                             )}
@@ -349,14 +356,20 @@ const Index = () => {
                             </CommonButton>
                           )}
 
-                          <CommonButton
+                          <ATag
                             width={`78px`}
-                            height={`30px`}
-                            kindOf={`grey3`}
-                            padding={`0`}
+                            target="_blank"
+                            href="http://pf.kakao.com/_mNWhG"
                           >
-                            1:1 채팅
-                          </CommonButton>
+                            <CommonButton
+                              width={`100%`}
+                              height={`30px`}
+                              kindOf={`grey3`}
+                              padding={`0`}
+                            >
+                              1:1 채팅
+                            </CommonButton>
+                          </ATag>
                         </Wrapper>
                       </Wrapper>
                     </Wrapper>

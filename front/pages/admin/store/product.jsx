@@ -738,8 +738,8 @@ const Product = ({}) => {
       },
     },
     {
-      title: "할인율",
-      render: (row) => <div>{row.discount}%</div>,
+      title: "할인금액",
+      render: (row) => <div>{row.viewDiscount}</div>,
       sorter: {
         compare: (a, b) => a.discround - b.discround,
         multiple: 3,
@@ -748,9 +748,7 @@ const Product = ({}) => {
     {
       title: "할인가",
       render: (row) => (
-        <Text color={Theme.subTheme3_C}>
-          {numberWithCommas(row.price - (row.discount / 100) * row.price)}원
-        </Text>
+        <Text color={Theme.subTheme3_C}>{row.viewCalcPrice}</Text>
       ),
       sorter: {
         compare: (a, b) => a.discround - b.discround,
@@ -1070,8 +1068,8 @@ const Product = ({}) => {
 
           <ManagementForm.Item
             rules={[{ required: true }]}
-            tooltip="단위는 % 입니다."
-            label="할인율"
+            tooltip="단위는 원 입니다."
+            label="할인금액"
             name="discount"
           >
             <ManageInput type="number" />

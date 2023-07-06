@@ -21,6 +21,10 @@ import {
   BANNER_DELETE_SUCCESS,
   BANNER_DELETE_FAILURE,
   //
+  BANNER_MOBILE_UPLOAD_REQUEST,
+  BANNER_MOBILE_UPLOAD_SUCCESS,
+  BANNER_MOBILE_UPLOAD_FAILURE,
+  //
   BANNER_SORT_UPDATE_REQUEST,
   BANNER_SORT_UPDATE_SUCCESS,
   BANNER_SORT_UPDATE_FAILURE,
@@ -447,6 +451,34 @@ function* deleteSlide(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function bannerMobileUploadAPI(data) {
+  return await axios.post(`/api/banner/image`, data);
+}
+
+function* bannerMobileUpload(action) {
+  try {
+    const result = yield call(bannerMobileUploadAPI, action.data);
+
+    yield put({
+      type: BANNER_MOBILE_UPLOAD_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: BANNER_MOBILE_UPLOAD_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchMainBanner() {
   yield takeLatest(MAIN_BANNER_REQUEST, mainBanner);
@@ -505,6 +537,10 @@ function* watchDeleteSlide() {
   yield takeLatest(DELETE_SLIDE_REQUEST, deleteSlide);
 }
 
+function* watchBannerMobileUpload() {
+  yield takeLatest(BANNER_MOBILE_UPLOAD_REQUEST, bannerMobileUpload);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* bannerSaga() {
   yield all([
@@ -522,6 +558,7 @@ export default function* bannerSaga() {
     fork(watchUpdateSlide),
     fork(watchInsertSlide),
     fork(watchDeleteSlide),
+    fork(watchBannerMobileUpload),
     //
   ]);
 }

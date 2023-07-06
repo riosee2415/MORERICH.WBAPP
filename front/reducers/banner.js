@@ -5,6 +5,7 @@ export const initailState = {
   uploadBannerPath: null,
   bannerHistory: [],
   slides: [],
+  uploadMobileBannerPath: null,
 
   //
   st_mainBannerLoading: false, // 메인배너 가져오기
@@ -30,6 +31,10 @@ export const initailState = {
   st_bannerSortUpdateLoading: false, // 메인베너 우선순위 변경
   st_bannerSortUpdateDone: false,
   st_bannerSortUpdateError: null,
+  //
+  st_bannerMobileUploadLoading: false, // 메인모바일베너 이미지 업로드
+  st_bannerMobileUploadDone: false,
+  st_bannerMobileUploadError: null,
 
   //
   st_bannerOnlyImageUpdateLoading: false, // 이미지만 수정하기!
@@ -86,6 +91,10 @@ export const BANNER_CREATE_FAILURE = "BANNER_CREATE_FAILURE";
 export const BANNER_DELETE_REQUEST = "BANNER_DELETE_REQUEST";
 export const BANNER_DELETE_SUCCESS = "BANNER_DELETE_SUCCESS";
 export const BANNER_DELETE_FAILURE = "BANNER_DELETE_FAILURE";
+
+export const BANNER_MOBILE_UPLOAD_REQUEST = "BANNER_MOBILE_UPLOAD_REQUEST";
+export const BANNER_MOBILE_UPLOAD_SUCCESS = "BANNER_MOBILE_UPLOAD_SUCCESS";
+export const BANNER_MOBILE_UPLOAD_FAILURE = "BANNER_MOBILE_UPLOAD_FAILURE";
 
 export const BANNER_SORT_UPDATE_REQUEST = "BANNER_SORT_UPDATE_REQUEST";
 export const BANNER_SORT_UPDATE_SUCCESS = "BANNER_SORT_UPDATE_SUCCESS";
@@ -408,10 +417,32 @@ const reducer = (state = initailState, action) =>
       }
       //////////////////////////////////////////////
 
+      case BANNER_MOBILE_UPLOAD_REQUEST: {
+        draft.st_bannerMobileUploadLoading = true;
+        draft.st_bannerMobileUploadDone = false;
+        draft.st_bannerMobileUploadError = null;
+        break;
+      }
+      case BANNER_MOBILE_UPLOAD_SUCCESS: {
+        draft.st_bannerMobileUploadLoading = false;
+        draft.st_bannerMobileUploadDone = true;
+        draft.st_bannerMobileUploadError = null;
+        draft.uploadMobileBannerPath = action.data.path;
+        break;
+      }
+      case BANNER_MOBILE_UPLOAD_FAILURE: {
+        draft.st_bannerMobileUploadLoading = false;
+        draft.st_bannerMobileUploadDone = false;
+        draft.st_bannerMobileUploadError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
       //////////////////////////////////////////////
 
       case UPLOAD_BANNER_INIT_REQUEST: {
         draft.uploadBannerPath = null;
+        draft.uploadMobileBannerPath = null;
         break;
       }
       //////////////////////////////////////////////

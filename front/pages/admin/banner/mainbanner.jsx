@@ -42,6 +42,7 @@ import {
   BANNER_USE_YN_REQUEST,
   BANNER_DELETE_REQUEST,
   BANNER_FAST_CREATE_REQUEST,
+  BANNER_MOBILE_UPLOAD_REQUEST,
 } from "../../../reducers/banner";
 import Theme from "../../../components/Theme";
 import { items } from "../../../components/AdminLayout";
@@ -84,6 +85,11 @@ const ViewStatusIcon = styled(EyeOutlined)`
     props.active ? props.theme.subTheme5_C : props.theme.lightGrey_C};
 `;
 
+const MobileBannerImage = styled(Image)`
+  width: 350px;
+  height: 300px;
+`;
+
 const MainBanner = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
   const {
@@ -94,6 +100,8 @@ const MainBanner = ({}) => {
     st_bannerUpdateError,
     st_bannerUploadLoading,
     uploadBannerPath,
+    uploadMobileBannerPath,
+    st_bannerMobileUploadLoading,
     st_bannerOnlyImageUpdateDone,
     st_bannerOnlyImageUpdateError,
     st_bannerUseYnDone,
@@ -108,6 +116,7 @@ const MainBanner = ({}) => {
   const dispatch = useDispatch();
 
   const bannerInageRef = useRef();
+  const bannerMoblileImgRef = useRef();
 
   // 상위메뉴 변수
   const [level1, setLevel1] = useState("배너관리");
@@ -275,6 +284,7 @@ const MainBanner = ({}) => {
       return {
         ...currentData,
         imageURL: uploadBannerPath,
+        mobileURL: uploadMobileBannerPath,
       };
     });
 
@@ -284,9 +294,10 @@ const MainBanner = ({}) => {
         id: currentData.id,
         title: currentData.title,
         imageURL: uploadBannerPath,
+        mobileURL: uploadMobileBannerPath,
       },
     });
-  }, [currentData, uploadBannerPath]);
+  }, [currentData, uploadBannerPath, uploadMobileBannerPath]);
 
   const beforeSetDataHandler = useCallback(
     (record) => {
@@ -466,6 +477,23 @@ const MainBanner = ({}) => {
     dispatch({
       type: BANNER_UPLOAD_REQUEST,
       data: formData,
+    });
+  });
+
+  const clickMobileImageUpload = useCallback(() => {
+    bannerMoblileImgRef.current.click();
+  }, [bannerMoblileImgRef.current]);
+
+  const onChangeMobileImages = useCallback((e) => {
+    const formMData = new FormData();
+
+    [].forEach.call(e.target.files, (file) => {
+      formMData.append("image", file);
+    });
+
+    dispatch({
+      type: BANNER_MOBILE_UPLOAD_REQUEST,
+      data: formMData,
     });
   });
 
@@ -666,8 +694,41 @@ const MainBanner = ({}) => {
                 >
                   이미지 업로드
                 </Button>
+              </Wrapper>
 
-                {uploadBannerPath && (
+              <Wrapper margin={`0px 0px 5px 0px`}>
+                <MobileBannerImage
+                  src={
+                    uploadMobileBannerPath
+                      ? uploadMobileBannerPath
+                      : currentData && currentData.mobileImageURL
+                  }
+                />
+              </Wrapper>
+
+              <Wrapper margin={`0px 0px 10px 0px`} al={`flex-end`}>
+                <input
+                  type="file"
+                  name="image"
+                  accept=".png, .jpg"
+                  // multiple
+                  hidden
+                  ref={bannerMoblileImgRef}
+                  onChange={onChangeMobileImages}
+                />
+                <Button
+                  type="primary"
+                  size="small"
+                  style={{ margin: ` 0 0 0 10px` }}
+                  onClick={clickMobileImageUpload}
+                  loading={st_bannerMobileUploadLoading}
+                >
+                  MOBILE 이미지 업로드
+                </Button>
+              </Wrapper>
+
+              {(uploadBannerPath || uploadMobileBannerPath) && (
+                <Wrapper al={`flex-end`}>
                   <Button
                     size="small"
                     type="danger"
@@ -676,8 +737,8 @@ const MainBanner = ({}) => {
                   >
                     적용하기
                   </Button>
-                )}
-              </Wrapper>
+                </Wrapper>
+              )}
 
               <Wrapper
                 width="100%"

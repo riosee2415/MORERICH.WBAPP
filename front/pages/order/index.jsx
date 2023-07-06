@@ -7,7 +7,6 @@ import axios from "axios";
 import { END } from "redux-saga";
 import useWidth from "../../hooks/useWidth";
 import {
-  CustomSelect,
   RsWrapper,
   Text,
   WholeWrapper,
@@ -172,8 +171,9 @@ const Index = () => {
     currentData.map((data) => {
       boughtLists.push({
         productName: data.name,
-        price: data.calcPrice,
+        price: data.totalPrice,
         qun: data.qun,
+        etcOption: data.etcOption,
         optionValue: data.optionName,
         thumbnail: data.thumbnail,
       });
@@ -190,6 +190,9 @@ const Index = () => {
     });
   }, [currentData, postcodeInput, addressInput, detailAddressInput, isTerms]);
 
+  const backHandler = useCallback(() => {
+    window.history.back();
+  }, []);
   ////// DATAVIEW //////
 
   return (
@@ -207,11 +210,13 @@ const Index = () => {
                 src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_prev.svg`}
                 width={`14px`}
                 margin={`0 14px 0 0`}
+                onClick={backHandler}
               />
               <Text
                 isHover
                 fontSize={width < 800 ? `16px` : `28px`}
                 fontWeight={`600`}
+                onClick={backHandler}
               >
                 PRODUCT-DETAIL
               </Text>
@@ -497,6 +502,13 @@ const Index = () => {
                               margin={`0 15px 0 0`}
                             >
                               옵션 : {data.optionName}
+                            </Text>
+                            <Text
+                              fontSize={width < 900 ? `14px` : `15px`}
+                              color={Theme.grey_C}
+                              margin={`0 15px 0 0`}
+                            >
+                              사이즈 : {data.etcOption}
                             </Text>
                             <Text
                               fontSize={width < 900 ? `14px` : `15px`}

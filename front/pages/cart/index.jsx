@@ -39,6 +39,7 @@ const Index = () => {
     st_cartQunUpdateDone,
     st_cartQunUpdateError,
   } = useSelector((state) => state.cart);
+
   ////// HOOKS //////
   const width = useWidth();
 
@@ -319,6 +320,12 @@ const Index = () => {
                           color={Theme.grey_C}
                         >
                           옵션 : {data.optionName}
+                        </Text>
+                        <Text
+                          fontSize={width < 900 ? `14px` : `15px`}
+                          color={Theme.grey_C}
+                        >
+                          사이즈 : {data.etcOption}
                         </Text>
                         {width < 900 && (
                           <>

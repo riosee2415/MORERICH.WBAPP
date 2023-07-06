@@ -158,6 +158,13 @@ const Complete = () => {
                           <Text
                             fontSize={width < 900 ? `14px` : `15px`}
                             color={Theme.grey_C}
+                            margin={`0 15px 0 0`}
+                          >
+                            사이즈 : {data.etcOption}
+                          </Text>
+                          <Text
+                            fontSize={width < 900 ? `14px` : `15px`}
+                            color={Theme.grey_C}
                           >
                             수량 : {data.qun}개
                           </Text>

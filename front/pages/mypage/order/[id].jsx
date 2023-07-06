@@ -136,6 +136,13 @@ const Index = () => {
                                 <Text
                                   fontSize={width < 900 ? `14px` : `15px`}
                                   color={Theme.grey_C}
+                                  margin={`0 15px 0 0`}
+                                >
+                                  사이즈 : {item.etcOption}
+                                </Text>
+                                <Text
+                                  fontSize={width < 900 ? `14px` : `15px`}
+                                  color={Theme.grey_C}
                                 >
                                   수량 : {item.qun}개
                                 </Text>

@@ -13,7 +13,7 @@ import {
   WholeWrapper,
   Wrapper,
   Image,
-  CustomPage,
+  ATag,
 } from "../../../components/commonComponents";
 import MypageLeft from "../../../components/MypageLeft";
 import Theme from "../../../components/Theme";

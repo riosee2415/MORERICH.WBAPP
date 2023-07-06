@@ -309,6 +309,10 @@ const Bought = ({}) => {
       dataIndex: "optionValue",
     },
     {
+      title: "사이즈",
+      dataIndex: "etcOption",
+    },
+    {
       title: "구매수량",
       render: (row) => <Text>{row.qun}개</Text>,
     },
@@ -676,7 +680,7 @@ const Bought = ({}) => {
 
       <Drawer
         visible={detailDr}
-        width="40%"
+        width="50%"
         title={`${crData && crData.num}번의 구매 상세목록`}
         onClose={() => detailDrToggle(null)}
       >

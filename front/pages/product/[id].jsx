@@ -15,6 +15,7 @@ import {
   Image,
   CommonButton,
   ATag,
+  TextInput,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { message, Modal, Select } from "antd";
@@ -33,6 +34,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { CART_CREATE_REQUEST } from "../../reducers/cart";
 import { useEffect } from "react";
+import useInput from "../../hooks/useInput";
 
 const LineText = styled(Text)`
   color: ${(props) => props.theme.grey4_C};
@@ -50,8 +52,11 @@ const Index = () => {
   ////// GLOBAL STATE //////
   const { productDetail } = useSelector((s) => s.store);
   const { st_cartCreateDone, st_cartCreateError } = useSelector((s) => s.cart);
+
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   // MODAL
   const [cartModal, setCartModal] = useState(false);
@@ -62,9 +67,10 @@ const Index = () => {
   const [optionData, setOptionData] = useState(null); // 옵션 데이터
   const [totalPrice, setTotalPrice] = useState(0); // 상품금액
   const [isMore, setIsMore] = useState(false); // 상품금액
+
+  const sizeInput = useInput(``);
   ////// REDUX //////
-  const dispatch = useDispatch();
-  const router = useRouter();
+
   ////// USEEFFECT //////
 
   // 카드 후 처리
@@ -112,6 +118,9 @@ const Index = () => {
     if (currentDatum.length === 0) {
       return message.error("옵션을 선택해주세요");
     }
+    if (!sizeInput.value) {
+      return message.error("사이즈를 입력해주세요.");
+    }
 
     sessionStorage.setItem("BUY", JSON.stringify(currentDatum));
     sessionStorage.setItem(
@@ -120,13 +129,14 @@ const Index = () => {
         totalPriceInt: totalPrice,
         totalPrice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         qun: qun,
+        etcOption: etcOption,
         productprice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })
     );
 
     router.push(`/order`);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentDatum]);
+  }, [currentDatum, sizeInput]);
 
   // 장바구니 담기
   const cartCreateHandler = useCallback(() => {
@@ -136,10 +146,15 @@ const Index = () => {
       return message.error("옵션을 선택해주세요");
     }
 
+    if (!sizeInput.value) {
+      return message.error("사이즈를 입력해주세요.");
+    }
+
     currentDatum.map((data) => {
       products.push({
         ProductId: router.query.id,
         ProductOptionId: data.optionId,
+        etcOption: sizeInput.value,
         qun: data.qun,
       });
     });
@@ -150,7 +165,7 @@ const Index = () => {
         products,
       },
     });
-  }, [currentDatum]);
+  }, [currentDatum, sizeInput]);
 
   // 수량 증가
   const optionQunUpdateHandler = useCallback(
@@ -196,7 +211,7 @@ const Index = () => {
 
       setcurrentDatum(arr);
     },
-    [currentDatum, productDetail, totalPrice]
+    [currentDatum, productDetail, totalPrice, sizeInput]
   );
 
   const movelinkHandler = useCallback((link) => {
@@ -287,7 +302,7 @@ const Index = () => {
                 dr={`row`}
                 ju={`space-between`}
                 borderBottom={`4px solid ${Theme.lightGrey2_C}`}
-                padding={`0 0 36px`}
+                padding={`0 0 25px`}
               >
                 <Wrapper width={`auto`} dr={`row`}>
                   {productDetail && productDetail.discount !== 0 && (
@@ -313,7 +328,7 @@ const Index = () => {
                   width={`28px`}
                 />
               </Wrapper>
-              <Wrapper dr={`row`} ju={`space-between`} margin={`34px 0 16px`}>
+              <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 16px`}>
                 <Text
                   fontSize={width < 800 ? `16px` : `20px`}
                   fontWeight={`600`}
@@ -341,7 +356,7 @@ const Index = () => {
               </Wrapper>
               <Wrapper
                 borderBottom={`4px solid ${Theme.lightGrey2_C}`}
-                padding={`0 0 36px`}
+                padding={`0 0 30px`}
                 al={`flex-start`}
               >
                 <LineText
@@ -402,6 +417,15 @@ const Index = () => {
                       <Text isHover onClick={() => optionDeleteHandler(data)}>
                         <CloseOutlined />
                       </Text>
+                    </Wrapper>
+                    <Wrapper dr={`row`} margin={`14px 0 0`}>
+                      <Text width={`100px`}>사이즈</Text>
+                      <TextInput
+                        {...sizeInput}
+                        placeholder="사이즈를 입력해주세요."
+                        width={`calc(100% - 100px)`}
+                        height={`40px`}
+                      />
                     </Wrapper>
                     <Wrapper
                       dr={`row`}

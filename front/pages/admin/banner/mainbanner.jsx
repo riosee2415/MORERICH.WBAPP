@@ -283,8 +283,10 @@ const MainBanner = ({}) => {
     setCurrentData((prev) => {
       return {
         ...currentData,
-        imageURL: uploadBannerPath,
-        mobileURL: uploadMobileBannerPath,
+        imageURL: uploadBannerPath ? uploadBannerPath : currentData.imageURL,
+        mobileURL: uploadMobileBannerPath
+          ? uploadMobileBannerPath
+          : currentData.mobileURL,
       };
     });
 
@@ -293,8 +295,10 @@ const MainBanner = ({}) => {
       data: {
         id: currentData.id,
         title: currentData.title,
-        imageURL: uploadBannerPath,
-        mobileURL: uploadMobileBannerPath,
+        imageURL: uploadBannerPath ? uploadBannerPath : currentData.imageURL,
+        mobileURL: uploadMobileBannerPath
+          ? uploadMobileBannerPath
+          : currentData.mobileURL,
       },
     });
   }, [currentData, uploadBannerPath, uploadMobileBannerPath]);
@@ -701,7 +705,7 @@ const MainBanner = ({}) => {
                   src={
                     uploadMobileBannerPath
                       ? uploadMobileBannerPath
-                      : currentData && currentData.mobileImageURL
+                      : currentData && currentData.mobileURL
                   }
                 />
               </Wrapper>

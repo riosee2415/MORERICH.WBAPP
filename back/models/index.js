@@ -29,6 +29,7 @@ const productTypeHistory = require("./producttypehistory");
 const product = require("./product");
 const productImage = require("./productImage");
 const productOption = require("./productoption");
+const productOption2 = require("./productoption2");
 const joinset = require("./joinset");
 const mainSlide = require("./mainslide");
 const mainSlideProduct = require("./mainslideproduct");
@@ -79,6 +80,7 @@ db.ProductTypeHistory = productTypeHistory;
 db.Product = product;
 db.ProductImage = productImage;
 db.ProductOption = productOption;
+db.ProductOption2 = productOption2;
 db.MainSlide = mainSlide;
 db.MainSlideProduct = mainSlideProduct;
 

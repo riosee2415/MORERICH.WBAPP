@@ -816,6 +816,59 @@ router.post("/option/delete", isAdminCheck, async (req, res, next) => {
 });
 
 /**
+ * SUBJECT : 옵션2 추가
+ * PARAMETERS : {ProductId, value}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 선임개발자 김동현
+ * DEV DATE : 2023/07/07
+ */
+router.post("/option2/new", isAdminCheck, async (req, res, next) => {
+  const { value, ProductId } = req.body;
+
+  const insertQ = `
+INSERT INTO productOption2 (value, createdAt, updatedAt, ProductId) VALUES (
+	"${value}", NOW(), NOW(), ${ProductId}
+)
+    `;
+
+  try {
+    await models.sequelize.query(insertQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("옵션을 추가할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 옵션2 삭제
+ * PARAMETERS : {id}
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 선임개발자 김동현
+ * DEV DATE : 2023/07/07
+ */
+router.post("/option2/delete", isAdminCheck, async (req, res, next) => {
+  const { id } = req.body;
+
+  const deleteQ = `
+        DELETE FROM productOption2
+           WHERE id = ${id}
+    `;
+
+  try {
+    await models.sequelize.query(deleteQ);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("옵션을 삭제할 수 없습니다.");
+  }
+});
+
+/**
  * SUBJECT : 위시리스트 차트
  * PARAMETERS : -
  * ORDER BY : -

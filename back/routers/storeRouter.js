@@ -263,6 +263,22 @@ const consistOfArrayToArray2 = (arr1, arr2, targetColumn) => {
   return arr1;
 };
 
+const consistOfArrayToArray3 = (arr1, arr2, targetColumn) => {
+  arr1.map((item) => {
+    const tempArr = [];
+
+    arr2.map((inItem) => {
+      if (item.id === inItem[targetColumn]) {
+        tempArr.push(inItem);
+      }
+    });
+
+    item["options2"] = tempArr;
+  });
+
+  return arr1;
+};
+
 /**
  * SUBJECT : 상품 상세 가져오기
  * PARAMETERS : {id}
@@ -319,15 +335,30 @@ router.post("/product/detail", async (req, res, next) => {
  WHERE	ProductId = ${id}
   `;
 
+  const sq4 = `
+  SELECT	
+  id,
+      value,
+        ProductId
+  FROM 	productOption2
+ WHERE	ProductId = ${id}
+  `;
+
   try {
     const list1 = await models.sequelize.query(sq1);
     const list2 = await models.sequelize.query(sq2);
     const list3 = await models.sequelize.query(sq3);
+    const list4 = await models.sequelize.query(sq4);
 
     const result = await consistOfArrayToArray(list1[0], list2[0], "ProductId");
     const result2 = await consistOfArrayToArray2(result, list3[0], "ProductId");
+    const result3 = await consistOfArrayToArray3(
+      result2,
+      list4[0],
+      "ProductId"
+    );
 
-    return res.status(200).json(result2[0]);
+    return res.status(200).json(result3[0]);
   } catch (error) {
     console.error(error);
     return res.status(400).send("상품데이터를 조회할 수 없습니다.");
@@ -433,15 +464,30 @@ router.post("/product/list", async (req, res, next) => {
    ORDER    BY  value ASC
 `;
 
+  const selectQ4 = `
+SELECT 	ROW_NUMBER() OVER(ORDER BY value ASC)        AS num,
+          id,
+          value,
+          ProductId
+  FROM	productOption2
+ ORDER    BY  value ASC
+`;
+
   try {
     const list1 = await models.sequelize.query(selectQ);
     const list2 = await models.sequelize.query(selectQ2);
     const list3 = await models.sequelize.query(selectQ3);
+    const list4 = await models.sequelize.query(selectQ4);
 
     const result = consistOfArrayToArray(list1[0], list2[0], "ProductId");
     const result2 = consistOfArrayToArray2(result, list3[0], "ProductId");
+    const result3 = await consistOfArrayToArray3(
+      result2,
+      list4[0],
+      "ProductId"
+    );
 
-    return res.status(200).json(result2);
+    return res.status(200).json(result3);
   } catch (error) {
     console.error(error);
     return res.status(400).send("상품데이터를 조회할 수 없습니다.");

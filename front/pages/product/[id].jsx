@@ -35,6 +35,7 @@ import { useRouter } from "next/router";
 import { CART_CREATE_REQUEST } from "../../reducers/cart";
 import { useEffect } from "react";
 import useInput from "../../hooks/useInput";
+import EtcOption from "../../components/product/EtcOption";
 
 const LineText = styled(Text)`
   color: ${(props) => props.theme.grey4_C};
@@ -420,12 +421,7 @@ const Index = () => {
                     </Wrapper>
                     <Wrapper dr={`row`} margin={`14px 0 0`}>
                       <Text width={`100px`}>사이즈</Text>
-                      <TextInput
-                        {...sizeInput}
-                        placeholder="사이즈를 입력해주세요."
-                        width={`calc(100% - 100px)`}
-                        height={`40px`}
-                      />
+                      <EtcOption />
                     </Wrapper>
                     <Wrapper
                       dr={`row`}

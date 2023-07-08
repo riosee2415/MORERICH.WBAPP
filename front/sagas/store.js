@@ -100,6 +100,22 @@ import {
   BOUGHT_CREATE_REQUEST,
   BOUGHT_CREATE_SUCCESS,
   BOUGHT_CREATE_FAILURE,
+  //
+  GET_TYPE_2DEPTH_REQUEST,
+  GET_TYPE_2DEPTH_SUCCESS,
+  GET_TYPE_2DEPTH_FAILURE,
+  //
+  MODIFY_TYPE_2DEPTH_REQUEST,
+  MODIFY_TYPE_2DEPTH_SUCCESS,
+  MODIFY_TYPE_2DEPTH_FAILURE,
+  //
+  DEL_TYPE_2DEPTH_REQUEST,
+  DEL_TYPE_2DEPTH_SUCCESS,
+  DEL_TYPE_2DEPTH_FAILURE,
+  //
+  NEW_TYPE_2DEPTH_REQUEST,
+  NEW_TYPE_2DEPTH_SUCCESS,
+  NEW_TYPE_2DEPTH_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -771,6 +787,113 @@ function* boughtCreate(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 // ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function get2DepthAPI(data) {
+  return await axios.post(`/api/store/list3`, data);
+}
+
+function* get2Depth(action) {
+  try {
+    const result = yield call(get2DepthAPI, action.data);
+
+    yield put({
+      type: GET_TYPE_2DEPTH_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: GET_TYPE_2DEPTH_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function modify2DepthAPI(data) {
+  return await axios.post(`/api/store/modify3`, data);
+}
+
+function* modify2Depth(action) {
+  try {
+    const result = yield call(modify2DepthAPI, action.data);
+
+    yield put({
+      type: MODIFY_TYPE_2DEPTH_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MODIFY_TYPE_2DEPTH_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function del2DepthAPI(data) {
+  return await axios.post(`/api/store/delete3`, data);
+}
+
+function* del2Depth(action) {
+  try {
+    const result = yield call(del2DepthAPI, action.data);
+
+    yield put({
+      type: DEL_TYPE_2DEPTH_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: DEL_TYPE_2DEPTH_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function new2DepthAPI(data) {
+  return await axios.post(`/api/store/new3`, data);
+}
+
+function* new2Depth(action) {
+  try {
+    const result = yield call(new2DepthAPI, action.data);
+
+    yield put({
+      type: NEW_TYPE_2DEPTH_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: NEW_TYPE_2DEPTH_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
 
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
@@ -848,6 +971,18 @@ function* watchCancelBought() {
 function* watchBoughtCreate() {
   yield takeLatest(BOUGHT_CREATE_REQUEST, boughtCreate);
 }
+function* watchGet2DeptType() {
+  yield takeLatest(GET_TYPE_2DEPTH_REQUEST, get2Depth);
+}
+function* watchModify2DeptType() {
+  yield takeLatest(MODIFY_TYPE_2DEPTH_REQUEST, modify2Depth);
+}
+function* watchDel2DeptType() {
+  yield takeLatest(DEL_TYPE_2DEPTH_REQUEST, del2Depth);
+}
+function* watchNew2DeptType() {
+  yield takeLatest(NEW_TYPE_2DEPTH_REQUEST, new2Depth);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -877,6 +1012,10 @@ export default function* storeSaga() {
     fork(watchProductDetail),
     fork(watchCancelBought),
     fork(watchBoughtCreate),
+    fork(watchGet2DeptType),
+    fork(watchModify2DeptType),
+    fork(watchDel2DeptType),
+    fork(watchNew2DeptType),
 
     //
   ]);

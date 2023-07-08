@@ -3,6 +3,8 @@ import produce from "../util/produce";
 export const initailState = {
   // 유형
   productTypes: [],
+  productType2Depth: null,
+
   productTypes2: [],
   thumbnailPath: null,
   detailImagePath: null,
@@ -129,6 +131,26 @@ export const initailState = {
   st_boughtCreateLoading: false,
   st_boughtCreateDone: false,
   st_boughtCreateError: null,
+
+  // 상품유형 2뎁스 가져오기
+  st_getProductType2DepthLoading: false,
+  st_getProductType2DepthDone: false,
+  st_getProductType2DepthError: null,
+
+  // 상품유형 2뎁스 수정하기
+  st_modifyProductType2DepthLoading: false,
+  st_modifyProductType2DepthDone: false,
+  st_modifyProductType2DepthError: null,
+
+  // 상품유형 2뎁스 삭제하기
+  st_delProductType2DepthLoading: false,
+  st_delProductType2DepthDone: false,
+  st_delProductType2DepthError: null,
+
+  // 상품유형 2뎁스 추가하기
+  st_newProductType2DepthLoading: false,
+  st_newProductType2DepthDone: false,
+  st_newProductType2DepthError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -230,6 +252,22 @@ export const CANCEL_BOUGHT_FAILURE = "CANCEL_BOUGHT_FAILURE";
 export const BOUGHT_CREATE_REQUEST = "BOUGHT_CREATE_REQUEST";
 export const BOUGHT_CREATE_SUCCESS = "BOUGHT_CREATE_SUCCESS";
 export const BOUGHT_CREATE_FAILURE = "BOUGHT_CREATE_FAILURE";
+
+export const GET_TYPE_2DEPTH_REQUEST = "GET_TYPE_2DEPTH_REQUEST";
+export const GET_TYPE_2DEPTH_SUCCESS = "GET_TYPE_2DEPTH_SUCCESS";
+export const GET_TYPE_2DEPTH_FAILURE = "GET_TYPE_2DEPTH_FAILURE";
+
+export const MODIFY_TYPE_2DEPTH_REQUEST = "MODIFY_TYPE_2DEPTH_REQUEST";
+export const MODIFY_TYPE_2DEPTH_SUCCESS = "MODIFY_TYPE_2DEPTH_SUCCESS";
+export const MODIFY_TYPE_2DEPTH_FAILURE = "MODIFY_TYPE_2DEPTH_FAILURE";
+
+export const DEL_TYPE_2DEPTH_REQUEST = "DEL_TYPE_2DEPTH_REQUEST";
+export const DEL_TYPE_2DEPTH_SUCCESS = "DEL_TYPE_2DEPTH_SUCCESS";
+export const DEL_TYPE_2DEPTH_FAILURE = "DEL_TYPE_2DEPTH_FAILURE";
+
+export const NEW_TYPE_2DEPTH_REQUEST = "NEW_TYPE_2DEPTH_REQUEST";
+export const NEW_TYPE_2DEPTH_SUCCESS = "NEW_TYPE_2DEPTH_SUCCESS";
+export const NEW_TYPE_2DEPTH_FAILURE = "NEW_TYPE_2DEPTH_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -830,6 +868,100 @@ const reducer = (state = initailState, action) =>
         draft.st_boughtCreateLoading = false;
         draft.st_boughtCreateDone = false;
         draft.st_boughtCreateError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case GET_TYPE_2DEPTH_REQUEST: {
+        draft.st_getProductType2DepthLoading = true;
+        draft.st_getProductType2DepthDone = false;
+        draft.st_getProductType2DepthError = null;
+        break;
+      }
+
+      case GET_TYPE_2DEPTH_SUCCESS: {
+        draft.st_getProductType2DepthLoading = false;
+        draft.st_getProductType2DepthDone = true;
+        draft.st_getProductType2DepthError = null;
+        draft.productType2Depth = action.data;
+        break;
+      }
+
+      case GET_TYPE_2DEPTH_FAILURE: {
+        draft.st_getProductType2DepthLoading = false;
+        draft.st_getProductType2DepthDone = false;
+        draft.st_getProductType2DepthError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
+      case MODIFY_TYPE_2DEPTH_REQUEST: {
+        draft.st_modifyProductType2DepthLoading = true;
+        draft.st_modifyProductType2DepthDone = false;
+        draft.st_modifyProductType2DepthError = null;
+        break;
+      }
+
+      case MODIFY_TYPE_2DEPTH_SUCCESS: {
+        draft.st_modifyProductType2DepthLoading = false;
+        draft.st_modifyProductType2DepthDone = true;
+        draft.st_modifyProductType2DepthError = null;
+        break;
+      }
+
+      case MODIFY_TYPE_2DEPTH_FAILURE: {
+        draft.st_modifyProductType2DepthLoading = false;
+        draft.st_modifyProductType2DepthDone = false;
+        draft.st_modifyProductType2DepthError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case DEL_TYPE_2DEPTH_REQUEST: {
+        draft.st_delProductType2DepthLoading = true;
+        draft.st_delProductType2DepthDone = false;
+        draft.st_delProductType2DepthError = null;
+        break;
+      }
+
+      case DEL_TYPE_2DEPTH_SUCCESS: {
+        draft.st_delProductType2DepthLoading = false;
+        draft.st_delProductType2DepthDone = true;
+        draft.st_delProductType2DepthError = null;
+        break;
+      }
+
+      case DEL_TYPE_2DEPTH_FAILURE: {
+        draft.st_delProductType2DepthLoading = false;
+        draft.st_delProductType2DepthDone = false;
+        draft.st_delProductType2DepthError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case NEW_TYPE_2DEPTH_REQUEST: {
+        draft.st_newProductType2DepthLoading = true;
+        draft.st_newProductType2DepthDone = false;
+        draft.st_newProductType2DepthError = null;
+        break;
+      }
+
+      case NEW_TYPE_2DEPTH_SUCCESS: {
+        draft.st_newProductType2DepthLoading = false;
+        draft.st_newProductType2DepthDone = true;
+        draft.st_newProductType2DepthError = null;
+        break;
+      }
+
+      case NEW_TYPE_2DEPTH_FAILURE: {
+        draft.st_newProductType2DepthLoading = false;
+        draft.st_newProductType2DepthDone = false;
+        draft.st_newProductType2DepthError = action.error;
         break;
       }
 

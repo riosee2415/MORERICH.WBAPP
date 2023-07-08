@@ -151,6 +151,7 @@ const Product = ({}) => {
 
   const [infoForm] = Form.useForm();
   const [optionForm] = Form.useForm();
+  const [option2Form] = Form.useForm();
 
   const thumbnailRef = useRef();
   const detailImageRef = useRef();

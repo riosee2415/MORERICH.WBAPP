@@ -11,7 +11,7 @@ import {
 } from "./commonComponents";
 import styled from "styled-components";
 import Theme from "./Theme";
-import { MenuOutlined } from "@ant-design/icons";
+import { MenuOutlined, SearchOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -300,6 +300,13 @@ const AppHeader = ({}) => {
                 />
               </a>
             </Link>
+            <Link href={`/search`}>
+              <a>
+                <Wrapper width={`20px`} fontSize={`20px`} margin={`0 20px 0 0`}>
+                  <SearchOutlined />
+                </Wrapper>
+              </a>
+            </Link>
             <MenuOutlined onClick={drawarToggle} />
           </Wrapper>
         </Wrapper>
@@ -356,6 +363,17 @@ const AppHeader = ({}) => {
                     margin={`0 30px 0 0`}
                     alt="login icon"
                   />
+                </a>
+              </Link>
+              <Link href={`/search`}>
+                <a>
+                  <Wrapper
+                    width={`20px`}
+                    fontSize={`20px`}
+                    margin={`0 30px 0 0`}
+                  >
+                    <SearchOutlined />
+                  </Wrapper>
                 </a>
               </Link>
 

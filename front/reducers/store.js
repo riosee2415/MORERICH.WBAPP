@@ -95,6 +95,16 @@ export const initailState = {
   st_delOptionDone: false,
   st_delOptionError: null,
 
+  // 상품옵션2 추가
+  st_addOption2Loading: false,
+  st_addOption2Done: false,
+  st_addOption2Error: null,
+
+  // 상품옵션2 삭제
+  st_delOption2Loading: false,
+  st_delOption2Done: false,
+  st_delOption2Error: null,
+
   // 위시 통계
   st_wishChartLoading: false,
   st_wishChartDone: false,
@@ -202,6 +212,14 @@ export const ADD_OPTION_FAILURE = "ADD_OPTION_FAILURE";
 export const DEL_OPTION_REQUEST = "DEL_OPTION_REQUEST";
 export const DEL_OPTION_SUCCESS = "DEL_OPTION_SUCCESS";
 export const DEL_OPTION_FAILURE = "DEL_OPTION_FAILURE";
+
+export const ADD_OPTION2_REQUEST = "ADD_OPTION2_REQUEST";
+export const ADD_OPTION2_SUCCESS = "ADD_OPTION2_SUCCESS";
+export const ADD_OPTION2_FAILURE = "ADD_OPTION2_FAILURE";
+
+export const DEL_OPTION2_REQUEST = "DEL_OPTION2_REQUEST";
+export const DEL_OPTION2_SUCCESS = "DEL_OPTION2_SUCCESS";
+export const DEL_OPTION2_FAILURE = "DEL_OPTION2_FAILURE";
 
 export const WISH_CHART_REQUEST = "WISH_CHART_REQUEST";
 export const WISH_CHART_SUCCESS = "WISH_CHART_SUCCESS";
@@ -665,6 +683,53 @@ const reducer = (state = initailState, action) =>
 
       ///////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////
+      case ADD_OPTION2_REQUEST: {
+        draft.st_addOption2Loading = true;
+        draft.st_addOption2Done = false;
+        draft.st_addOption2Error = null;
+        break;
+      }
+
+      case ADD_OPTION2_SUCCESS: {
+        draft.st_addOption2Loading = false;
+        draft.st_addOption2Done = true;
+        draft.st_addOption2Error = null;
+        break;
+      }
+
+      case ADD_OPTION2_FAILURE: {
+        draft.st_addOption2Loading = false;
+        draft.st_addOption2Done = false;
+        draft.st_addOption2Error = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+      case DEL_OPTION2_REQUEST: {
+        draft.st_delOption2Loading = true;
+        draft.st_delOption2Done = false;
+        draft.st_delOption2Error = null;
+        break;
+      }
+
+      case DEL_OPTION2_SUCCESS: {
+        draft.st_delOption2Loading = false;
+        draft.st_delOption2Done = true;
+        draft.st_delOption2Error = null;
+        break;
+      }
+
+      case DEL_OPTION2_FAILURE: {
+        draft.st_delOption2Loading = false;
+        draft.st_delOption2Done = false;
+        draft.st_delOption2Error = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////
+
       case WISH_CHART_REQUEST: {
         draft.st_wishChartLoading = true;
         draft.st_wishChartDone = false;

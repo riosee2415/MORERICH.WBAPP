@@ -30,6 +30,7 @@ import { LIKE_CREATE_REQUEST } from "../../reducers/wish";
 import { LOGO_GET_REQUEST } from "../../reducers/logo";
 import { COMPANY_GET_REQUEST } from "../../reducers/company";
 import { SearchOutlined } from "@ant-design/icons";
+import useInput from "../../hooks/useInput";
 
 const CateBtn = styled(Wrapper)`
   padding: 0 14px;
@@ -50,14 +51,15 @@ const CateBtn = styled(Wrapper)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
-  const { products, productTypes } = useSelector((state) => state.store);
+  const { products } = useSelector((state) => state.store);
   const { me } = useSelector((state) => state.user);
   const { st_likeCreateDone, st_likeCreateError } = useSelector(
     (state) => state.wish
   );
 
-  const [type, setType] = useState(0);
   const [orderType, setOrderType] = useState(1); // 순서
+
+  const sName = useInput(``);
 
   const [likeId, setLikeId] = useState(null);
 
@@ -98,11 +100,11 @@ const Index = () => {
     dispatch({
       type: GET_PRODUCT_REQUEST,
       data: {
-        ProductTypeId: type,
+        sName: sName.value,
         orderType: orderType,
       },
     });
-  }, [type, orderType]);
+  }, [orderType, sName.value]);
 
   ////// TOGGLE //////
   ////// HANDLER //////
@@ -129,14 +131,6 @@ const Index = () => {
       });
     },
     [likeId, me]
-  );
-
-  const typeHandler = useCallback(
-    (data) => {
-      router.push(`/product?target=${data}`);
-      setType(parseInt(data));
-    },
-    [type]
   );
 
   // 순서
@@ -172,7 +166,7 @@ const Index = () => {
             </Text>
 
             <Wrapper
-              width={`500px`}
+              width={width < 700 ? `350px` : `500px`}
               height={`50px`}
               margin={`18px 0 0`}
               position={`relative`}
@@ -183,6 +177,7 @@ const Index = () => {
                 placeholder="검색어를 입력해주세요."
                 type="text"
                 padding={`0 60px 0 10px`}
+                {...sName}
               />
 
               <Wrapper
@@ -282,11 +277,6 @@ const Index = () => {
                               onClick={() => likeCreateHandler(data)}
                             />
                           )}
-                          {/* <Image
-                            alt="cart icon"
-                            src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
-                            width={`22px`}
-                          /> */}
                         </Wrapper>
                       </Wrapper>
                     </ProductWrapper>

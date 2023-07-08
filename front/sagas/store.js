@@ -73,6 +73,14 @@ import {
   DEL_OPTION_SUCCESS,
   DEL_OPTION_FAILURE,
   //
+  ADD_OPTION2_REQUEST,
+  ADD_OPTION2_SUCCESS,
+  ADD_OPTION2_FAILURE,
+  //
+  DEL_OPTION2_REQUEST,
+  DEL_OPTION2_SUCCESS,
+  DEL_OPTION2_FAILURE,
+  //
   WISH_CHART_REQUEST,
   WISH_CHART_SUCCESS,
   WISH_CHART_FAILURE,
@@ -603,6 +611,59 @@ function* delOption(action) {
 // ******************************************************************************************************************
 // SAGA AREA ********************************************************************************************************
 // ******************************************************************************************************************
+async function addOption2API(data) {
+  return await axios.post(`/api/store/option2/new`, data);
+}
+
+function* addOption2(action) {
+  try {
+    const result = yield call(addOption2API, action.data);
+
+    yield put({
+      type: ADD_OPTION2_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: ADD_OPTION2_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function delOption2API(data) {
+  return await axios.post(`/api/store/option2/delete`, data);
+}
+
+function* delOption2(action) {
+  try {
+    const result = yield call(delOption2API, action.data);
+
+    yield put({
+      type: DEL_OPTION2_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: DEL_OPTION2_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
 async function wishChartAPI(data) {
   return await axios.post(`/api/store/wishchart`, data);
 }
@@ -950,6 +1011,12 @@ function* watchAddOption() {
 function* watchDelOption() {
   yield takeLatest(DEL_OPTION_REQUEST, delOption);
 }
+function* watchAddOption2() {
+  yield takeLatest(ADD_OPTION2_REQUEST, addOption2);
+}
+function* watchDelOption2() {
+  yield takeLatest(DEL_OPTION2_REQUEST, delOption2);
+}
 function* watchWishChart() {
   yield takeLatest(WISH_CHART_REQUEST, wishChart);
 }
@@ -1005,6 +1072,8 @@ export default function* storeSaga() {
     fork(watchDelProduct),
     fork(watchAddOption),
     fork(watchDelOption),
+    fork(watchAddOption2),
+    fork(watchDelOption2),
     fork(watchWishChart),
     fork(watchGetBoughtList),
     fork(watchStatusBoughtList),

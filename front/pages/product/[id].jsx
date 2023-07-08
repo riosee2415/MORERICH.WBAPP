@@ -15,7 +15,6 @@ import {
   Image,
   CommonButton,
   ATag,
-  TextInput,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
 import { message, Modal, Select } from "antd";
@@ -66,6 +65,7 @@ const Index = () => {
   // DATA
   const [currentDatum, setcurrentDatum] = useState([]); // 상품 선택
   const [optionData, setOptionData] = useState(null); // 옵션 데이터
+  const [optionData2, setOptionData2] = useState(null); // 옵션2 데이터
   const [totalPrice, setTotalPrice] = useState(0); // 상품금액
   const [isMore, setIsMore] = useState(false); // 상품금액
 
@@ -119,9 +119,6 @@ const Index = () => {
     if (currentDatum.length === 0) {
       return message.error("옵션을 선택해주세요");
     }
-    if (!sizeInput.value) {
-      return message.error("사이즈를 입력해주세요.");
-    }
 
     sessionStorage.setItem("BUY", JSON.stringify(currentDatum));
     sessionStorage.setItem(
@@ -130,14 +127,13 @@ const Index = () => {
         totalPriceInt: totalPrice,
         totalPrice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
         qun: qun,
-        etcOption: etcOption,
         productprice: String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
       })
     );
 
     router.push(`/order`);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentDatum, sizeInput]);
+  }, [currentDatum]);
 
   // 장바구니 담기
   const cartCreateHandler = useCallback(() => {
@@ -147,15 +143,11 @@ const Index = () => {
       return message.error("옵션을 선택해주세요");
     }
 
-    if (!sizeInput.value) {
-      return message.error("사이즈를 입력해주세요.");
-    }
-
     currentDatum.map((data) => {
       products.push({
         ProductId: router.query.id,
         ProductOptionId: data.optionId,
-        etcOption: sizeInput.value,
+        ProductOptionId2: data.optionId2,
         qun: data.qun,
       });
     });
@@ -166,7 +158,7 @@ const Index = () => {
         products,
       },
     });
-  }, [currentDatum, sizeInput]);
+  }, [currentDatum]);
 
   // 수량 증가
   const optionQunUpdateHandler = useCallback(
@@ -192,6 +184,13 @@ const Index = () => {
   const optionCreateHandler = useCallback(
     (data) => {
       setOptionData(data);
+    },
+    [optionData]
+  );
+  // 옵션 선택
+  const optionCreateHandler2 = useCallback(
+    (data) => {
+      setOptionData2(data);
 
       setTotalPrice(totalPrice + (productDetail && productDetail.calcPrice));
 
@@ -201,9 +200,12 @@ const Index = () => {
       if (currentId === -1) {
         arr.push({
           ...productDetail,
-          optionId: data[0],
-          optionName: data[1],
-          value: data[1],
+          optionId: optionData[0],
+          optionName: optionData[1],
+          value: optionData[1],
+          optionId2: data[0],
+          optionName2: data[1],
+          value2: data[1],
           qun: 1,
         });
       } else {
@@ -214,11 +216,6 @@ const Index = () => {
     },
     [currentDatum, productDetail, totalPrice, sizeInput]
   );
-
-  const movelinkHandler = useCallback((link) => {
-    router.push(link);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
 
   const backHandler = useCallback(() => {
     window.history.back();
@@ -380,8 +377,8 @@ const Index = () => {
               </Wrapper>
               <CustomSelect
                 width={`100%`}
-                height={`55px`}
-                margin={`34px 0`}
+                height={`50px`}
+                margin={`34px 0 10px`}
                 sBorder={`1px solid ${Theme.black_C}`}
               >
                 <Select
@@ -392,6 +389,29 @@ const Index = () => {
                   {productDetail &&
                     productDetail.options &&
                     productDetail.options.map((data, idx) => {
+                      return (
+                        <Select.Option key={idx} value={[data.id, data.value]}>
+                          {data.value}
+                        </Select.Option>
+                      );
+                    })}
+                </Select>
+              </CustomSelect>
+
+              <CustomSelect
+                width={`100%`}
+                height={`50px`}
+                margin={`0 0 34px`}
+                sBorder={`1px solid ${Theme.black_C}`}
+              >
+                <Select
+                  placeholder="옵션을 선택해주세요."
+                  value={optionData2 && optionData2[1]}
+                  onChange={optionCreateHandler2}
+                >
+                  {productDetail &&
+                    productDetail.options2 &&
+                    productDetail.options2.map((data, idx) => {
                       return (
                         <Select.Option key={idx} value={[data.id, data.value]}>
                           {data.value}
@@ -412,17 +432,22 @@ const Index = () => {
                   >
                     <Wrapper dr={`row`} ju={`space-between`}>
                       <Text fontSize={width < 800 ? `14px` : `16px`}>
-                        {productDetail && productDetail.name} - {data.value}
+                        {productDetail && productDetail.name} - {data.value} -{" "}
+                        {data.value2}
                       </Text>
 
                       <Text isHover onClick={() => optionDeleteHandler(data)}>
                         <CloseOutlined />
                       </Text>
                     </Wrapper>
+<<<<<<< HEAD
                     <Wrapper dr={`row`} margin={`14px 0 0`}>
                       <Text width={`100px`}>사이즈</Text>
                       <EtcOption />
                     </Wrapper>
+=======
+
+>>>>>>> c6a9b27169db7adaaa0eb4fc18f40c6a494db781
                     <Wrapper
                       dr={`row`}
                       ju={`space-between`}

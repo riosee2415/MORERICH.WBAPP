@@ -56,6 +56,8 @@ import {
   DEL_PRODUCT_REQUEST,
   ADD_OPTION_REQUEST,
   DEL_OPTION_REQUEST,
+  ADD_OPTION2_REQUEST,
+  DEL_OPTION2_REQUEST,
 } from "../../../reducers/store";
 import { numberWithCommas } from "../../../components/commonUtils";
 import BarChart from "../../../components/admin/BarChart";
@@ -124,6 +126,11 @@ const Product = ({}) => {
     st_addOptionError,
     st_delOptionDone,
     st_delOptionError,
+    //
+    st_addOption2Done,
+    st_addOption2Error,
+    st_delOption2Done,
+    st_delOption2Error,
   } = useSelector((state) => state.store);
 
   const router = useRouter();
@@ -146,6 +153,7 @@ const Product = ({}) => {
   const [graphView, setGraphView] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
   const [optionDr, setOptionDr] = useState(false);
+  const [option2Dr, setOption2Dr] = useState(false);
   const [crData, setCrData] = useState(null);
   const [cModal, setCModal] = useState(false);
 
@@ -255,6 +263,46 @@ const Product = ({}) => {
   }, [st_delOptionDone, st_delOptionError]);
 
   useEffect(() => {
+    if (st_addOption2Done) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+
+      option2Form.resetFields();
+    }
+    if (st_addOption2Error) {
+      return message.error(st_addOption2Error);
+    }
+  }, [st_addOption2Done, st_addOption2Error]);
+
+  useEffect(() => {
+    if (st_delOption2Done) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: typeId,
+          sName: _sName,
+          isNew: newCh,
+          isBest: bestCh,
+          isRecomm: recCh,
+        },
+      });
+
+      option2Form.resetFields();
+    }
+    if (st_delOption2Error) {
+      return message.error(st_delOption2Error);
+    }
+  }, [st_delOption2Done, st_delOption2Error]);
+
+  useEffect(() => {
     if (st_delProductDone) {
       dispatch({
         type: GET_PRODUCT_REQUEST,
@@ -360,8 +408,22 @@ const Product = ({}) => {
         setCrData(targetData);
       }
     }
+    if (st_addOption2Done && st_getProductDone) {
+      if (crData) {
+        const targetData = products.find((item) => item.id === crData.id);
+
+        setCrData(targetData);
+      }
+    }
 
     if (st_delOptionDone && st_getProductDone) {
+      if (crData) {
+        const targetData = products.find((item) => item.id === crData.id);
+
+        setCrData(targetData);
+      }
+    }
+    if (st_delOption2Done && st_getProductDone) {
       if (crData) {
         const targetData = products.find((item) => item.id === crData.id);
 
@@ -468,6 +530,14 @@ const Product = ({}) => {
 
   const optionDrToggle = useCallback((item) => {
     setOptionDr((p) => !p);
+
+    if (item) {
+      setCrData(item);
+    }
+  }, []);
+
+  const option2DrToggle = useCallback((item) => {
+    setOption2Dr((p) => !p);
 
     if (item) {
       setCrData(item);
@@ -661,6 +731,28 @@ const Product = ({}) => {
     });
   }, []);
 
+  const option2AddHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: ADD_OPTION2_REQUEST,
+        data: {
+          ProductId: crData.id,
+          value: data.value,
+        },
+      });
+    },
+    [crData]
+  );
+
+  const deleteOption2Handler = useCallback((row) => {
+    dispatch({
+      type: DEL_OPTION2_REQUEST,
+      data: {
+        id: row.id,
+      },
+    });
+  }, []);
+
   // FILE HANDLER
   const clickImageUpload = useCallback(() => {
     thumbnailRef.current.click();
@@ -831,6 +923,14 @@ const Product = ({}) => {
         </ManageButton>
       ),
     },
+    {
+      title: "옵션2정보",
+      render: (row) => (
+        <ManageButton onClick={() => option2DrToggle(row)}>
+          상품옵션2
+        </ManageButton>
+      ),
+    },
   ];
 
   const column2 = [
@@ -854,6 +954,32 @@ const Product = ({}) => {
           onConfirm={() => deleteOptionHandler(row)}
         >
           <ManageDelButton>옵션삭제</ManageDelButton>
+        </Popconfirm>
+      ),
+    },
+  ];
+
+  const opt2 = [
+    {
+      title: "번호",
+      dataIndex: "num",
+      width: "10%",
+    },
+
+    {
+      title: "옵션명",
+      render: (row) => <Text color={Theme.subTheme3_C}>{row.value}</Text>,
+      sorter: (a, b) => a.value.localeCompare(b.value),
+    },
+    {
+      title: "삭제",
+      render: (row) => (
+        <Popconfirm
+          title="삭제한 옵션2은 복구할 수 없습니다. 삭제하시겠습니까?"
+          onCancel={null}
+          onConfirm={() => deleteOption2Handler(row)}
+        >
+          <ManageDelButton>옵션2삭제</ManageDelButton>
         </Popconfirm>
       ),
     },
@@ -1374,6 +1500,50 @@ const Product = ({}) => {
           <ManagementTable
             columns={column2}
             dataSource={crData ? crData.options : []}
+            rowKey={"num"}
+          />
+        </Wrapper>
+      </Drawer>
+
+      <Drawer
+        visible={option2Dr}
+        width="35%"
+        title={`${crData && crData.name} _ 상품 옵션정보`}
+        onClose={() => option2DrToggle(null)}
+      >
+        <GuideUl>
+          <GuideLi>상품옵션2은 갯수에 재한없이 추가 가능합니다.</GuideLi>
+          <GuideLi isImpo={true}>
+            옵션2은 옵션명을 기준 이름순 정렬되니, 등록 시 참고해주세요.
+          </GuideLi>
+          <GuideLi isImpo={true}>
+            옵션명을 변경할 경우, 배송중인 물품 또는 배송완료 된 물품조회에
+            혼선이 있을 수 있어 수정을 금지합니다.
+          </GuideLi>
+        </GuideUl>
+
+        <Wrapper dr="row" ju="flex-start">
+          <ManagementForm
+            form={option2Form}
+            layout="inline"
+            onFinish={option2AddHandler}
+          >
+            <ManagementForm.Item
+              name="value"
+              rules={[{ required: true, message: "옵션명은 필수 입니다." }]}
+            >
+              <ManageInput width="230px" placeholder="옵션명을 입력해주세요." />
+            </ManagementForm.Item>
+
+            <ManageButton type="primary" htmlType="submit">
+              등록
+            </ManageButton>
+          </ManagementForm>
+        </Wrapper>
+        <Wrapper padding="5px">
+          <ManagementTable
+            columns={opt2}
+            dataSource={crData ? crData.options2 : []}
             rowKey={"num"}
           />
         </Wrapper>

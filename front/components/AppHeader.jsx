@@ -240,6 +240,13 @@ const AppHeader = ({}) => {
               </Link>
             )}
 
+            <Link href={`/search`}>
+              <a>
+                <Text margin={`0 24px 0 0`} isHover>
+                  검색
+                </Text>
+              </a>
+            </Link>
             <Link href={`/cart`}>
               <a>
                 <Text margin={`0 5px 0 0`} isHover>

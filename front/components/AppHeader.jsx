@@ -82,11 +82,7 @@ const Menu = styled.h2`
 `;
 
 const AppHeader = ({}) => {
-  const {
-    cartList,
-    //
-    st_cartCreateDone,
-  } = useSelector((state) => state.cart);
+  const { cartList } = useSelector((state) => state.cart);
   const { productTypes } = useSelector((state) => state.store);
   const { logos } = useSelector((state) => state.logo);
   const { me } = useSelector((state) => state.user);
@@ -100,7 +96,6 @@ const AppHeader = ({}) => {
   // const documentRef = useRef(document);
 
   const [drawar, setDrawar] = useState(false);
-  const [subMenu, setSubMenu] = useState(``);
 
   ///////////// - EVENT HANDLER- ////////////
 
@@ -176,7 +171,10 @@ const AppHeader = ({}) => {
                   <Menu isActive={router.pathname === `/best`}>BEST</Menu>
                 </a>
               </Link>
-              <Menu width={`120px`} isActive={router.pathname === `/product`}>
+              <Menu
+                width={`120px`}
+                isActive={router.pathname.includes(`/product`)}
+              >
                 <Link href={`/product`}>
                   <a>PRODUCT</a>
                 </Link>

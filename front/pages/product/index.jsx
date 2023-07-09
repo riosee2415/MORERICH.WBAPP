@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   GET_PRODUCTTYPE_REQUEST,
   GET_PRODUCT_REQUEST,
+  GET_TYPE_2DEPTH_REQUEST,
 } from "../../reducers/store";
 import { useRouter } from "next/router";
 import { LIKE_CREATE_REQUEST } from "../../reducers/wish";
@@ -48,13 +49,18 @@ const CateBtn = styled(Wrapper)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
-  const { products, productTypes } = useSelector((state) => state.store);
+  const { products, productTypes, productType2Depth } = useSelector(
+    (state) => state.store
+  );
   const { me } = useSelector((state) => state.user);
   const { st_likeCreateDone, st_likeCreateError } = useSelector(
     (state) => state.wish
   );
 
+  console.log(productType2Depth);
+
   const [type, setType] = useState(0);
+  const [type2, setType2] = useState(0);
   const [orderType, setOrderType] = useState(1); // 순서
 
   const [likeId, setLikeId] = useState(null);
@@ -84,13 +90,13 @@ const Index = () => {
     }
   }, [st_likeCreateDone, st_likeCreateError]);
 
-  useEffect(() => {
-    if (router.query.target) {
-      setType(parseInt(router.query.target));
-    } else {
-      return;
-    }
-  }, [router.query.target]);
+  // useEffect(() => {
+  //   if (router.query.target) {
+  //     setType(parseInt(router.query.target));
+  //   } else {
+  //     return;
+  //   }
+  // }, [router.query.target]);
 
   useEffect(() => {
     dispatch({
@@ -98,9 +104,10 @@ const Index = () => {
       data: {
         ProductTypeId: type,
         orderType: orderType,
+        ProductTypeId2: type2 ? type2 : null,
       },
     });
-  }, [type, orderType]);
+  }, [type, type2, orderType]);
 
   ////// TOGGLE //////
   ////// HANDLER //////
@@ -133,8 +140,22 @@ const Index = () => {
     (data) => {
       router.push(`/product?target=${data}`);
       setType(parseInt(data));
+
+      dispatch({
+        type: GET_TYPE_2DEPTH_REQUEST,
+        data: {
+          TypeId: parseInt(data),
+        },
+      });
     },
     [type]
+  );
+
+  const typeHandler2 = useCallback(
+    (data) => {
+      setType2(parseInt(data));
+    },
+    [type2]
   );
 
   // 순서
@@ -192,6 +213,38 @@ const Index = () => {
             </Wrapper>
           </Wrapper>
           <RsWrapper>
+            <Wrapper
+              borderBottom={`1px solid ${Theme.black_C}`}
+              dr={`row`}
+              ju={`flex-start`}
+              margin={`30px 0 0`}
+              fontSize={`18px`}
+            >
+              <Text margin={`0 20px 10px 0`}>전체</Text>
+              {productType2Depth && productType2Depth.length === 0 ? (
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 20px 10px 0`}
+                  color={Theme.grey_C}
+                >
+                  조회된 카테고리가 없습니다.
+                </Wrapper>
+              ) : (
+                productType2Depth &&
+                productType2Depth.map((data) => {
+                  return (
+                    <Text
+                      onClick={() => typeHandler2(data.id)}
+                      margin={`0 20px 10px 0`}
+                      key={data.id}
+                      isHover
+                    >
+                      {data.value}
+                    </Text>
+                  );
+                })
+              )}
+            </Wrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 20px`}>
               <Text color={Theme.grey_C}>
                 {products && products.length}개의 상품이 존재합니다.

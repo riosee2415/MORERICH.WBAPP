@@ -601,6 +601,7 @@ router.post("/product/toggle", isAdminCheck, async (req, res, next) => {
 router.post("/product/update", isAdminCheck, async (req, res, next) => {
   const {
     ProductTypeId,
+    ProductType2Id,
     detail,
     discount,
     id,
@@ -620,6 +621,7 @@ router.post("/product/update", isAdminCheck, async (req, res, next) => {
   const updateQ = `
     UPDATE  product
        SET  ProductTypeId = ${ProductTypeId},
+            ProductType2Id = ${ProductType2Id},
             detail = "${detail}",
             discount = ${discount},
             infoColor = "${infoColor}",
@@ -1330,6 +1332,17 @@ router.post("/bought/cancel", isAdminCheck, async (req, res, next) => {
  */
 router.post("/list3", async (req, res, next) => {
   const { TypeId } = req.body;
+
+
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log(TypeId);
+  console.log(TypeId);
+  console.log(TypeId);
 
   if (!TypeId) {
     return res.status(400).send("데이터를 조회할 수 없습니다.");

@@ -34,7 +34,6 @@ import { useRouter } from "next/router";
 import { CART_CREATE_REQUEST } from "../../reducers/cart";
 import { useEffect } from "react";
 import useInput from "../../hooks/useInput";
-import EtcOption from "../../components/product/EtcOption";
 
 const LineText = styled(Text)`
   color: ${(props) => props.theme.grey4_C};
@@ -440,14 +439,7 @@ const Index = () => {
                         <CloseOutlined />
                       </Text>
                     </Wrapper>
-<<<<<<< HEAD
-                    <Wrapper dr={`row`} margin={`14px 0 0`}>
-                      <Text width={`100px`}>사이즈</Text>
-                      <EtcOption />
-                    </Wrapper>
-=======
 
->>>>>>> c6a9b27169db7adaaa0eb4fc18f40c6a494db781
                     <Wrapper
                       dr={`row`}
                       ju={`space-between`}

@@ -380,7 +380,7 @@ router.post("/product/list", async (req, res, next) => {
     isBest = false,
     isRecomm = false,
     ProductTypeId,
-    ProductTypeId2 = false,
+    ProductType2Id = false,
     orderType = 1,
   } = req.body;
 
@@ -443,7 +443,7 @@ router.post("/product/list", async (req, res, next) => {
       AND	A.isDelete = 0
       AND	A.name LIKE "%${sName}%"
       ${_ProductTypeId ? `AND  A.ProductTypeId = ${_ProductTypeId}` : ""}
-      ${ProductTypeId2 ? `AND  A.ProductTypeId2 = ${ProductTypeId2}` : ""}
+      ${ProductType2Id ? `AND  A.ProductType2Id = ${ProductType2Id}` : ""}
       ${isNew ? `AND	A.isNew = ${isNew}` : ""}
       ${isBest ? `AND	A.isBest = ${isBest}` : ""}
       ${isRecomm ? `AND	A.isRecomm = ${isRecomm}` : ""}

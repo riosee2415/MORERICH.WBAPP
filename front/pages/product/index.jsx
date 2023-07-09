@@ -57,10 +57,8 @@ const Index = () => {
     (state) => state.wish
   );
 
-  console.log(productType2Depth);
-
-  const [type, setType] = useState(0);
-  const [type2, setType2] = useState(0);
+  const [type, setType] = useState(false);
+  const [type2, setType2] = useState(false);
   const [orderType, setOrderType] = useState(1); // 순서
 
   const [likeId, setLikeId] = useState(null);
@@ -90,25 +88,6 @@ const Index = () => {
     }
   }, [st_likeCreateDone, st_likeCreateError]);
 
-  // useEffect(() => {
-  //   if (router.query.target) {
-  //     setType(parseInt(router.query.target));
-  //   } else {
-  //     return;
-  //   }
-  // }, [router.query.target]);
-
-  useEffect(() => {
-    dispatch({
-      type: GET_PRODUCT_REQUEST,
-      data: {
-        ProductTypeId: type,
-        orderType: orderType,
-        ProductTypeId2: type2 ? type2 : null,
-      },
-    });
-  }, [type, type2, orderType]);
-
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -136,35 +115,45 @@ const Index = () => {
     [likeId, me]
   );
 
-  const typeHandler = useCallback(
-    (data) => {
-      router.push(`/product?target=${data}`);
-      setType(parseInt(data));
+  useEffect(() => {
+    if (router.query.target) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: type,
+          orderType: orderType,
+          ProductType2Id: type2 ? type2 : false,
+        },
+      });
 
       dispatch({
         type: GET_TYPE_2DEPTH_REQUEST,
         data: {
-          TypeId: parseInt(data),
+          TypeId: router.query.target,
         },
       });
-    },
-    [type]
-  );
+    }
+  }, [router.query, type, type2, orderType]);
 
-  const typeHandler2 = useCallback(
-    (data) => {
-      setType2(parseInt(data));
-    },
-    [type2]
-  );
+  const typeHandler = useCallback((data) => {
+    router.push(`/product?target=${data}`);
+
+    if (data === 0) {
+      setType2(false);
+      setType(false);
+    } else {
+      setType(parseInt(data));
+    }
+  }, []);
+
+  const typeHandler2 = useCallback((data) => {
+    setType2(parseInt(data));
+  }, []);
 
   // 순서
-  const orderTypeHandler = useCallback(
-    (data) => {
-      setOrderType(data);
-    },
-    [orderType]
-  );
+  const orderTypeHandler = useCallback((data) => {
+    setOrderType(data);
+  }, []);
 
   const movelinkHandler = useCallback((link) => {
     router.push(link);
@@ -190,7 +179,7 @@ const Index = () => {
               PRODUCT
             </Text>
             <Wrapper dr={`row`} margin={`18px 0 0`}>
-              <CateBtn onClick={() => typeHandler(0)} isActive={0 === type}>
+              <CateBtn onClick={() => typeHandler(0)} isActive={false === type}>
                 전체
               </CateBtn>
               {productTypes && productTypes.length === 0 ? (

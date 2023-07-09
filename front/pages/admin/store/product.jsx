@@ -58,6 +58,7 @@ import {
   DEL_OPTION_REQUEST,
   ADD_OPTION2_REQUEST,
   DEL_OPTION2_REQUEST,
+  GET_TYPE_2DEPTH_REQUEST,
 } from "../../../reducers/store";
 import { numberWithCommas } from "../../../components/commonUtils";
 import BarChart from "../../../components/admin/BarChart";
@@ -92,6 +93,7 @@ const Product = ({}) => {
     productTypes,
     products,
     products2,
+    productType2Depth,
     thumbnailPath,
     detailImagePath,
     //
@@ -135,6 +137,8 @@ const Product = ({}) => {
 
   const router = useRouter();
   const dispatch = useDispatch();
+
+  console.log(productType2Depth);
 
   // 상위메뉴 변수
   const [level1, setLevel1] = useState("상점관리");
@@ -433,6 +437,17 @@ const Product = ({}) => {
   }, [st_getProductDone]);
 
   useEffect(() => {
+    if (crData) {
+      dispatch({
+        type: GET_TYPE_2DEPTH_REQUEST,
+        data: {
+          TypeId: crData && crData.ProductTypeId,
+        },
+      });
+    }
+  }, [crData]);
+
+  useEffect(() => {
     if (st_addDetailImageDone) {
       dispatch({
         type: GET_PRODUCT_REQUEST,
@@ -623,6 +638,7 @@ const Product = ({}) => {
         type: UPDATE_PRODUCT_REQUEST,
         data: {
           ProductTypeId: crData.ProductTypeId,
+          ProductType2Id: crData.ProductType2Id,
           detail: data.detail,
           discount: data.discount,
           id: crData.id,
@@ -648,6 +664,16 @@ const Product = ({}) => {
       setCrData({
         ...crData,
         ProductTypeId: e,
+      });
+    },
+    [crData]
+  );
+
+  const productTypeChangeHandler2 = useCallback(
+    (e) => {
+      setCrData({
+        ...crData,
+        ProductType2Id: e,
       });
     },
     [crData]
@@ -821,6 +847,11 @@ const Product = ({}) => {
       title: "유형명",
       render: (row) => <div>{row.value}</div>,
       sorter: (a, b) => a.value.localeCompare(b.value),
+    },
+    {
+      title: "하위유형",
+      render: (row) => <div>{row.value2}</div>,
+      sorter: (a, b) => a.value2.localeCompare(b.value2),
     },
     {
       title: "판매금액",
@@ -1172,6 +1203,24 @@ const Product = ({}) => {
                     </Select.Option>
                   );
                 })}
+              </Select>
+            </CustomSelect>
+          </ManagementForm.Item>
+
+          <ManagementForm.Item label="상품유형2" name="value2">
+            <CustomSelect width="100%" height="24px">
+              <Select
+                value={crData && crData.ProductType2Id}
+                onChange={productTypeChangeHandler2}
+              >
+                {productType2Depth &&
+                  productType2Depth.map((item) => {
+                    return (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.value}
+                      </Select.Option>
+                    );
+                  })}
               </Select>
             </CustomSelect>
           </ManagementForm.Item>

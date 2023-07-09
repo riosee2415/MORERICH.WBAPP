@@ -380,7 +380,7 @@ router.post("/product/list", async (req, res, next) => {
     isBest = false,
     isRecomm = false,
     ProductTypeId,
-
+    ProductType2Id = false,
     orderType = 1,
   } = req.body;
 
@@ -415,7 +415,9 @@ router.post("/product/list", async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
             DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
             A.ProductTypeId,
+            A.ProductType2Id,
             B.value,
+            IFNULL(C.value, "-" )   as value2,
             ${
               req.user
                 ? ` (
@@ -433,10 +435,15 @@ router.post("/product/list", async (req, res, next) => {
     INNER	
      JOIN	productType		B
        ON	A.ProductTypeId = B.id
+       LEFT
+       OUTER
+        JOIN 		productType2 			C
+          ON		A.ProductType2Id = C.id
     WHERE	1 = 1
       AND	A.isDelete = 0
       AND	A.name LIKE "%${sName}%"
       ${_ProductTypeId ? `AND  A.ProductTypeId = ${_ProductTypeId}` : ""}
+      ${ProductType2Id ? `AND  A.ProductType2Id = ${ProductType2Id}` : ""}
       ${isNew ? `AND	A.isNew = ${isNew}` : ""}
       ${isBest ? `AND	A.isBest = ${isBest}` : ""}
       ${isRecomm ? `AND	A.isRecomm = ${isRecomm}` : ""}
@@ -594,6 +601,7 @@ router.post("/product/toggle", isAdminCheck, async (req, res, next) => {
 router.post("/product/update", isAdminCheck, async (req, res, next) => {
   const {
     ProductTypeId,
+    ProductType2Id,
     detail,
     discount,
     id,
@@ -613,6 +621,7 @@ router.post("/product/update", isAdminCheck, async (req, res, next) => {
   const updateQ = `
     UPDATE  product
        SET  ProductTypeId = ${ProductTypeId},
+            ProductType2Id = ${ProductType2Id},
             detail = "${detail}",
             discount = ${discount},
             infoColor = "${infoColor}",
@@ -1323,6 +1332,17 @@ router.post("/bought/cancel", isAdminCheck, async (req, res, next) => {
  */
 router.post("/list3", async (req, res, next) => {
   const { TypeId } = req.body;
+
+
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log("***************************************")
+  console.log(TypeId);
+  console.log(TypeId);
+  console.log(TypeId);
 
   if (!TypeId) {
     return res.status(400).send("데이터를 조회할 수 없습니다.");

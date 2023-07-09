@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   GET_PRODUCTTYPE_REQUEST,
   GET_PRODUCT_REQUEST,
+  GET_TYPE_2DEPTH_REQUEST,
 } from "../../reducers/store";
 import { useRouter } from "next/router";
 import { LIKE_CREATE_REQUEST } from "../../reducers/wish";
@@ -48,13 +49,16 @@ const CateBtn = styled(Wrapper)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
-  const { products, productTypes } = useSelector((state) => state.store);
+  const { products, productTypes, productType2Depth } = useSelector(
+    (state) => state.store
+  );
   const { me } = useSelector((state) => state.user);
   const { st_likeCreateDone, st_likeCreateError } = useSelector(
     (state) => state.wish
   );
 
-  const [type, setType] = useState(0);
+  const [type, setType] = useState(false);
+  const [type2, setType2] = useState(false);
   const [orderType, setOrderType] = useState(1); // 순서
 
   const [likeId, setLikeId] = useState(null);
@@ -93,14 +97,24 @@ const Index = () => {
   }, [router.query.target]);
 
   useEffect(() => {
-    dispatch({
-      type: GET_PRODUCT_REQUEST,
-      data: {
-        ProductTypeId: type,
-        orderType: orderType,
-      },
-    });
-  }, [type, orderType]);
+    if (router.query.target) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: type,
+          orderType: orderType,
+          ProductType2Id: type2 ? type2 : false,
+        },
+      });
+
+      dispatch({
+        type: GET_TYPE_2DEPTH_REQUEST,
+        data: {
+          TypeId: router.query.target,
+        },
+      });
+    }
+  }, [router.query, type, type2, orderType]);
 
   ////// TOGGLE //////
   ////// HANDLER //////
@@ -129,21 +143,26 @@ const Index = () => {
     [likeId, me]
   );
 
-  const typeHandler = useCallback(
-    (data) => {
-      router.push(`/product?target=${data}`);
+  const typeHandler = useCallback((data) => {
+    router.push(`/product?target=${data}`);
+
+    if (data === 0) {
+      setType2(false);
+      setType(false);
+    } else {
       setType(parseInt(data));
-    },
-    [type]
-  );
+      setType2(false);
+    }
+  }, []);
+
+  const typeHandler2 = useCallback((data) => {
+    setType2(parseInt(data));
+  }, []);
 
   // 순서
-  const orderTypeHandler = useCallback(
-    (data) => {
-      setOrderType(data);
-    },
-    [orderType]
-  );
+  const orderTypeHandler = useCallback((data) => {
+    setOrderType(data);
+  }, []);
 
   const movelinkHandler = useCallback((link) => {
     router.push(link);
@@ -169,7 +188,7 @@ const Index = () => {
               PRODUCT
             </Text>
             <Wrapper dr={`row`} margin={`18px 0 0`}>
-              <CateBtn onClick={() => typeHandler(0)} isActive={0 === type}>
+              <CateBtn onClick={() => typeHandler(0)} isActive={false === type}>
                 전체
               </CateBtn>
               {productTypes && productTypes.length === 0 ? (
@@ -192,6 +211,49 @@ const Index = () => {
             </Wrapper>
           </Wrapper>
           <RsWrapper>
+            <Wrapper
+              borderBottom={`1px solid ${Theme.black_C}`}
+              dr={`row`}
+              ju={`flex-start`}
+              margin={`30px 0 0`}
+              fontSize={width < 900 ? `16px` : `18px`}
+            >
+              <Text
+                margin={`0 20px 10px 0`}
+                color={false === type2 ? Theme.black_C : Theme.grey2_C}
+                fontWeight={false === type2 ? `bold` : ``}
+                onClick={() => typeHandler2(false)}
+                isHover
+              >
+                전체
+              </Text>
+
+              {productType2Depth && productType2Depth.length === 0 ? (
+                <Wrapper
+                  width={`auto`}
+                  margin={`0 20px 10px 0`}
+                  color={Theme.grey_C}
+                >
+                  조회된 카테고리가 없습니다.
+                </Wrapper>
+              ) : (
+                productType2Depth &&
+                productType2Depth.map((data) => {
+                  return (
+                    <Text
+                      onClick={() => typeHandler2(data.id)}
+                      margin={`0 20px 10px 0`}
+                      key={data.id}
+                      fontWeight={data.id === type2 ? `bold` : ``}
+                      color={data.id === type2 ? Theme.black_C : Theme.grey2_C}
+                      isHover
+                    >
+                      {data.value}
+                    </Text>
+                  );
+                })
+              )}
+            </Wrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 20px`}>
               <Text color={Theme.grey_C}>
                 {products && products.length}개의 상품이 존재합니다.

@@ -175,7 +175,7 @@ const AppHeader = ({}) => {
                 width={`120px`}
                 isActive={router.pathname.includes(`/product`)}
               >
-                <Link href={`/product`}>
+                <Link href={`/product?target=0`}>
                   <a>PRODUCT</a>
                 </Link>
                 <SubMenu>
@@ -405,11 +405,11 @@ const AppHeader = ({}) => {
                 </Menu>
               </ATag>
             </Link>
-            <Link href={`/product`}>
+            <Link href={`//product?target=0`}>
               <ATag height={`70px`} ju={`flex-start`}>
                 <Menu
                   onClick={drawarToggle}
-                  isActive={router.pathname === `/product`}
+                  isActive={router.pathname.includes(`/product`)}
                 >
                   PRODUCT
                 </Menu>

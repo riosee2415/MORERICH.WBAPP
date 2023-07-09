@@ -88,6 +88,34 @@ const Index = () => {
     }
   }, [st_likeCreateDone, st_likeCreateError]);
 
+  useEffect(() => {
+    if (router.query.target) {
+      setType(parseInt(router.query.target));
+    } else {
+      return;
+    }
+  }, [router.query.target]);
+
+  useEffect(() => {
+    if (router.query.target) {
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+        data: {
+          ProductTypeId: type,
+          orderType: orderType,
+          ProductType2Id: type2 ? type2 : false,
+        },
+      });
+
+      dispatch({
+        type: GET_TYPE_2DEPTH_REQUEST,
+        data: {
+          TypeId: router.query.target,
+        },
+      });
+    }
+  }, [router.query, type, type2, orderType]);
+
   ////// TOGGLE //////
   ////// HANDLER //////
 
@@ -115,26 +143,6 @@ const Index = () => {
     [likeId, me]
   );
 
-  useEffect(() => {
-    if (router.query.target) {
-      dispatch({
-        type: GET_PRODUCT_REQUEST,
-        data: {
-          ProductTypeId: type,
-          orderType: orderType,
-          ProductType2Id: type2 ? type2 : false,
-        },
-      });
-
-      dispatch({
-        type: GET_TYPE_2DEPTH_REQUEST,
-        data: {
-          TypeId: router.query.target,
-        },
-      });
-    }
-  }, [router.query, type, type2, orderType]);
-
   const typeHandler = useCallback((data) => {
     router.push(`/product?target=${data}`);
 
@@ -143,6 +151,7 @@ const Index = () => {
       setType(false);
     } else {
       setType(parseInt(data));
+      setType2(false);
     }
   }, []);
 
@@ -207,9 +216,18 @@ const Index = () => {
               dr={`row`}
               ju={`flex-start`}
               margin={`30px 0 0`}
-              fontSize={`18px`}
+              fontSize={width < 900 ? `16px` : `18px`}
             >
-              <Text margin={`0 20px 10px 0`}>전체</Text>
+              <Text
+                margin={`0 20px 10px 0`}
+                color={false === type2 ? Theme.black_C : Theme.grey2_C}
+                fontWeight={false === type2 ? `bold` : ``}
+                onClick={() => typeHandler2(false)}
+                isHover
+              >
+                전체
+              </Text>
+
               {productType2Depth && productType2Depth.length === 0 ? (
                 <Wrapper
                   width={`auto`}
@@ -226,6 +244,8 @@ const Index = () => {
                       onClick={() => typeHandler2(data.id)}
                       margin={`0 20px 10px 0`}
                       key={data.id}
+                      fontWeight={data.id === type2 ? `bold` : ``}
+                      color={data.id === type2 ? Theme.black_C : Theme.grey2_C}
                       isHover
                     >
                       {data.value}

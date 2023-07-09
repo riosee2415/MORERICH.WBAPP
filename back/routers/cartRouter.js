@@ -90,6 +90,8 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     return res.status(401).send("잘못된 요청입니다.");
   }
 
+  console.log(products);
+
   try {
     let ids = [];
 
@@ -100,6 +102,8 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
           FROM  cart
          WHERE  ProductId = ${data.ProductId}
            AND  ProductOptionId = ${data.ProductOptionId}
+           AND  etcOption = "${data.etcOption}"
+           AND  UserId = ${req.user.id}
         `;
 
         const findResult = await models.sequelize.query(findQuery);

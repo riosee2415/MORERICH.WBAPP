@@ -68,7 +68,6 @@ const Index = () => {
   const [totalPrice, setTotalPrice] = useState(0); // 상품금액
   const [isMore, setIsMore] = useState(false); // 상품금액
 
-  const sizeInput = useInput(``);
   ////// REDUX //////
 
   ////// USEEFFECT //////
@@ -144,10 +143,10 @@ const Index = () => {
 
     currentDatum.map((data) => {
       products.push({
-        ProductId: router.query.id,
+        ProductId: data.id,
         ProductOptionId: data.optionId,
-        ProductOptionId2: data.optionId2,
         qun: data.qun,
+        etcOption: data.optionName2,
       });
     });
 
@@ -163,7 +162,7 @@ const Index = () => {
   const optionQunUpdateHandler = useCallback(
     (data, num) => {
       const arr = currentDatum ? currentDatum.map((data) => data) : [];
-      const currentId = arr.findIndex((value) => value.id === data.id);
+      const currentId = arr.findIndex((value) => value.targetId === data);
 
       if (arr[currentId].qun + num <= 0) {
         arr[currentId].qun = 1;
@@ -189,8 +188,6 @@ const Index = () => {
   // 옵션 선택
   const optionCreateHandler2 = useCallback(
     (data) => {
-      setOptionData2(data);
-
       setTotalPrice(totalPrice + (productDetail && productDetail.calcPrice));
 
       let arr = currentDatum ? currentDatum.map((data) => data) : [];
@@ -199,11 +196,13 @@ const Index = () => {
       if (currentId === -1) {
         arr.push({
           ...productDetail,
+          targetId: currentDatum.length + 1,
           optionId: optionData[0],
           optionName: optionData[1],
           value: optionData[1],
           optionId2: data[0],
           optionName2: data[1],
+          etcOption: data[1],
           value2: data[1],
           qun: 1,
         });
@@ -213,7 +212,7 @@ const Index = () => {
 
       setcurrentDatum(arr);
     },
-    [currentDatum, productDetail, totalPrice, sizeInput]
+    [currentDatum, productDetail, totalPrice, optionData]
   );
 
   const backHandler = useCallback(() => {
@@ -457,7 +456,9 @@ const Index = () => {
                           cursor={`pointer`}
                           height={`30px`}
                           fontSize={`12px`}
-                          onClick={() => optionQunUpdateHandler(data, -1)}
+                          onClick={() =>
+                            optionQunUpdateHandler(data.targetId, -1)
+                          }
                         >
                           <Text isHover>
                             <MinusOutlined />
@@ -477,7 +478,9 @@ const Index = () => {
                           cursor={`pointer`}
                           height={`30px`}
                           fontSize={`12px`}
-                          onClick={() => optionQunUpdateHandler(data, +1)}
+                          onClick={() =>
+                            optionQunUpdateHandler(data.targetId, +1)
+                          }
                         >
                           <Text isHover>
                             <PlusOutlined />

@@ -174,7 +174,7 @@ const Index = () => {
         price: data.price,
         qun: data.qun,
         optionValue: data.optionName,
-        optionValue2: data.optionName2,
+        etcOption: data.etcOption,
         thumbnail: data.thumbnail,
       });
     });
@@ -509,7 +509,7 @@ const Index = () => {
                               color={Theme.grey_C}
                               margin={`0 15px 0 0`}
                             >
-                              옵션2 : {data.optionName2}
+                              옵션2 : {data.etcOption}
                             </Text>
                             <Text
                               fontSize={width < 900 ? `14px` : `15px`}

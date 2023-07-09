@@ -325,7 +325,7 @@ const Index = () => {
                           fontSize={width < 900 ? `14px` : `15px`}
                           color={Theme.grey_C}
                         >
-                          옵션2 : {data.optionName2}
+                          옵션2 : {data.etcOption}
                         </Text>
                         {width < 900 && (
                           <>

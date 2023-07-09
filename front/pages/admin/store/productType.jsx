@@ -33,14 +33,19 @@ import {
   NEW_PRODUCTTYPE_REQUEST,
   DEL_PRODUCTTYPE_REQUEST,
   GET2_PRODUCTTYPE_REQUEST,
+  GET_TYPE_2DEPTH_REQUEST,
+  DEL_TYPE_2DEPTH_REQUEST,
+  NEW_TYPE_2DEPTH_REQUEST,
 } from "../../../reducers/store";
 import PTypeWorkInput from "../../../components/admin/PTypeWorkInput";
+import PTypeWorkInput2 from "../../../components/admin/PTypeWorkInput2";
 import BarChart from "../../../components/admin/BarChart";
 
 const ProductType = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
   const {
     productTypes,
+    productType2Depth,
     productTypes2,
     //
     st_newProductTypeLoading,
@@ -54,6 +59,10 @@ const ProductType = ({}) => {
     st_delProductTypeError,
     //
     st_getProductType2Loading,
+    //
+    st_delProductType2DepthDone,
+    //
+    st_newProductType2DepthDone,
   } = useSelector((state) => state.store);
 
   const router = useRouter();
@@ -67,7 +76,12 @@ const ProductType = ({}) => {
   const [newView, setNewView] = useState(false);
   const [newValue, setNewValue] = useState("");
 
+  const [newView2, setNewView2] = useState(false);
+  const [newValue2, setNewValue2] = useState("");
+
   const [graphView, setGraphView] = useState(false);
+
+  const [currentRow, setCurrentRow] = useState(null);
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -90,15 +104,46 @@ const ProductType = ({}) => {
 
   /////////////////////////////////////////////////////////////////////////
 
-  const blankKey = (e) => {
-    if (e.keyCode === 78) {
-      setNewValue("");
-      setNewView((p) => !p);
+  useEffect(() => {
+    if (st_delProductType2DepthDone && currentRow) {
+      dispatch({
+        type: GET_TYPE_2DEPTH_REQUEST,
+        data: {
+          TypeId: currentRow.id,
+        },
+      });
     }
+  }, [st_delProductType2DepthDone]);
 
-    if (e.keyCode === 83) {
-      graphToggle();
+  useEffect(() => {
+    if (st_newProductType2DepthDone && currentRow) {
+      dispatch({
+        type: GET_TYPE_2DEPTH_REQUEST,
+        data: {
+          TypeId: currentRow.id,
+        },
+      });
     }
+  }, [st_newProductType2DepthDone]);
+
+  const get2DepthHandler = useCallback((row) => {
+    setCurrentRow(row);
+    dispatch({
+      type: GET_TYPE_2DEPTH_REQUEST,
+      data: {
+        TypeId: row.id,
+      },
+    });
+  }, []);
+
+  const blankKey = (e) => {
+    // if (e.keyCode === 78) {
+    //   setNewValue("");
+    //   setNewView((p) => !p);
+    // }
+    // if (e.keyCode === 83) {
+    //   graphToggle();
+    // }
   };
 
   ////// HOOKS //////
@@ -202,10 +247,33 @@ const ProductType = ({}) => {
     });
   }, [newValue]);
 
+  const newHandler2 = useCallback(() => {
+    if (newValue2 === "") {
+      return message.error("유형명은 필수 입니다.");
+    }
+
+    dispatch({
+      type: NEW_TYPE_2DEPTH_REQUEST,
+      data: {
+        value: newValue2,
+        ProductTypeId: currentRow.id,
+      },
+    });
+  }, [newValue2, currentRow]);
+
   const onNewKeyDown = useCallback(
     (e) => {
       if (e.keyCode === 13) {
         newHandler();
+      }
+    },
+    [newValue]
+  );
+
+  const onNewKeyDown2 = useCallback(
+    (e) => {
+      if (e.keyCode === 13) {
+        newHandler2();
       }
     },
     [newValue]
@@ -223,6 +291,15 @@ const ProductType = ({}) => {
       data: {
         id: row.id,
         value: row.value,
+      },
+    });
+  }, []);
+
+  const delHandler2 = useCallback((row) => {
+    dispatch({
+      type: DEL_TYPE_2DEPTH_REQUEST,
+      data: {
+        id: row.id,
       },
     });
   }, []);
@@ -280,6 +357,62 @@ const ProductType = ({}) => {
           cancelText="취소"
           onCancel={null}
           onConfirm={() => delHandler(row)}
+        >
+          <ManageDelButton type="dashed">삭제</ManageDelButton>
+        </Popconfirm>
+      ),
+    },
+
+    {
+      title: "하위 카테고리",
+      render: (row) => (
+        <ManageButton type="primary" onClick={() => get2DepthHandler(row)}>
+          관리
+        </ManageButton>
+      ),
+    },
+  ];
+
+  const column2 = [
+    {
+      title: "번호",
+      dataIndex: "num",
+      width: "5%",
+    },
+    {
+      title: "유형명",
+      render: (row) => (
+        <PTypeWorkInput2 compare="value" initValue={row.value} row={row} />
+      ),
+      sorter: (a, b) => a.value.localeCompare(b.value),
+      width: "30%",
+    },
+
+    {
+      title: "등록일",
+      dataIndex: "viewCreatedAt",
+      sorter: {
+        compare: (a, b) => a.sortCreatedAt - b.sortCreatedAt,
+        multiple: 3,
+      },
+    },
+    {
+      title: "최근수정",
+      dataIndex: "viewUpdatedAt",
+      sorter: {
+        compare: (a, b) => a.sortUpdatedAt - b.sortUpdatedAt,
+        multiple: 3,
+      },
+    },
+    {
+      title: "컨트롤",
+      render: (row) => (
+        <Popconfirm
+          title={`${row.value} 상품유형을 삭제하시겠습니까?`}
+          okText="삭제"
+          cancelText="취소"
+          onCancel={null}
+          onConfirm={() => delHandler2(row)}
         >
           <ManageDelButton type="dashed">삭제</ManageDelButton>
         </Popconfirm>
@@ -384,6 +517,49 @@ const ProductType = ({}) => {
           )}
         </Wrapper>
       </Drawer>
+
+      {/* Type2 */}
+
+      {productType2Depth ? (
+        <Wrapper padding="20px" margin="0px 0px 100px 0px">
+          <Wrapper dr="row" ju="space-between">
+            <Text fontSize="18px">하위 카테고리</Text>
+
+            <Wrapper dr="row" ju="flex-end">
+              {newView2 ? (
+                <ManageInput
+                  width="220px"
+                  placeholder="새로운 유형을 입력하세요."
+                  value={newValue2}
+                  onChange={(e) => setNewValue2(e.target.value)}
+                  onKeyDown={onNewKeyDown2}
+                />
+              ) : null}
+
+              {newView2 ? (
+                <ManageButton onClick={newHandler2} type="primary">
+                  등록
+                </ManageButton>
+              ) : null}
+
+              <ManageButton
+                onClick={() => setNewView2((p) => !p)}
+                type="primary"
+              >
+                {newView2 ? "등록취소" : "신규등록"}
+              </ManageButton>
+            </Wrapper>
+          </Wrapper>
+
+          <ManagementTable
+            columns={column2}
+            dataSource={productType2Depth}
+            rowKey={"num"}
+          />
+        </Wrapper>
+      ) : (
+        <Text>하위 카테고리를 선택해주세요.</Text>
+      )}
     </AdminLayout>
   );
 };

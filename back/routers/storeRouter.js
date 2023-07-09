@@ -1313,4 +1313,138 @@ router.post("/bought/cancel", isAdminCheck, async (req, res, next) => {
   }
 });
 
+/**
+ * SUBJECT : 상품유형2 가져오기
+ * PARAMETERS : { TypeId }
+ * ORDER BY : 이름 순
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/07/08
+ */
+router.post("/list3", async (req, res, next) => {
+  const { TypeId } = req.body;
+
+  if (!TypeId) {
+    return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+
+  const selectQuery = `
+    SELECT	ROW_NUMBER() OVER(ORDER BY value ASC)           AS num,   
+            A.id,
+            A.value,
+            DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
+            DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
+            DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
+            DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+            ProductTypeId
+     FROM	productType2	A
+    WHERE	1 = 1
+      AND	A.isDelete = 0
+      AND ProductTypeId = ${TypeId}
+    ORDER	BY value ASC
+    `;
+
+  try {
+    const list = await models.sequelize.query(selectQuery);
+
+    return res.status(200).json(list[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형2 수정하기
+ * PARAMETERS : { id, value }
+ * ORDER BY : 이름 순
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/07/08
+ */
+router.post("/modify3", async (req, res, next) => {
+  const { id, value } = req.body;
+
+  if (!id) {
+    return res.status(400).send("데이터를 수정할 수 없습니다.");
+  }
+
+  if (!value) {
+    return res.status(400).send("데이터를 수정할 수 없습니다.");
+  }
+  const uq = `
+    UPDATE  productType2
+       SET  value = "${value}",
+            updatedAt = NOW()
+      WHERE id = ${id}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 수정할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형2 추가하기
+ * PARAMETERS : { value }
+ * ORDER BY : SORT 기준
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/new3", isAdminCheck, async (req, res, next) => {
+  const { value, ProductTypeId } = req.body;
+
+  const insertQuery1 = `
+    INSERT INTO productType2 (value, createdAt, updatedAt, ProductTypeId) VALUES 
+        ("${value}", NOW(), NOW(), ${ProductTypeId})
+    `;
+
+  try {
+    const result1 = await models.sequelize.query(insertQuery1);
+
+    if (result1[1] > 0) {
+      return res.status(200).json({ result: true });
+    } else {
+      return res.status(400).send("데이터 추가에 실패했습니다.");
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("관리자에 문의해주세요.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형2 삭제하기
+ * PARAMETERS : -
+ * ORDER BY : SORT 기준
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/05/31
+ */
+router.post("/delete3", isAdminCheck, async (req, res, next) => {
+  const { id } = req.body;
+
+  const updateQuery = `
+    UPDATE	productType2
+       SET	isDelete = 1,
+            deletedAt = NOW()
+     WHERE	id = ${id} 
+    `;
+
+  try {
+    await models.sequelize.query(updateQuery);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 삭제할 수 없습니다.");
+  }
+});
+
 module.exports = router;

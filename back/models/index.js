@@ -40,6 +40,7 @@ const boughtList = require("./boughtlist");
 const cart = require("./cart");
 const newbanner = require("./newbanner");
 const maindesign = require("./maindesign");
+const producttype2 = require("./producttype2");
 
 const env = process.env.NODE_ENV || "development";
 const config = require("../config/config")[env];
@@ -76,6 +77,7 @@ db.FaqType = faqType;
 db.JoinSet = joinset;
 
 db.ProductType = productType;
+db.ProductType2 = producttype2;
 db.ProductTypeHistory = productTypeHistory;
 db.Product = product;
 db.ProductImage = productImage;

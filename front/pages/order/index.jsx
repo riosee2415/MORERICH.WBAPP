@@ -173,8 +173,8 @@ const Index = () => {
         productName: data.name,
         price: data.price,
         qun: data.qun,
-        etcOption: data.etcOption,
         optionValue: data.optionName,
+        optionValue2: data.optionName2,
         thumbnail: data.thumbnail,
       });
     });
@@ -459,6 +459,7 @@ const Index = () => {
                 >
                   주문상품
                 </Wrapper>
+
                 {currentData.map((data) => {
                   return (
                     <Wrapper
@@ -508,7 +509,7 @@ const Index = () => {
                               color={Theme.grey_C}
                               margin={`0 15px 0 0`}
                             >
-                              사이즈 : {data.etcOption}
+                              옵션2 : {data.optionName2}
                             </Text>
                             <Text
                               fontSize={width < 900 ? `14px` : `15px`}

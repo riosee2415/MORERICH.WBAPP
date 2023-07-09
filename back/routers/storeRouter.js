@@ -380,7 +380,7 @@ router.post("/product/list", async (req, res, next) => {
     isBest = false,
     isRecomm = false,
     ProductTypeId,
-
+    ProductTypeId2 = false,
     orderType = 1,
   } = req.body;
 
@@ -415,7 +415,9 @@ router.post("/product/list", async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
             DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
             A.ProductTypeId,
+            A.ProductType2Id,
             B.value,
+            IFNULL(C.value, "-" )   as value2,
             ${
               req.user
                 ? ` (
@@ -433,10 +435,15 @@ router.post("/product/list", async (req, res, next) => {
     INNER	
      JOIN	productType		B
        ON	A.ProductTypeId = B.id
+       LEFT
+       OUTER
+        JOIN 		productType2 			C
+          ON		A.ProductType2Id = C.id
     WHERE	1 = 1
       AND	A.isDelete = 0
       AND	A.name LIKE "%${sName}%"
       ${_ProductTypeId ? `AND  A.ProductTypeId = ${_ProductTypeId}` : ""}
+      ${ProductTypeId2 ? `AND  A.ProductTypeId2 = ${ProductTypeId2}` : ""}
       ${isNew ? `AND	A.isNew = ${isNew}` : ""}
       ${isBest ? `AND	A.isBest = ${isBest}` : ""}
       ${isRecomm ? `AND	A.isRecomm = ${isRecomm}` : ""}

@@ -823,6 +823,11 @@ const Product = ({}) => {
       sorter: (a, b) => a.value.localeCompare(b.value),
     },
     {
+      title: "하위유형",
+      render: (row) => <div>{row.value2}</div>,
+      sorter: (a, b) => a.value2.localeCompare(b.value2),
+    },
+    {
       title: "판매금액",
       render: (row) => <div>{row.viewPrice}</div>,
       sorter: {
@@ -1160,6 +1165,24 @@ const Product = ({}) => {
           </ManagementForm.Item>
 
           <ManagementForm.Item label="상품유형" name="value">
+            <CustomSelect width="100%" height="24px">
+              <Select
+                value={crData && crData.ProductTypeId}
+                onChange={productTypeChangeHandler}
+              >
+                {productTypes.map((item) => {
+                  return (
+                    <Select.Option key={item.id} value={item.id}>
+                      {item.value}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </CustomSelect>
+          </ManagementForm.Item>
+
+
+          <ManagementForm.Item label="상품유형2" name="value2">
             <CustomSelect width="100%" height="24px">
               <Select
                 value={crData && crData.ProductTypeId}

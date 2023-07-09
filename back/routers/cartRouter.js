@@ -90,8 +90,6 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     return res.status(401).send("잘못된 요청입니다.");
   }
 
-  console.log(products);
-
   try {
     let ids = [];
 

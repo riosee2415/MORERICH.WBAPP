@@ -309,7 +309,7 @@ const Bought = ({}) => {
       dataIndex: "optionValue",
     },
     {
-      title: "사이즈",
+      title: "선택옵션2",
       dataIndex: "etcOption",
     },
     {

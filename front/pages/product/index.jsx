@@ -155,9 +155,14 @@ const Index = () => {
     }
   }, []);
 
-  const typeHandler2 = useCallback((data) => {
-    setType2(parseInt(data));
-  }, []);
+  const typeHandler2 = useCallback(
+    (data) => {
+      router.push(`/product?target=${type}&target2=${data}`);
+
+      setType2(parseInt(data));
+    },
+    [type]
+  );
 
   // 순서
   const orderTypeHandler = useCallback((data) => {

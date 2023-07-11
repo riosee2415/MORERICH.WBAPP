@@ -214,7 +214,7 @@ const Index = () => {
             <Wrapper
               borderBottom={`1px solid ${Theme.black_C}`}
               dr={`row`}
-              ju={`flex-start`}
+              ju={width < 900 ? `center` : `flex-start`}
               margin={`30px 0 0`}
               fontSize={width < 900 ? `16px` : `18px`}
             >

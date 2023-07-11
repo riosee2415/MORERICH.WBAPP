@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { POPUP_GET_REQUEST } from "../../reducers/popup";
 import { Image, Wrapper } from "../commonComponents";
@@ -35,6 +35,10 @@ const Popup = ({ cookies }) => {
     popup.style.display = "none";
   };
 
+  const moveLinkHandler = useCallback((link) => {
+    window.open(link);
+  }, []);
+
   return (
     <Wrapper zIndex={`20`}>
       {popups &&
@@ -59,7 +63,12 @@ const Popup = ({ cookies }) => {
               }
               width={`340px`}
             >
-              <Wrapper>
+              <Wrapper
+                cursor={data.linkUseYn ? `pointer` : ``}
+                onClick={() =>
+                  data.linkUseYn ? moveLinkHandler(data.link) : ""
+                }
+              >
                 <Image src={data.imagePath} alt={`popup`} height={`454px`} />
               </Wrapper>
               <Wrapper dr={`row`}>

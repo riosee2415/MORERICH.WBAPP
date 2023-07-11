@@ -50,15 +50,9 @@ router.post("/list", async (req, res, next) => {
             DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
             (
                 SELECT	COUNT(id)
-<<<<<<< HEAD
                     FROM	product
                 WHERE	ProductTypeId = A.id
                   AND isDelete = 0
-=======
-                  FROM	product
-                 WHERE	ProductTypeId = A.id
-                   AND  isDelete = 0
->>>>>>> 736b632db8a93c85d89583ca170fb6c86cd917be
             )	AS	productCnt
      FROM	productType	A
     WHERE	1 = 1

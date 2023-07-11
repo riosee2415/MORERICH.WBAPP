@@ -79,7 +79,7 @@ const Complete = () => {
                   카드결제는 카카오톡 채팅을 이용해주시기 바랍니다.
                 </Text>
 
-                <ATag target="_blank" href="http://pf.kakao.com/_mNWhG">
+                <ATag target="_blank" href="https://pf.kakao.com/_mNWhG/chat">
                   <CommonButton
                     width={width < 700 ? `150px` : `200px`}
                     height={width < 700 ? `50px` : `60px`}

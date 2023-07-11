@@ -534,7 +534,7 @@ const Index = () => {
                 <ATag
                   width={`32%`}
                   target="_blank"
-                  href="http://pf.kakao.com/_mNWhG"
+                  href="https://pf.kakao.com/_mNWhG/chat"
                 >
                   <CommonButton
                     width={`100%`}
@@ -550,7 +550,7 @@ const Index = () => {
                 <ATag
                   width={`32%`}
                   target="_blank"
-                  href="http://pf.kakao.com/_mNWhG"
+                  href="https://pf.kakao.com/_mNWhG/chat"
                 >
                   <CommonButton
                     width={`100%`}

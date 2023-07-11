@@ -278,7 +278,7 @@ const Complete = () => {
                   입금은행
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                  국민은행 19649078709307
+                  하나은행 516-910248-15807 (김하나)
                 </Text>
               </Wrapper>
               <Wrapper dr={`row`} margin={`0 0 20px`}>

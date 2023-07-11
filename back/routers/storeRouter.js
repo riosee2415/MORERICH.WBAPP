@@ -52,6 +52,7 @@ router.post("/list", async (req, res, next) => {
                 SELECT	COUNT(id)
                     FROM	product
                 WHERE	ProductTypeId = A.id
+                  AND isDelete = 0
             )	AS	productCnt
      FROM	productType	A
     WHERE	1 = 1
@@ -517,6 +518,7 @@ router.post("/product/list2", isAdminCheck, async (req, res, next) => {
     INNER
      JOIN	productType B
        ON	A.ProductTypeId = B.id
+    WHERE A.isDelete = 0
     GROUP	BY	A.ProductTypeId
     `;
 

@@ -117,6 +117,7 @@ const ProductType = ({}) => {
 
   useEffect(() => {
     if (st_newProductType2DepthDone && currentRow) {
+      setNewValue2("");
       dispatch({
         type: GET_TYPE_2DEPTH_REQUEST,
         data: {
@@ -276,7 +277,7 @@ const ProductType = ({}) => {
         newHandler2();
       }
     },
-    [newValue]
+    [newValue2]
   );
 
   const delHandler = useCallback((row) => {

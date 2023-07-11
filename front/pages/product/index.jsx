@@ -159,7 +159,11 @@ const Index = () => {
     (data) => {
       router.push(`/product?target=${type}&target2=${data}`);
 
-      setType2(parseInt(data));
+      if (data === false) {
+        setType2(data);
+      } else {
+        setType2(parseInt(data));
+      }
     },
     [type]
   );

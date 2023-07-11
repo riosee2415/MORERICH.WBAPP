@@ -170,10 +170,10 @@ const SignUp = () => {
                 {...nameInput}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
-                연락처
+                *연락처
               </Wrapper>
               <TextInput
-                placeholder="(선택사항)'-'를 제외한 연락처"
+                placeholder="'-'를 제외한 연락처"
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}

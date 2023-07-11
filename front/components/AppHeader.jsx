@@ -77,7 +77,7 @@ const Menu = styled.h2`
     line-height: 1;
     height: auto;
     width: 100%;
-    text-align: left;
+    text-align: ${(props) => props.textAlign || `left`};
   }
 `;
 
@@ -308,8 +308,8 @@ const AppHeader = ({}) => {
             <MenuOutlined onClick={drawarToggle} />
           </Wrapper>
         </Wrapper>
-        <Wrapper padding={`20px 0`} overflow={`auto`} al={`flex-start`}>
-          <Wrapper
+        <Wrapper padding={`20px 0`} dr={`row`} ju={`space-between`}>
+          {/* <Wrapper
             minWidth={`${productTypes.length * 60}px`}
             width={`auto`}
             wrap={`nowrap`}
@@ -328,7 +328,41 @@ const AppHeader = ({}) => {
                 </Menu>
               );
             })}
-          </Wrapper>
+          </Wrapper> */}
+          <Link href={`/new`}>
+            <ATag width={`auto`}>
+              <Menu textAlign={`center`} isActive={router.pathname === `/new`}>
+                NEW
+              </Menu>
+            </ATag>
+          </Link>
+          <Link href={`/best`}>
+            <ATag width={`auto`}>
+              <Menu textAlign={`center`} isActive={router.pathname === `/best`}>
+                BEST
+              </Menu>
+            </ATag>
+          </Link>
+          <Link href={`/product?target=0`}>
+            <ATag width={`auto`}>
+              <Menu
+                textAlign={`center`}
+                isActive={router.pathname.includes(`/product`)}
+              >
+                PRODUCT
+              </Menu>
+            </ATag>
+          </Link>
+          <Link href={`/customer/notice`}>
+            <ATag width={`auto`}>
+              <Menu
+                textAlign={`center`}
+                isActive={router.pathname.includes(`/customer`)}
+              >
+                고객센터
+              </Menu>
+            </ATag>
+          </Link>
         </Wrapper>
         <Drawer
           placement="right"
@@ -405,7 +439,7 @@ const AppHeader = ({}) => {
                 </Menu>
               </ATag>
             </Link>
-            <Link href={`//product?target=0`}>
+            <Link href={`/product?target=0`}>
               <ATag height={`70px`} ju={`flex-start`}>
                 <Menu
                   onClick={drawarToggle}

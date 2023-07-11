@@ -258,10 +258,6 @@ const Cate = ({}) => {
 
   const updateButtonHandler = useCallback(
     (data) => {
-      if (data.title === currentData.title && !uploadBannerPath) {
-        return message.warning("변경할 데이터가 없습니다.");
-      }
-
       dispatch({
         type: MAIN_DESIGN_UPDATE_REQUEST,
         data: {

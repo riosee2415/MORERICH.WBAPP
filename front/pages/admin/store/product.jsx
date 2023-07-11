@@ -138,8 +138,6 @@ const Product = ({}) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  console.log(productType2Depth);
-
   // 상위메뉴 변수
   const [level1, setLevel1] = useState("상점관리");
   const [level2, setLevel2] = useState("");

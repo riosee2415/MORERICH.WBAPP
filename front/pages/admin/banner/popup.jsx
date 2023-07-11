@@ -352,10 +352,6 @@ const Popup = ({}) => {
 
   const updateInfoHandler = useCallback(
     (data) => {
-      if (data.title === currentData.title) {
-        return message.warning("수정할 정보가 없습니다.");
-      }
-
       dispatch({
         type: POPUP_UPDATE_REQUEST,
         data: {

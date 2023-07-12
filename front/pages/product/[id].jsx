@@ -559,6 +559,7 @@ const Index = () => {
                         {String(
                           data.qun * (productDetail && productDetail.calcPrice)
                         ).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        원
                       </Text>
                     </Wrapper>
                   </Wrapper>
@@ -573,6 +574,7 @@ const Index = () => {
                   {currentDatum.length === 0
                     ? productDetail && productDetail.viewCalcPrice
                     : String(totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  원
                 </Text>
               </Wrapper>
               <CommonButton

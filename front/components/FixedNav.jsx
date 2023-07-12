@@ -26,8 +26,8 @@ const Btn = styled(Wrapper)`
   }
 
   @media (max-width: 900px) {
-    width: 40px;
-    height: 40px;
+    width: ${(props) => props.width || `40px`};
+    height: ${(props) => props.height || `40px`};
   }
 `;
 
@@ -51,6 +51,7 @@ const FixedNav = () => {
       position={`fixed`}
       bottom={width < 800 ? `20px` : `20px`}
       right={width < 800 ? `20px` : `50px`}
+      zIndex={`100`}
     >
       <a href={`https://pf.kakao.com/_mNWhG/chat`} target={`_blank`}>
         <Btn
@@ -58,13 +59,15 @@ const FixedNav = () => {
           hoverColor={Theme.grey2_C}
           margin={`0 0 15px`}
           border={`1px solid ${Theme.kakao_C}`}
+          width={`50px`}
+          height={`50px`}
         >
           <Image
             alt="kakao"
             src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_kakao_h.png`}
             width={`22px`}
           />
-          <Text fontSize={`10px`}>카카오톡</Text>
+          {width < 900 ? null : <Text fontSize={`10px`}>카카오톡</Text>}
         </Btn>
       </a>
       <Btn

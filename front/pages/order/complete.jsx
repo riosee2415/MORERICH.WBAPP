@@ -123,7 +123,7 @@ const Complete = () => {
                       <Image
                         alt="thumbnail"
                         width={width < 900 ? `80px` : `112px`}
-                        src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/prod-page/img_prod1.png`}
+                        src={data.thumbnail}
                       />
                       <Wrapper
                         width={

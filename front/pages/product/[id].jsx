@@ -94,6 +94,9 @@ const Index = () => {
     if (st_likeCreateDone) {
       dispatch({
         type: PRODUCT_DETAIL_REQUEST,
+        data: {
+          id: router.query.id,
+        },
       });
       if (likeId === null) {
         return message.success("좋아요가 취소되었습니다.");
@@ -249,7 +252,7 @@ const Index = () => {
         return message.error("로그인 후 이용할 수 있습니다.");
       }
 
-      if (data !== null) {
+      if (data.exWish !== null) {
         setLikeId(null);
       } else {
         setLikeId(data.ProductId);
@@ -258,8 +261,8 @@ const Index = () => {
       dispatch({
         type: LIKE_CREATE_REQUEST,
         data: {
-          ProductId: data,
-          id: data,
+          ProductId: data.id,
+          id: data.exWish,
         },
       });
     },
@@ -366,7 +369,6 @@ const Index = () => {
                   </Text>
                 </Wrapper>
 
-                {console.log(productDetail)}
                 {productDetail && productDetail.exWish ? (
                   <Image
                     alt="heart icon"
@@ -374,9 +376,7 @@ const Index = () => {
                     width={`22px`}
                     margin={`0 18px 0 0`}
                     cursor={`pointer`}
-                    onClick={() =>
-                      likeCreateHandler(productDetail && productDetail.id)
-                    }
+                    onClick={() => likeCreateHandler(productDetail)}
                   />
                 ) : (
                   <Image
@@ -385,9 +385,7 @@ const Index = () => {
                     width={`22px`}
                     margin={`0 18px 0 0`}
                     cursor={`pointer`}
-                    onClick={() =>
-                      likeCreateHandler(productDetail && productDetail.id)
-                    }
+                    onClick={() => likeCreateHandler(productDetail)}
                   />
                 )}
               </Wrapper>

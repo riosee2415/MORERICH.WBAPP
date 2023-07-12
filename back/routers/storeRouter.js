@@ -314,7 +314,20 @@ router.post("/product/detail", async (req, res, next) => {
           DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
           DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
           DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
-          DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt
+          DATE_FORMAT(A.updatedAt, '%Y%m%d')			    AS sortUpdatedAt,
+          ${
+            req.user
+              ? ` (
+              SELECT	id
+                FROM	wish	Z
+               WHERE	Z.UserId = ${req.user.id}
+                 AND	A.id = Z.ProductId 
+            )	AS exWish`
+              : `(
+              SELECT	null
+                FROM	dual
+            )	AS exWish`
+          }
     FROM	product		A
    WHERE	A.isDelete = 0
      AND  A.id = ${id}

@@ -29,6 +29,8 @@ import { useCallback } from "react";
 import { message } from "antd";
 import { NEW_BANNER_REQUEST } from "../reducers/newbanner";
 import { MAIN_DESIGN_REQUEST } from "../reducers/mainDesign";
+import { ADDRESS_LIST_REQUEST } from "../reducers/mypage";
+import { useRouter } from "next/router";
 
 const Box = styled(Wrapper)`
   width: calc(100% / 3);
@@ -104,9 +106,12 @@ const Home = ({}) => {
   const { st_likeCreateDone, st_likeCreateError } = useSelector(
     (state) => state.wish
   );
+  const { addressList } = useSelector((state) => state.mypage);
+  const { me } = useSelector((state) => state.user);
 
   ////// HOOKS //////
   const width = useWidth();
+  const router = useRouter();
 
   const [likeId, setLikeId] = useState(null);
 
@@ -130,6 +135,16 @@ const Home = ({}) => {
       return message.error(st_likeCreateError);
     }
   }, [st_likeCreateDone, st_likeCreateError]);
+
+  useEffect(() => {
+    if (me) {
+      if (addressList.length === 0) {
+        router.push("/mypage/delivery");
+
+        return message.error("배송지를 등록해주세요.");
+      }
+    }
+  }, [addressList, me]);
 
   ////// TOGGLE //////
   ////// HANDLER //////
@@ -286,6 +301,11 @@ export const getServerSideProps = wrapper.getServerSideProps(
     context.store.dispatch({
       type: MAIN_DESIGN_REQUEST,
     });
+
+    context.store.dispatch({
+      type: ADDRESS_LIST_REQUEST,
+    });
+
     // 구현부 종료
     context.store.dispatch(END);
     console.log("🍀 SERVER SIDE PROPS END");

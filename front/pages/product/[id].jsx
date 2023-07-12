@@ -34,6 +34,7 @@ import { useRouter } from "next/router";
 import { CART_CREATE_REQUEST } from "../../reducers/cart";
 import { useEffect } from "react";
 import useInput from "../../hooks/useInput";
+import { LIKE_CREATE_REQUEST } from "../../reducers/wish";
 
 const LineText = styled(Text)`
   color: ${(props) => props.theme.grey4_C};
@@ -50,7 +51,11 @@ const LineText = styled(Text)`
 const Index = () => {
   ////// GLOBAL STATE //////
   const { productDetail } = useSelector((s) => s.store);
+  const { me } = useSelector((state) => state.user);
   const { st_cartCreateDone, st_cartCreateError } = useSelector((s) => s.cart);
+  const { st_likeCreateDone, st_likeCreateError } = useSelector(
+    (state) => state.wish
+  );
 
   ////// HOOKS //////
   const width = useWidth();
@@ -67,6 +72,7 @@ const Index = () => {
   const [optionData2, setOptionData2] = useState(null); // 옵션2 데이터
   const [totalPrice, setTotalPrice] = useState(0); // 상품금액
   const [isMore, setIsMore] = useState(false); // 상품금액
+  const [likeId, setLikeId] = useState(null);
 
   ////// REDUX //////
 
@@ -83,6 +89,23 @@ const Index = () => {
       return message.error(st_cartCreateError);
     }
   }, [st_cartCreateDone, st_cartCreateError]);
+
+  useEffect(() => {
+    if (st_likeCreateDone) {
+      dispatch({
+        type: PRODUCT_DETAIL_REQUEST,
+      });
+      if (likeId === null) {
+        return message.success("좋아요가 취소되었습니다.");
+      } else {
+        return message.success("좋아요 목록에 추가되었습니다.");
+      }
+    }
+
+    if (st_likeCreateError) {
+      return message.error(st_likeCreateError);
+    }
+  }, [st_likeCreateDone, st_likeCreateError]);
 
   ////// TOGGLE //////
   const cartModalToggle = useCallback(() => {
@@ -219,6 +242,30 @@ const Index = () => {
     window.history.back();
   }, []);
 
+  // 좋아요
+  const likeCreateHandler = useCallback(
+    (data) => {
+      if (!me) {
+        return message.error("로그인 후 이용할 수 있습니다.");
+      }
+
+      if (data !== null) {
+        setLikeId(null);
+      } else {
+        setLikeId(data.ProductId);
+      }
+
+      dispatch({
+        type: LIKE_CREATE_REQUEST,
+        data: {
+          ProductId: data,
+          id: data,
+        },
+      });
+    },
+    [likeId, me]
+  );
+
   ////// DATAVIEW //////
 
   return (
@@ -301,7 +348,7 @@ const Index = () => {
                 padding={`0 0 25px`}
               >
                 <Wrapper width={`auto`} dr={`row`}>
-                  {productDetail && productDetail.discount !== 0 && (
+                  {/* {productDetail && productDetail.discount !== 0 && (
                     <Text
                       color={Theme.grey_C}
                       className="line"
@@ -310,7 +357,7 @@ const Index = () => {
                     >
                       {productDetail && productDetail.viewPrice}
                     </Text>
-                  )}
+                  )} */}
                   <Text
                     fontSize={width < 800 ? `16px` : `28px`}
                     fontWeight={`bold`}
@@ -318,11 +365,31 @@ const Index = () => {
                     {productDetail && productDetail.viewCalcPrice}
                   </Text>
                 </Wrapper>
-                <Image
-                  alt="heart icon"
-                  src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                  width={`28px`}
-                />
+
+                {console.log(productDetail)}
+                {productDetail && productDetail.exWish ? (
+                  <Image
+                    alt="heart icon"
+                    src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                    width={`22px`}
+                    margin={`0 18px 0 0`}
+                    cursor={`pointer`}
+                    onClick={() =>
+                      likeCreateHandler(productDetail && productDetail.id)
+                    }
+                  />
+                ) : (
+                  <Image
+                    alt="heart icon"
+                    src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                    width={`22px`}
+                    margin={`0 18px 0 0`}
+                    cursor={`pointer`}
+                    onClick={() =>
+                      likeCreateHandler(productDetail && productDetail.id)
+                    }
+                  />
+                )}
               </Wrapper>
               <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 16px`}>
                 <Text

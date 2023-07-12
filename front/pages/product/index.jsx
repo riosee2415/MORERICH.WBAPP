@@ -89,12 +89,17 @@ const Index = () => {
   }, [st_likeCreateDone, st_likeCreateError]);
 
   useEffect(() => {
-    if (router.query.target) {
+    if (router.query) {
       setType(parseInt(router.query.target));
+      if (router.query.target2 === "false") {
+        setType2(false);
+      } else {
+        setType2(parseInt(router.query.target2));
+      }
     } else {
       return;
     }
-  }, [router.query.target]);
+  }, [router.query]);
 
   useEffect(() => {
     if (router.query.target) {

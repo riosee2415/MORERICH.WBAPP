@@ -172,12 +172,22 @@ const SignUp = () => {
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 *연락처
               </Wrapper>
+              <Wrapper dr={`row`} ju={`space-between`} margin={`0 0 10px`}>
+                <TextInput
+                  placeholder="'-'를 제외한 연락처"
+                  width={`calc(100% - 110px)`}
+                  height={`50px`}
+                  {...mobileInput}
+                />
+                <CommonButton width={`100px`} height={`50px`}>
+                  인증번호
+                </CommonButton>
+              </Wrapper>
               <TextInput
-                placeholder="'-'를 제외한 연락처"
+                placeholder="인증번호를 입력해주세요."
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
-                {...mobileInput}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 *이메일

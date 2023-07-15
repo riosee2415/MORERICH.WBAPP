@@ -1002,6 +1002,7 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           A.returnAccountName,
           A.returnBankName,
           A.returnAccountNum,
+          A.payType,
           (
           	SELECT  SUM(C.price * C.qun)
           	  FROM  boughtList C
@@ -1086,6 +1087,7 @@ router.post("/boughtlist/target", isAdminCheck, async (req, res, next) => {
           A.returnAccountName,
           A.returnBankName,
           A.returnAccountNum,
+          A.payType,
           (
           	SELECT  SUM(C.price * C.qun)
           	  FROM  boughtList C
@@ -1136,14 +1138,15 @@ router.post("/boughtlist/target", isAdminCheck, async (req, res, next) => {
  * PARAMETERS : post,
                 adrs,
                 dadrs,
-                boughtLists
+                boughtLists,
+                payType
  * ORDER BY : -
  * STATEMENT : -
  * DEVELOPMENT : 시니어 개발자 신태섭
  * DEV DATE : 2023/06/02
  */
 router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
-  const { post, adrs, dadrs, boughtLists } = req.body;
+  const { post, adrs, dadrs, boughtLists, payType } = req.body;
 
   if (!Array.isArray(boughtLists)) {
     return res.status(401).send("잘못된 요청입니다.");
@@ -1156,6 +1159,7 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
     adrs,
     dadrs,
     UserId,
+    payType,
     createdAt,
     updatedAt
   )
@@ -1165,6 +1169,7 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
     "${adrs}",
     "${dadrs}",
     ${req.user.id},
+    ${payType},
     NOW(),
     NOW()
   )
@@ -1347,16 +1352,6 @@ router.post("/bought/cancel", isAdminCheck, async (req, res, next) => {
  */
 router.post("/list3", async (req, res, next) => {
   const { TypeId } = req.body;
-
-  console.log("***************************************");
-  console.log("***************************************");
-  console.log("***************************************");
-  console.log("***************************************");
-  console.log("***************************************");
-  console.log("***************************************");
-  console.log(TypeId);
-  console.log(TypeId);
-  console.log(TypeId);
 
   if (!TypeId) {
     return res.status(400).send("데이터를 조회할 수 없습니다.");

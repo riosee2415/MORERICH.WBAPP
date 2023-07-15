@@ -58,6 +58,10 @@ module.exports = class BoughtHistory extends Model {
           type: DataTypes.STRING(100),
           allowNull: true,
         },
+        payType: {
+          type: DataTypes.STRING(100),
+          allowNull: true,
+        },
       },
       {
         modelName: "BoughtHistory",

@@ -366,6 +366,12 @@ const Bought = ({}) => {
       title: "구매상품 수",
       render: (row) => <div>{row.connectArray.length}개</div>,
     },
+    {
+      title: "결제방법",
+      render: (row) => (
+        <div>{row.payType === "1" ? "무통장입금" : "카드결제"}</div>
+      ),
+    },
 
     {
       title: "처리상태",

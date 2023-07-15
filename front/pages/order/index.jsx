@@ -185,10 +185,18 @@ const Index = () => {
         post: postcodeInput.value,
         adrs: addressInput.value,
         dadrs: detailAddressInput.value,
+        payType: isPayType,
         boughtLists,
       },
     });
-  }, [currentData, postcodeInput, addressInput, detailAddressInput, isTerms]);
+  }, [
+    currentData,
+    postcodeInput,
+    addressInput,
+    detailAddressInput,
+    isTerms,
+    isPayType,
+  ]);
 
   const backHandler = useCallback(() => {
     window.history.back();

@@ -138,11 +138,12 @@ const Home = ({}) => {
 
   useEffect(() => {
     if (me) {
-      if (addressList.length === 0) {
-        router.push("/mypage/delivery");
-
-        return message.error("배송지를 등록해주세요.");
-      }
+      setTimeout(() => {
+        if (addressList.length === 0) {
+          router.push("/mypage/delivery");
+          return message.error("배송지를 등록해주세요.");
+        }
+      }, 1000);
     }
   }, [addressList, me]);
 

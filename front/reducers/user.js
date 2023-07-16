@@ -15,6 +15,8 @@ export const initailState = {
   productData: 0, // 총 등록된 상품
   boughtData: 0, // 오늘 구매자
 
+  mobileCode: null, // 인증코드
+
   //
   st_loginLoading: false,
   st_loginDone: false,
@@ -103,6 +105,10 @@ export const initailState = {
   st_adminMainLoading: false, // 관리자 메인
   st_adminMainDone: false,
   st_adminMainError: null,
+
+  st_mobileCheckLoading: false, // 핸드폰 인증
+  st_mobileCheckDone: false,
+  st_mobileCheckError: null,
 };
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
@@ -196,6 +202,10 @@ export const USER_EXIT_FAILURE = "USER_EXIT_FAILURE";
 export const ADMIN_MAIN_CNT_REQUEST = "ADMIN_MAIN_CNT_REQUEST";
 export const ADMIN_MAIN_CNT_SUCCESS = "ADMIN_MAIN_CNT_SUCCESS";
 export const ADMIN_MAIN_CNT_FAILURE = "ADMIN_MAIN_CNT_FAILURE";
+
+export const MOBILE_CHECK_REQUEST = "MOBILE_CHECK_REQUEST";
+export const MOBILE_CHECK_SUCCESS = "MOBILE_CHECK_SUCCESS";
+export const MOBILE_CHECK_FAILURE = "MOBILE_CHECK_FAILURE";
 
 export const UPDATE_MODAL_OPEN_REQUEST = "UPDATE_MODAL_OPEN_REQUEST";
 export const UPDATE_MODAL_CLOSE_REQUEST = "UPDATE_MODAL_CLOSE_REQUEST";
@@ -682,6 +692,27 @@ const reducer = (state = initailState, action) =>
         draft.st_adminMainLoading = false;
         draft.st_adminMainDone = false;
         draft.st_adminMainError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case MOBILE_CHECK_REQUEST: {
+        draft.st_mobileCheckLoading = true;
+        draft.st_mobileCheckDone = false;
+        draft.st_mobileCheckError = null;
+        break;
+      }
+      case MOBILE_CHECK_SUCCESS: {
+        draft.st_mobileCheckLoading = false;
+        draft.st_mobileCheckDone = true;
+        draft.st_mobileCheckError = null;
+        draft.mobileCode = action.data.code;
+        break;
+      }
+      case MOBILE_CHECK_FAILURE: {
+        draft.st_mobileCheckLoading = false;
+        draft.st_mobileCheckDone = false;
+        draft.st_mobileCheckError = action.error;
         break;
       }
       //////////////////////////////////////////////

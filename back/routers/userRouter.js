@@ -7,6 +7,9 @@ const isAdminCheck = require("../middlewares/isAdminCheck");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const generateUUID = require("../utils/generateUUID");
 const sendSecretMail = require("../utils/mailSender");
+const moment = require("moment");
+const CryptoJS = require("crypto-js");
+const axios = require("axios");
 
 const router = express.Router();
 
@@ -1011,39 +1014,79 @@ router.post("/admin/main", async (req, res, next) => {
 });
 
 /**
- * SUBJECT : 유저 주소 가져오기
+ * SUBJECT : 알림톡 전송
  * PARAMETERS : -
  * ORDER BY : -
  * STATEMENT : -
- * DEVELOPMENT : 박은비
- * DEV DATE : 2023/06/01
+ * DEVELOPMENT : 김동현
+ * DEV DATE : 2023/07/15
  */
 
-/**
- * SUBJECT : 상품유형 통계 가져오기
- * PARAMETERS : -
- * ORDER BY : -
- * STATEMENT : -
- * DEVELOPMENT : 박은비
- * DEV DATE : 2023/06/01
- */
+router.post("/send/message", async (req, res, next) => {
+  const { mobile } = req.body;
 
-/**
- * SUBJECT : 상품유형 통계 가져오기
- * PARAMETERS : -
- * ORDER BY : -
- * STATEMENT : -
- * DEVELOPMENT : 박은비
- * DEV DATE : 2023/06/01
- */
+  try {
+    const timestampData = moment().format("x");
+    const uri = process.env.MESSAGE_URI;
+    const secretKey = process.env.MESSAGE_SECRET_KEY;
+    const accessKey = process.env.MESSAGE_ACCESS_KEY;
+    const method = "POST";
+    const space = " ";
+    const newLine = "\n";
+    const url = `https://sens.apigw.ntruss.com/sms/v2/services/${uri}/messages`;
+    const url2 = `/sms/v2/services/${uri}/messages`;
 
-/**
- * SUBJECT : 상품유형 통계 가져오기
- * PARAMETERS : -
- * ORDER BY : -
- * STATEMENT : -
- * DEVELOPMENT : 박은비
- * DEV DATE : 2023/06/01
- */
+    let hmac = await CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
+    hmac.update(method);
+    hmac.update(space);
+    hmac.update(url2);
+    hmac.update(newLine);
+    hmac.update(timestampData);
+    hmac.update(newLine);
+    hmac.update(accessKey);
+
+    let hash = hmac.finalize();
+
+    const signature = hash.toString(CryptoJS.enc.Base64);
+
+    const UUID = generateUUID();
+
+    await axios({
+      method: method,
+      json: true,
+      url: url,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "x-ncp-apigw-timestamp": `${timestampData}`,
+        "x-ncp-iam-access-key": `${accessKey}`,
+        "x-ncp-apigw-signature-v2": `${signature}`,
+      },
+      data: {
+        type: "LMS",
+        from: "01036531805",
+        subject: "모어리치",
+        content: `인증번호는 ${UUID} 입니다.`,
+        messages: [
+          {
+            to: mobile.replace(/\-/gi, ""),
+            // subject: "string",
+            // content: "string",
+          },
+        ],
+        // files: [
+        //   {
+        //     name: "string",
+        //     body: "string",
+        //   },
+        // ],
+      },
+    });
+
+    return res.status(200).json({ code: UUID });
+  } catch (e) {
+    console.error(e);
+    return res.status(400).send("인증번호를 전송 할 수 없습니다.");
+  }
+});
 
 module.exports = router;

@@ -92,6 +92,10 @@ import {
   ADMIN_MAIN_CNT_REQUEST,
   ADMIN_MAIN_CNT_SUCCESS,
   ADMIN_MAIN_CNT_FAILURE,
+  //
+  MOBILE_CHECK_REQUEST,
+  MOBILE_CHECK_SUCCESS,
+  MOBILE_CHECK_FAILURE,
 } from "../reducers/user";
 
 // SAGA AREA ********************************************************************************************************
@@ -710,6 +714,33 @@ function* adminMain(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function mobileCheckAPI(data) {
+  return await axios.post("/api/user/send/message", data);
+}
+
+function* mobileCheck(action) {
+  try {
+    const result = yield call(mobileCheckAPI, action.data);
+    yield put({
+      type: MOBILE_CHECK_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: MOBILE_CHECK_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 
 function* watchLoadMyInfo() {
@@ -804,6 +835,10 @@ function* watchAdminMain() {
   yield takeLatest(ADMIN_MAIN_CNT_REQUEST, adminMain);
 }
 
+function* watchMobileCheck() {
+  yield takeLatest(MOBILE_CHECK_REQUEST, mobileCheck);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* userSaga() {
   yield all([
@@ -830,6 +865,7 @@ export default function* userSaga() {
     fork(watchUserExit),
     fork(watchUserUpdate),
     fork(watchAdminMain),
+    fork(watchMobileCheck),
     //
   ]);
 }

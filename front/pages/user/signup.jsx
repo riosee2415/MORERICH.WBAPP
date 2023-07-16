@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Checkbox, message, Modal } from "antd";
 import useInput from "../../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
-import { SIGNUP_REQUEST } from "../../reducers/user";
+import { MOBILE_CHECK_REQUEST, SIGNUP_REQUEST } from "../../reducers/user";
 import ClientLayout from "../../components/ClientLayout";
 import Head from "next/head";
 import wrapper from "../../store/configureStore";
@@ -28,7 +28,14 @@ const style = {
 
 const SignUp = () => {
   ////// GLOBAL STATE //////
-  const { st_signUpDone, st_signUpError } = useSelector((state) => state.user);
+  const {
+    st_signUpDone,
+    st_signUpError,
+
+    mobileCode,
+    st_mobileCheckDone,
+    st_mobileCheckError,
+  } = useSelector((state) => state.user);
 
   ////// HOOKS //////
   const width = useWidth();
@@ -40,6 +47,7 @@ const SignUp = () => {
   const nameInput = useInput(``);
   const mobileInput = useInput(``);
   const emailInput = useInput(``);
+  const code = useInput("");
   // const addressInput = useInput(``);
   // const postcodeInput = useInput(``);
   // const detailAddressInput = useInput(``);
@@ -55,6 +63,14 @@ const SignUp = () => {
   const router = useRouter();
 
   ////// USEEFFECT //////
+  useEffect(() => {
+    if (st_mobileCheckDone) {
+      return message.success("인증번호가 전송되었습니다.");
+    }
+    if (st_mobileCheckError) {
+      return message.error(st_mobileCheckError);
+    }
+  }, [st_mobileCheckDone, st_mobileCheckError]);
 
   useEffect(() => {
     if (st_signUpDone) {
@@ -90,6 +106,11 @@ const SignUp = () => {
     if (!mobileInput.value) {
       return message.error("전화번호를 입력해주세요.");
     }
+
+    if (mobileCode !== code.value) {
+      return message.error("인증번호가 일치하지 않습니다.");
+    }
+
     if (!emailInput.value) {
       return message.error("이메일을 입력해주세요.");
     }
@@ -108,7 +129,29 @@ const SignUp = () => {
         terms: isTerms,
       },
     });
-  }, [idInput, pwInput, nameInput, mobileInput, emailInput, isTerms]);
+  }, [
+    idInput,
+    pwInput,
+    nameInput,
+    mobileInput,
+    emailInput,
+    isTerms,
+    mobileCode,
+    code,
+  ]);
+
+  const mobileCheckHandler = useCallback(() => {
+    if (!mobileInput.value) {
+      return message.error("전화번호를 입력해주세요.");
+    }
+
+    dispatch({
+      type: MOBILE_CHECK_REQUEST,
+      data: {
+        mobile: mobileInput.value,
+      },
+    });
+  }, [mobileInput]);
 
   ////// DATAVIEW //////
 
@@ -179,7 +222,11 @@ const SignUp = () => {
                   height={`50px`}
                   {...mobileInput}
                 />
-                <CommonButton width={`100px`} height={`50px`}>
+                <CommonButton
+                  width={`100px`}
+                  height={`50px`}
+                  onClick={mobileCheckHandler}
+                >
                   인증번호
                 </CommonButton>
               </Wrapper>
@@ -188,6 +235,7 @@ const SignUp = () => {
                 width={`356px`}
                 height={`50px`}
                 margin={`0 0 27px`}
+                {...code}
               />
               <Wrapper al={`flex-start`} margin={`0 0 8px`}>
                 *이메일
@@ -290,27 +338,5 @@ const SignUp = () => {
     </>
   );
 };
-
-export const getServerSideProps = wrapper.getServerSideProps(
-  async (context) => {
-    // SSR Cookie Settings For Data Load/////////////////////////////////////
-    const cookie = context.req ? context.req.headers.cookie : "";
-    axios.defaults.headers.Cookie = "";
-    if (context.req && cookie) {
-      axios.defaults.headers.Cookie = cookie;
-    }
-    ////////////////////////////////////////////////////////////////////////
-    // 구현부
-
-    context.store.dispatch({
-      type: LOAD_MY_INFO_REQUEST,
-    });
-
-    // 구현부 종료
-    context.store.dispatch(END);
-    console.log("🍀 SERVER SIDE PROPS END");
-    await context.store.sagaTask.toPromise();
-  }
-);
 
 export default SignUp;

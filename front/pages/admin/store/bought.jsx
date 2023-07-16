@@ -50,8 +50,6 @@ const Bought = ({}) => {
     st_cancelBoughtError,
   } = useSelector((state) => state.store);
 
-  console.log(boughtlist);
-
   const router = useRouter();
   const dispatch = useDispatch();
 

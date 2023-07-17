@@ -295,8 +295,8 @@ const UserList = ({}) => {
       render: (data) => <div>{data.username}</div>,
     },
     {
-      title: "닉네임",
-      render: (data) => <div>{data.nickname}</div>,
+      title: "회원아이디",
+      render: (data) => <div>{data.userId}</div>,
     },
     {
       title: "이메일",
@@ -311,8 +311,8 @@ const UserList = ({}) => {
       render: (data) => <div>{data.viewCreatedAt}</div>,
     },
     {
-      title: "권한",
-      render: (data) => <div>{data.viewLevel}</div>,
+      title: "포인트",
+      render: (data) => <div>{data.point}</div>,
     },
     {
       title: "권한수정",

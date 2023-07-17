@@ -7,6 +7,7 @@ import {
   UPDATE_MODAL_CLOSE_REQUEST,
   UPDATE_MODAL_OPEN_REQUEST,
   ADMINUSERLIST_REQUEST,
+  USERLIST_REQUEST,
   USERLIST_UPDATE_REQUEST,
 } from "../../../reducers/user";
 import {
@@ -146,7 +147,7 @@ const UserList = ({}) => {
       });
 
       dispatch({
-        type: ADMINUSERLIST_REQUEST,
+        type: USERLIST_REQUEST,
       });
 
       return message.success("유저정보가 수정되었습니다.");
@@ -169,7 +170,7 @@ const UserList = ({}) => {
 
   useEffect(() => {
     dispatch({
-      type: ADMINUSERLIST_REQUEST,
+      type: USERLIST_REQUEST,
       data: {
         searchData: sData,
         searchLevel: currentTab,
@@ -202,14 +203,14 @@ const UserList = ({}) => {
   const searchResetHandler = useCallback(() => {
     nameInput.setValue("");
     dispatch({
-      type: ADMINUSERLIST_REQUEST,
+      type: USERLIST_REQUEST,
     });
   }, []);
 
   // 검색
   const searchHandler = useCallback(() => {
     dispatch({
-      type: ADMINUSERLIST_REQUEST,
+      type: USERLIST_REQUEST,
       data: {
         username: nameInput.value,
       },
@@ -466,7 +467,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     });
 
     context.store.dispatch({
-      type: ADMINUSERLIST_REQUEST,
+      type: USERLIST_REQUEST,
     });
 
     // 구현부 종료

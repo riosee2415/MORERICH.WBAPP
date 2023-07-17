@@ -533,6 +533,16 @@ router.post("/signup", async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // 신규가입 시 데이터 가져오기
+
+    const pq = `
+    SELECT	point,
+            pointPer 
+      FROM	joinSet
+    `;
+
+    const joinsetData = await models.sequelize.query(pq);
+
     const result = await User.create({
       userId,
       email,
@@ -541,8 +551,8 @@ router.post("/signup", async (req, res, next) => {
       mobile,
       terms,
       password: hashedPassword,
-      point: 0,
-      pointPer: 0,
+      point: joinsetData[0][0].point,
+      pointPer: joinsetData[0][0].pointPer,
     });
 
     res.status(201).send("SUCCESS");

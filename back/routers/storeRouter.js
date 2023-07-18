@@ -6,6 +6,9 @@ const path = require("path");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const isLoggedIn = require("../middlewares/isLoggedIn");
+const moment = require("moment");
+const CryptoJS = require("crypto-js");
+const axios = require("axios");
 
 const router = express.Router();
 
@@ -1232,7 +1235,7 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
  * DEV DATE : 2023/06/02
  */
 router.post("/bought/stat/update", isAdminCheck, async (req, res, next) => {
-  const { id, stat } = req.body;
+  const { id, stat, mobile, productName } = req.body;
 
   const uq = `
     UPDATE  boughtHistory
@@ -1242,6 +1245,72 @@ router.post("/bought/stat/update", isAdminCheck, async (req, res, next) => {
   `;
 
   try {
+    if (stat === 1) {
+      const timestampData = moment().format("x");
+      const uri = process.env.MESSAGE_URI;
+      const secretKey = process.env.MESSAGE_SECRET_KEY;
+      const accessKey = process.env.MESSAGE_ACCESS_KEY;
+      const method = "POST";
+      const space = " ";
+      const newLine = "\n";
+      const url = `https://sens.apigw.ntruss.com/sms/v2/services/${uri}/messages`;
+      const url2 = `/sms/v2/services/${uri}/messages`;
+
+      let hmac = await CryptoJS.algo.HMAC.create(
+        CryptoJS.algo.SHA256,
+        secretKey
+      );
+      hmac.update(method);
+      hmac.update(space);
+      hmac.update(url2);
+      hmac.update(newLine);
+      hmac.update(timestampData);
+      hmac.update(newLine);
+      hmac.update(accessKey);
+
+      let hash = hmac.finalize();
+
+      const signature = hash.toString(CryptoJS.enc.Base64);
+
+      await axios({
+        method: method,
+        json: true,
+        url: url,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "x-ncp-apigw-timestamp": `${timestampData}`,
+          "x-ncp-iam-access-key": `${accessKey}`,
+          "x-ncp-apigw-signature-v2": `${signature}`,
+        },
+        data: {
+          type: "LMS",
+          from: "01036531805",
+          subject: "모어리치",
+          content: `안녕하세요.
+MoreRich 입니다.
+주문하신 ${productName} 상품 접수가 완료 되었습니다.
+                    
+배송이 출발하면 송장 문자로 남겨드리겠습니다.
+                    
+이용해주셔서 감사합니다. 
+https://morerich.co.kr/`,
+          messages: [
+            {
+              to: mobile.replace(/\-/gi, ""),
+              // subject: "string",
+              // content: "string",
+            },
+          ],
+          // files: [
+          //   {
+          //     name: "string",
+          //     body: "string",
+          //   },
+          // ],
+        },
+      });
+    }
+
     await models.sequelize.query(uq);
 
     return res.status(200).json({ result: true });
@@ -1260,7 +1329,7 @@ router.post("/bought/stat/update", isAdminCheck, async (req, res, next) => {
  * DEV DATE : 2023/06/02
  */
 router.post("/bought/stat/update2", isAdminCheck, async (req, res, next) => {
-  const { id, deliveryCompany, deliveryNo } = req.body;
+  const { id, deliveryCompany, deliveryNo, mobile } = req.body;
 
   const uq = `
     UPDATE  boughtHistory
@@ -1271,6 +1340,65 @@ router.post("/bought/stat/update2", isAdminCheck, async (req, res, next) => {
   `;
 
   try {
+    const timestampData = moment().format("x");
+    const uri = process.env.MESSAGE_URI;
+    const secretKey = process.env.MESSAGE_SECRET_KEY;
+    const accessKey = process.env.MESSAGE_ACCESS_KEY;
+    const method = "POST";
+    const space = " ";
+    const newLine = "\n";
+    const url = `https://sens.apigw.ntruss.com/sms/v2/services/${uri}/messages`;
+    const url2 = `/sms/v2/services/${uri}/messages`;
+
+    let hmac = await CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
+    hmac.update(method);
+    hmac.update(space);
+    hmac.update(url2);
+    hmac.update(newLine);
+    hmac.update(timestampData);
+    hmac.update(newLine);
+    hmac.update(accessKey);
+
+    let hash = hmac.finalize();
+
+    const signature = hash.toString(CryptoJS.enc.Base64);
+
+    await axios({
+      method: method,
+      json: true,
+      url: url,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "x-ncp-apigw-timestamp": `${timestampData}`,
+        "x-ncp-iam-access-key": `${accessKey}`,
+        "x-ncp-apigw-signature-v2": `${signature}`,
+      },
+      data: {
+        type: "LMS",
+        from: "01036531805",
+        subject: "모어리치",
+        content: `안녕하세요.
+MoreRich 입니다.
+배송이 출발하여 송장번호 남겨드리겠습니다.
+${deliveryNo}                
+이용해주셔서 감사합니다. 
+https://morerich.co.kr/`,
+        messages: [
+          {
+            to: mobile.replace(/\-/gi, ""),
+            // subject: "string",
+            // content: "string",
+          },
+        ],
+        // files: [
+        //   {
+        //     name: "string",
+        //     body: "string",
+        //   },
+        // ],
+      },
+    });
+
     await models.sequelize.query(uq);
 
     return res.status(200).json({ result: true });

@@ -256,12 +256,19 @@ const Bought = ({}) => {
     [searchId]
   );
 
-  const changeStatusHandler = useCallback((id, stat) => {
+  const changeStatusHandler = useCallback((data, stat) => {
     dispatch({
       type: STATUS_BOUGHTLIST_REQUEST,
       data: {
-        id,
+        id: data.id,
         stat,
+        mobile: data.mobile,
+        productName:
+          data.connectArray.length === 1
+            ? data.connectArray[0].productName
+            : `${data.connectArray[0].productName} 외 ${
+                data.connectArray.length - 1
+              }개`,
       },
     });
   }, []);
@@ -274,6 +281,7 @@ const Bought = ({}) => {
           id: crData.id,
           deliveryCompany,
           deliveryNo,
+          mobile: crData.mobile,
         },
       });
     },
@@ -403,7 +411,7 @@ const Bought = ({}) => {
           return (
             <ManageButton
               type="dashed"
-              onClick={() => changeStatusHandler(row.id, 1)}
+              onClick={() => changeStatusHandler(row, 1)}
             >{`-> 배송 준비중`}</ManageButton>
           );
         }
@@ -413,11 +421,11 @@ const Bought = ({}) => {
             <Wrapper>
               <ManageButton
                 type="dashed"
-                onClick={() => changeStatusHandler(row.id, 0)}
+                onClick={() => changeStatusHandler(row, 0)}
               >{`<- 상품 준비중`}</ManageButton>
               <ManageButton
                 type="dashed"
-                onClick={() => changeStatusHandler(row.id, 2)}
+                onClick={() => changeStatusHandler(row, 2)}
               >{`-> 배송중`}</ManageButton>
             </Wrapper>
           );
@@ -428,11 +436,11 @@ const Bought = ({}) => {
             <Wrapper>
               <ManageButton
                 type="dashed"
-                onClick={() => changeStatusHandler(row.id, 1)}
+                onClick={() => changeStatusHandler(row, 1)}
               >{`<- 배송 준비중`}</ManageButton>
               <ManageButton
                 type="dashed"
-                onClick={() => changeStatusHandler(row.id, 3)}
+                onClick={() => changeStatusHandler(row, 3)}
               >{`-> 배송완료`}</ManageButton>
             </Wrapper>
           );
@@ -442,7 +450,7 @@ const Bought = ({}) => {
           return (
             <ManageButton
               type="dashed"
-              onClick={() => changeStatusHandler(row.id, 2)}
+              onClick={() => changeStatusHandler(row, 2)}
             >{`<- 배송중`}</ManageButton>
           );
         }
@@ -764,6 +772,12 @@ const Bought = ({}) => {
             <Text> 계좌번호 : {crData && crData.returnAccountNum}</Text>
           </Wrapper>
         </Wrapper>
+
+        {/* <Wrapper dr={`row`} ju={`flex-end`}>
+          <ManageDelButton onClick={() => canModalToggle(crData)}>
+            취소/환불 처리하기
+          </ManageDelButton>
+        </Wrapper> */}
       </Modal>
     </AdminLayout>
   );

@@ -128,6 +128,10 @@ import {
   TYPE_HIDE_TOGGLE_REQUEST,
   TYPE_HIDE_TOGGLE_SUCCESS,
   TYPE_HIDE_TOGGLE_FAILURE,
+  //
+  PRODUCT_MEMO_REQUEST,
+  PRODUCT_MEMO_SUCCESS,
+  PRODUCT_MEMO_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -987,6 +991,33 @@ function* typeHideToggle(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function productMemoAPI(data) {
+  return await axios.post(`/api/store/memoUp`, data);
+}
+
+function* productMemo(action) {
+  try {
+    const result = yield call(productMemoAPI, action.data);
+
+    yield put({
+      type: PRODUCT_MEMO_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: PRODUCT_MEMO_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
   yield takeLatest(GET_PRODUCTTYPE_REQUEST, getProductType);
@@ -1084,6 +1115,9 @@ function* watchNew2DeptType() {
 function* watchTypeHideToggle() {
   yield takeLatest(TYPE_HIDE_TOGGLE_REQUEST, typeHideToggle);
 }
+function* watchProductMemo() {
+  yield takeLatest(PRODUCT_MEMO_REQUEST, productMemo);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -1120,6 +1154,7 @@ export default function* storeSaga() {
     fork(watchDel2DeptType),
     fork(watchNew2DeptType),
     fork(watchTypeHideToggle),
+    fork(watchProductMemo),
 
     //
   ]);

@@ -166,6 +166,11 @@ export const initailState = {
   st_typeHideToggleLoading: false,
   st_typeHideToggleDone: false,
   st_typeHideToggleError: null,
+
+  // 상품 메모
+  st_productMemoLoading: false,
+  st_productMemoDone: false,
+  st_productMemoError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -295,6 +300,10 @@ export const NEW_TYPE_2DEPTH_FAILURE = "NEW_TYPE_2DEPTH_FAILURE";
 export const TYPE_HIDE_TOGGLE_REQUEST = "TYPE_HIDE_TOGGLE_REQUEST";
 export const TYPE_HIDE_TOGGLE_SUCCESS = "TYPE_HIDE_TOGGLE_SUCCESS";
 export const TYPE_HIDE_TOGGLE_FAILURE = "TYPE_HIDE_TOGGLE_FAILURE";
+
+export const PRODUCT_MEMO_REQUEST = "PRODUCT_MEMO_REQUEST";
+export const PRODUCT_MEMO_SUCCESS = "PRODUCT_MEMO_SUCCESS";
+export const PRODUCT_MEMO_FAILURE = "PRODUCT_MEMO_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -1058,6 +1067,28 @@ const reducer = (state = initailState, action) =>
         draft.st_typeHideToggleLoading = false;
         draft.st_typeHideToggleDone = false;
         draft.st_typeHideToggleError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case PRODUCT_MEMO_REQUEST: {
+        draft.st_productMemoLoading = true;
+        draft.st_productMemoDone = false;
+        draft.st_productMemoError = null;
+        break;
+      }
+
+      case PRODUCT_MEMO_SUCCESS: {
+        draft.st_productMemoLoading = false;
+        draft.st_productMemoDone = true;
+        draft.st_productMemoError = null;
+        break;
+      }
+
+      case PRODUCT_MEMO_FAILURE: {
+        draft.st_productMemoLoading = false;
+        draft.st_productMemoDone = false;
+        draft.st_productMemoError = action.error;
         break;
       }
 

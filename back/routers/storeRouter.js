@@ -1228,7 +1228,7 @@ router.post("/boughtlist/target", isAdminCheck, async (req, res, next) => {
  * DEV DATE : 2023/06/02
  */
 router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
-  const { post, adrs, dadrs, boughtLists, payType } = req.body;
+  const { post, adrs, dadrs, boughtLists, payType, point } = req.body;
 
   if (!Array.isArray(boughtLists)) {
     return res.status(401).send("잘못된 요청입니다.");
@@ -1257,8 +1257,15 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
   )
   `;
 
+  const pointUpdateQuery = `
+  UPDATE  users
+     SET  point = ${point}
+   WHERE  id = ${req.user.id}
+  `;
+
   try {
     const insertResult = await models.sequelize.query(insertQuery);
+    await models.sequelize.query(pointUpdateQuery);
 
     // (금액/할인)
     await Promise.all(

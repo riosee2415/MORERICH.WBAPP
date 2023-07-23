@@ -84,6 +84,7 @@ const Index = () => {
   const detailAddressInput = useInput(``);
   const mobileInput = useInput(``);
   const deliveryInput = useInput(``);
+  const point = useInput(0);
 
   // BOOLEAN
   const [isTerms, setIsTerms] = useState(false);
@@ -164,14 +165,22 @@ const Index = () => {
       return message.error("상세주소를 입력해주세요.");
     }
 
+    if (me.point < parseInt(point.value)) {
+      return message.error(
+        "보유한 포인트이상으로 포인트를 사용할 수 없습니다."
+      );
+    }
+
     if (!isTerms) {
       return message.error("이용약관에 동의해주세요.");
     }
 
+    const disPrice = parseInt(point.value) / currentData.length;
+
     currentData.map((data) => {
       boughtLists.push({
         productName: data.name,
-        price: data.price,
+        price: data.calcPrice - disPrice / data.qun,
         qun: data.qun,
         optionValue: data.optionName,
         etcOption: data.etcOption,
@@ -187,6 +196,10 @@ const Index = () => {
         dadrs: detailAddressInput.value,
         payType: isPayType,
         boughtLists,
+        point:
+          me.point -
+          parseInt(point.value) +
+          totalData.totalPriceInt * (me.pointPer / 100),
       },
     });
   }, [
@@ -196,13 +209,15 @@ const Index = () => {
     detailAddressInput,
     isTerms,
     isPayType,
+    me,
+    point,
+    totalData,
   ]);
 
   const backHandler = useCallback(() => {
     window.history.back();
   }, []);
 
-  console.log(me);
   ////// DATAVIEW //////
 
   return (
@@ -323,6 +338,35 @@ const Index = () => {
                     placeholder="연락처"
                     height={`50px`}
                     {...mobileInput}
+                  />
+                </Wrapper>
+
+                <Wrapper dr={`row`}>
+                  <Text
+                    width={width < 800 ? `100%` : `182px`}
+                    lineHeight={`50px`}
+                  >
+                    보유 포인트
+                  </Text>
+                  <TextInput
+                    width={width < 800 ? `100%` : `calc(100% - 182px)`}
+                    height={`50px`}
+                    value={me && me.point}
+                    readOnly
+                  />
+                </Wrapper>
+                <Wrapper dr={`row`} margin={`20px 0`}>
+                  <Text
+                    width={width < 800 ? `100%` : `182px`}
+                    lineHeight={`50px`}
+                  >
+                    포인트
+                  </Text>
+                  <TextInput
+                    width={width < 800 ? `100%` : `calc(100% - 182px)`}
+                    placeholder="포인트"
+                    height={`50px`}
+                    {...point}
                   />
                 </Wrapper>
                 {/* <Wrapper dr={`row`}>
@@ -604,7 +648,10 @@ const Index = () => {
                     fontSize={width < 800 ? `20px` : `28px`}
                     fontWeight={`bold`}
                   >
-                    {totalData.totalPrice}원
+                    {(totalData.totalPriceInt - parseInt(point.value))
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    원
                   </Text>
                 </Wrapper>
               </Wrapper>

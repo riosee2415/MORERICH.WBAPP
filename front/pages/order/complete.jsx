@@ -112,6 +112,7 @@ const Complete = () => {
               boughtDetail.connectArray.map((data) => {
                 return (
                   <Wrapper
+                    key={data.id}
                     borderBottom={`1px solid ${Theme.black_C}`}
                     dr={`row`}
                   >
@@ -294,7 +295,7 @@ const Complete = () => {
                     String(
                       boughtDetail &&
                         boughtDetail.connectArray.reduce((sum, currValue) => {
-                          let a = sum + currValue.price;
+                          let a = sum + currValue.calcPrice;
 
                           return a;
                         }, 0)
@@ -335,7 +336,7 @@ const Complete = () => {
                     String(
                       boughtDetail &&
                         boughtDetail.connectArray.reduce((sum, currValue) => {
-                          let a = sum + currValue.price;
+                          let a = sum + currValue.calcPrice;
 
                           return a;
                         }, 0)
@@ -373,7 +374,7 @@ const Complete = () => {
                     String(
                       boughtDetail &&
                         boughtDetail.connectArray.reduce((sum, currValue) => {
-                          let a = sum + currValue.price;
+                          let a = sum + currValue.calcPrice;
 
                           return a;
                         }, 0)

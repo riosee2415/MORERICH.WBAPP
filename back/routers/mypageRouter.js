@@ -169,6 +169,7 @@ router.post("/bought/detail", async (req, res, next) => {
           qun,
           optionValue,
           etcOption,
+          CAST(price * qun AS signed integer)	AS calcPrice,
           CONCAT(FORMAT(price, 0), "원") 			AS viewPrice,
           CONCAT(FORMAT((price * qun), 0), "원") 			AS viewCalcPrice,
           DATE_FORMAT(createdAt, '%Y%m%d')			    AS sortCreatedAt,

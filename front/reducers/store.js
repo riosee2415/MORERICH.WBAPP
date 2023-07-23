@@ -161,6 +161,11 @@ export const initailState = {
   st_newProductType2DepthLoading: false,
   st_newProductType2DepthDone: false,
   st_newProductType2DepthError: null,
+
+  // 상품유형 숨기기
+  st_typeHideToggleLoading: false,
+  st_typeHideToggleDone: false,
+  st_typeHideToggleError: null,
 };
 
 export const GET_PRODUCTTYPE_REQUEST = "GET_PRODUCTTYPE_REQUEST";
@@ -286,6 +291,10 @@ export const DEL_TYPE_2DEPTH_FAILURE = "DEL_TYPE_2DEPTH_FAILURE";
 export const NEW_TYPE_2DEPTH_REQUEST = "NEW_TYPE_2DEPTH_REQUEST";
 export const NEW_TYPE_2DEPTH_SUCCESS = "NEW_TYPE_2DEPTH_SUCCESS";
 export const NEW_TYPE_2DEPTH_FAILURE = "NEW_TYPE_2DEPTH_FAILURE";
+
+export const TYPE_HIDE_TOGGLE_REQUEST = "TYPE_HIDE_TOGGLE_REQUEST";
+export const TYPE_HIDE_TOGGLE_SUCCESS = "TYPE_HIDE_TOGGLE_SUCCESS";
+export const TYPE_HIDE_TOGGLE_FAILURE = "TYPE_HIDE_TOGGLE_FAILURE";
 
 export const INIT_TH = "INIT_TH";
 
@@ -1027,6 +1036,28 @@ const reducer = (state = initailState, action) =>
         draft.st_newProductType2DepthLoading = false;
         draft.st_newProductType2DepthDone = false;
         draft.st_newProductType2DepthError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case TYPE_HIDE_TOGGLE_REQUEST: {
+        draft.st_typeHideToggleLoading = true;
+        draft.st_typeHideToggleDone = false;
+        draft.st_typeHideToggleError = null;
+        break;
+      }
+
+      case TYPE_HIDE_TOGGLE_SUCCESS: {
+        draft.st_typeHideToggleLoading = false;
+        draft.st_typeHideToggleDone = true;
+        draft.st_typeHideToggleError = null;
+        break;
+      }
+
+      case TYPE_HIDE_TOGGLE_FAILURE: {
+        draft.st_typeHideToggleLoading = false;
+        draft.st_typeHideToggleDone = false;
+        draft.st_typeHideToggleError = action.error;
         break;
       }
 

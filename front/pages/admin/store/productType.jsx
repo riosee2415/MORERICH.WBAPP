@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Popover, message, Popconfirm, Drawer, Spin } from "antd";
+import { Popover, message, Popconfirm, Drawer, Spin, Switch } from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -36,6 +36,7 @@ import {
   GET_TYPE_2DEPTH_REQUEST,
   DEL_TYPE_2DEPTH_REQUEST,
   NEW_TYPE_2DEPTH_REQUEST,
+  TYPE_HIDE_TOGGLE_REQUEST,
 } from "../../../reducers/store";
 import PTypeWorkInput from "../../../components/admin/PTypeWorkInput";
 import PTypeWorkInput2 from "../../../components/admin/PTypeWorkInput2";
@@ -63,6 +64,9 @@ const ProductType = ({}) => {
     st_delProductType2DepthDone,
     //
     st_newProductType2DepthDone,
+    //
+    st_typeHideToggleDone,
+    st_typeHideToggleError,
   } = useSelector((state) => state.store);
 
   const router = useRouter();
@@ -167,6 +171,18 @@ const ProductType = ({}) => {
       return message.error(st_newProductTypeError);
     }
   }, [st_newProductTypeError, st_newProductTypeDone]);
+
+  useEffect(() => {
+    if (st_typeHideToggleDone) {
+      dispatch({
+        type: GET_PRODUCTTYPE_REQUEST,
+      });
+    }
+
+    if (st_typeHideToggleError) {
+      return message.error(st_typeHideToggleError);
+    }
+  }, [st_typeHideToggleError, st_typeHideToggleDone]);
 
   useEffect(() => {
     if (st_modifyProductTypeDone) {
@@ -305,6 +321,18 @@ const ProductType = ({}) => {
     });
   }, []);
 
+  const dataToggleUpdate = useCallback((e, row) => {
+    const nextFlag = e ? 1 : 0;
+
+    dispatch({
+      type: TYPE_HIDE_TOGGLE_REQUEST,
+      data: {
+        targetId: row.id,
+        nextFlag,
+      },
+    });
+  }, []);
+
   ////// DATAVIEW //////
 
   ////// DATA COLUMNS //////
@@ -330,6 +358,15 @@ const ProductType = ({}) => {
         compare: (a, b) => a.sortCreatedAt - b.sortCreatedAt,
         multiple: 3,
       },
+    },
+    {
+      title: "유형 숨기기",
+      render: (row) => (
+        <Switch
+          checked={row.isHide}
+          onChange={(e) => dataToggleUpdate(e, row)}
+        />
+      ),
     },
     {
       title: "최근수정",

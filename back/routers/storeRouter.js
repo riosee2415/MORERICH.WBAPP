@@ -1025,7 +1025,13 @@ router.post("/wishchart", isAdminCheck, async (req, res, next) => {
  * DEV DATE : 2023/06/01
  */
 router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
-  const { searchId = "", searchDate = false, stat = 0 } = req.body;
+  const { searchId = "", searchDate = false, stat = 0, terms = 1 } = req.body;
+
+  // terms가 없을 땐 1
+  // terms 1 은 1개월
+  // terms 3 은 3개월
+  // terms 6 은 6개월
+  // terms 12 은 12개월
 
   const selectQ1 = `
   SELECT	ROW_NUMBER() OVER(ORDER BY A.createdAt DESC)        AS num,
@@ -1068,11 +1074,10 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
    WHERE  1 = 1
      AND  B.userId LIKE "%${searchId}%"
      AND  A.status = ${stat}
-     ${
-       searchDate
-         ? `AND  DATE_FORMAT(A.createdAt, "%Y-%m-%d") = "${searchDate}"`
-         : ""
-     }
+     AND  DATE_FORMAT(A.createdAt, "%Y%m%d") >= (SELECT	DATE_FORMAT(DATE_SUB(NOW(), INTERVAL ${terms} month), "%Y%m%d")
+                                                 FROM	DUAL)
+
+    
   `;
 
   const selectQ2 = `

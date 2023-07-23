@@ -211,15 +211,17 @@ const Index = () => {
                 </Wrapper>
               ) : (
                 productTypes.map((data) => {
-                  return (
-                    <CateBtn
-                      onClick={() => typeHandler(data.id)}
-                      isActive={data.id === type}
-                      key={data.id}
-                    >
-                      {data.value}
-                    </CateBtn>
-                  );
+                  if (data.isHide === 0) {
+                    return (
+                      <CateBtn
+                        onClick={() => typeHandler(data.id)}
+                        isActive={data.id === type}
+                        key={data.id}
+                      >
+                        {data.value}
+                      </CateBtn>
+                    );
+                  }
                 })
               )}
             </Wrapper>
@@ -231,15 +233,20 @@ const Index = () => {
               margin={`30px 0 0`}
               fontSize={width < 900 ? `16px` : `18px`}
             >
-              <Text
+              <Wrapper
+                width={`auto`}
+                height={`35px`}
+                padding={`0 15px`}
+                radius={`30px`}
                 margin={`0 20px 10px 0`}
-                color={false === type2 ? Theme.black_C : Theme.grey2_C}
+                color={false === type2 ? Theme.white_C : Theme.grey2_C}
+                bgColor={false === type2 ? Theme.black_C : Theme.white_C}
+                cursor={`pointer`}
                 fontWeight={false === type2 ? `bold` : ``}
                 onClick={() => typeHandler2(false)}
-                isHover
               >
                 전체
-              </Text>
+              </Wrapper>
 
               {productType2Depth && productType2Depth.length === 0 ? (
                 <Wrapper
@@ -253,16 +260,23 @@ const Index = () => {
                 productType2Depth &&
                 productType2Depth.map((data) => {
                   return (
-                    <Text
+                    <Wrapper
+                      width={`auto`}
+                      height={`35px`}
+                      padding={`0 15px`}
+                      radius={`30px`}
                       onClick={() => typeHandler2(data.id)}
                       margin={`0 20px 10px 0`}
                       key={data.id}
                       fontWeight={data.id === type2 ? `bold` : ``}
-                      color={data.id === type2 ? Theme.black_C : Theme.grey2_C}
-                      isHover
+                      color={data.id === type2 ? Theme.white_C : Theme.grey2_C}
+                      bgColor={
+                        data.id === type2 ? Theme.black_C : Theme.white_C
+                      }
+                      cursor={`pointer`}
                     >
                       {data.value}
-                    </Text>
+                    </Wrapper>
                   );
                 })
               )}

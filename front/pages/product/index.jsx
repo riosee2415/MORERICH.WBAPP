@@ -61,6 +61,8 @@ const Index = () => {
   const [type2, setType2] = useState(false);
   const [orderType, setOrderType] = useState(1); // 순서
 
+  const [proLen, setProLen] = useState(0);
+
   const [likeId, setLikeId] = useState(null);
 
   ////// HOOKS //////
@@ -120,6 +122,14 @@ const Index = () => {
       });
     }
   }, [router.query, type, type2, orderType]);
+
+  useEffect(() => {
+    if (products) {
+      let count = products.filter((data) => data.isStop === 0).length;
+
+      setProLen(count);
+    }
+  }, [products]);
 
   ////// TOGGLE //////
   ////// HANDLER //////
@@ -282,9 +292,7 @@ const Index = () => {
               )}
             </Wrapper>
             <Wrapper dr={`row`} ju={`space-between`} margin={`30px 0 20px`}>
-              <Text color={Theme.grey_C}>
-                {products && products.length}개의 상품이 존재합니다.
-              </Text>
+              <Text color={Theme.grey_C}>{proLen}개의 상품이 존재합니다.</Text>
               <CustomSelect
                 width={width < 900 ? `160px` : `225px`}
                 height={`40px`}
@@ -308,35 +316,36 @@ const Index = () => {
               ) : (
                 products.map((data, idx) => {
                   return (
-                    <ProductWrapper key={idx}>
-                      <SquareBox
-                        onClick={() => movelinkHandler(`/product/${data.id}`)}
-                      >
-                        <Image alt="thumbnail" src={data.thumbnail} />
-                      </SquareBox>
-
-                      <Wrapper
-                        padding={width < 900 && `0 5px 0 0`}
-                        al={`flex-start`}
-                      >
-                        <Text
-                          fontSize={width < 900 ? `16px` : `18px`}
-                          fontWeight={`600`}
-                          margin={`23px 0 12px`}
+                    data.isStop === 0 && (
+                      <ProductWrapper key={idx}>
+                        <SquareBox
+                          onClick={() => movelinkHandler(`/product/${data.id}`)}
                         >
-                          {data.name}
-                        </Text>
+                          <Image alt="thumbnail" src={data.thumbnail} />
+                        </SquareBox>
 
-                        <Text fontSize={width < 900 ? `13px` : `17px`}>
-                          {data.subName}
-                        </Text>
                         <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          margin={`16px 0 20px`}
-                          fontSize={width < 900 ? `14px` : `20px`}
+                          padding={width < 900 && `0 5px 0 0`}
+                          al={`flex-start`}
                         >
-                          {/* {data.discount !== 0 && (
+                          <Text
+                            fontSize={width < 900 ? `16px` : `18px`}
+                            fontWeight={`600`}
+                            margin={`23px 0 12px`}
+                          >
+                            {data.name}
+                          </Text>
+
+                          <Text fontSize={width < 900 ? `13px` : `17px`}>
+                            {data.subName}
+                          </Text>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-start`}
+                            margin={`16px 0 20px`}
+                            fontSize={width < 900 ? `14px` : `20px`}
+                          >
+                            {/* {data.discount !== 0 && (
                             <Text
                               color={Theme.grey_C}
                               className="line"
@@ -345,34 +354,35 @@ const Index = () => {
                               {data.viewPrice}
                             </Text>
                           )} */}
-                          <Text>{data.viewCalcPrice}</Text>
-                        </Wrapper>
-                        <Wrapper dr={`row`} ju={`flex-start`}>
-                          {data.exWish ? (
-                            <Image
-                              alt="heart icon"
-                              src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
-                              width={`22px`}
-                              margin={`0 18px 0 0`}
-                              onClick={() => likeCreateHandler(data)}
-                            />
-                          ) : (
-                            <Image
-                              alt="heart icon"
-                              src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                              width={`22px`}
-                              margin={`0 18px 0 0`}
-                              onClick={() => likeCreateHandler(data)}
-                            />
-                          )}
-                          {/* <Image
+                            <Text>{data.viewCalcPrice}</Text>
+                          </Wrapper>
+                          <Wrapper dr={`row`} ju={`flex-start`}>
+                            {data.exWish ? (
+                              <Image
+                                alt="heart icon"
+                                src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish_full.png`}
+                                width={`22px`}
+                                margin={`0 18px 0 0`}
+                                onClick={() => likeCreateHandler(data)}
+                              />
+                            ) : (
+                              <Image
+                                alt="heart icon"
+                                src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                                width={`22px`}
+                                margin={`0 18px 0 0`}
+                                onClick={() => likeCreateHandler(data)}
+                              />
+                            )}
+                            {/* <Image
                             alt="cart icon"
                             src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
                             width={`22px`}
                           /> */}
+                          </Wrapper>
                         </Wrapper>
-                      </Wrapper>
-                    </ProductWrapper>
+                      </ProductWrapper>
+                    )
                   );
                 })
               )}

@@ -427,6 +427,7 @@ router.post("/product/list", async (req, res, next) => {
     isNew = false,
     isBest = false,
     isRecomm = false,
+    isStop = false,
     ProductTypeId,
     ProductType2Id = false,
     orderType = 1,
@@ -458,6 +459,7 @@ router.post("/product/list", async (req, res, next) => {
             A.isNew,
             A.isBest,
             A.isRecomm,
+            A.isStop,
             DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
             DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
             DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
@@ -495,6 +497,7 @@ router.post("/product/list", async (req, res, next) => {
       ${isNew ? `AND	A.isNew = ${isNew}` : ""}
       ${isBest ? `AND	A.isBest = ${isBest}` : ""}
       ${isRecomm ? `AND	A.isRecomm = ${isRecomm}` : ""}
+      ${isStop ? `AND	A.isStop = ${isStop}` : ""}
 
       ${parseInt(orderType) === 1 ? `ORDER   BY  A.createdAt DESC` : ""}
       ${parseInt(orderType) === 2 ? `ORDER   BY  A.price ASC` : ""}

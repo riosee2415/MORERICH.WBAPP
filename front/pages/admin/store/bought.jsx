@@ -15,6 +15,7 @@ import {
   OtherMenu,
   GuideUl,
   GuideLi,
+  TextArea,
 } from "../../../components/commonComponents";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import Theme from "../../../components/Theme";
@@ -32,8 +33,10 @@ import {
   STATUS_BOUGHTLIST_REQUEST,
   DELI_BOUGHTLIST_REQUEST,
   CANCEL_BOUGHT_REQUEST,
+  PRODUCT_MEMO_REQUEST,
 } from "../../../reducers/store";
 import { numberWithCommas } from "../../../components/commonUtils";
+import useInput from "../../../hooks/useInput";
 
 const Bought = ({}) => {
   const { st_loadMyInfoDone, me } = useSelector((state) => state.user);
@@ -48,6 +51,9 @@ const Bought = ({}) => {
     //
     st_cancelBoughtDone,
     st_cancelBoughtError,
+    //
+    st_productMemoDone,
+    st_productMemoError,
   } = useSelector((state) => state.store);
 
   const router = useRouter();
@@ -58,9 +64,6 @@ const Bought = ({}) => {
   const [level2, setLevel2] = useState("");
   const [sameDepth, setSameDepth] = useState([]);
 
-  const [searchDate, setSearchDate] = useState(
-    new Date().toISOString().substring(0, 10)
-  );
   const [searchId, setSearchId] = useState("");
   const [_searchId, set_SearchId] = useState("");
   const [stat, setStat] = useState(0);
@@ -71,11 +74,14 @@ const Bought = ({}) => {
   const [canInfoModal, setCanInfoModal] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
   const [adrs, setAdrs] = useState(false);
+  const [memo, setMemo] = useState(false);
 
   const [crData, setCrData] = useState(null);
 
   const [deliForm] = Form.useForm();
   const [canForm] = Form.useForm();
+
+  const memoInput = useInput("");
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -118,6 +124,27 @@ const Bought = ({}) => {
       return message.error(st_statusBoughtListError);
     }
   }, [st_statusBoughtListDone, st_statusBoughtListError]);
+
+  useEffect(() => {
+    if (st_productMemoDone) {
+      dispatch({
+        type: GET_BOUGHTLIST_REQUEST,
+        data: {
+          terms: sDate,
+          searchId: _searchId,
+          stat: stat,
+        },
+      });
+
+      memoToggle();
+      memoInput.setValue("");
+      return message.success("메모가 저장되었습니다.");
+    }
+
+    if (st_productMemoError) {
+      return message.error(st_productMemoError);
+    }
+  }, [st_productMemoDone, st_productMemoError]);
 
   useEffect(() => {
     if (st_cancelBoughtDone) {
@@ -244,8 +271,12 @@ const Bought = ({}) => {
     set_SearchId(searchId);
   }, [searchId]);
 
-  const dateChangeHandler = useCallback((e) => {
-    setSearchDate(e.target.value);
+  const memoToggle = useCallback((row) => {
+    setMemo((p) => !p);
+
+    setCrData(row);
+
+    memoInput.setValue(row && row.memo);
   }, []);
 
   const searchEnter = useCallback(
@@ -287,6 +318,19 @@ const Bought = ({}) => {
       });
     },
     [crData]
+  );
+
+  const memoHandler = useCallback(
+    (data) => {
+      dispatch({
+        type: PRODUCT_MEMO_REQUEST,
+        data: {
+          targetId: data.id,
+          memoValue: memoInput.value,
+        },
+      });
+    },
+    [memoInput.value]
   );
 
   ////// DATAVIEW //////
@@ -503,6 +547,12 @@ const Bought = ({}) => {
         <ManageButton onClick={() => adrsModalToggle(row)} type="link">
           배송지보기
         </ManageButton>
+      ),
+    },
+    {
+      title: "메모작성",
+      render: (row) => (
+        <ManageButton onClick={() => memoToggle(row)}>메모작성</ManageButton>
       ),
     },
 
@@ -803,6 +853,38 @@ const Bought = ({}) => {
             취소/환불 처리하기
           </ManageDelButton>
         </Wrapper> */}
+      </Modal>
+
+      <Modal
+        visible={memo}
+        width="500px"
+        title="메모작성하기"
+        footer={null}
+        onCancel={() => memoToggle(null)}
+      >
+        <Wrapper
+          bgColor={Theme.adminLightGrey_C}
+          padding="10px"
+          radius="5px"
+          al="flex-start"
+        >
+          <Wrapper al="flex-start">
+            <Text fontSize="18px">메모작성</Text>
+            <TextArea
+              placeholder="메모를 작성해주세요."
+              height={`100px`}
+              width={`100%`}
+              margin={`20px 0 0`}
+              radius={`0`}
+              {...memoInput}
+            />
+          </Wrapper>
+          <Wrapper dr="row" ju="flex-end" margin={`20px 0 0`}>
+            <ManageButton type="primary" onClick={() => memoHandler(crData)}>
+              저장
+            </ManageButton>
+          </Wrapper>
+        </Wrapper>
       </Modal>
     </AdminLayout>
   );

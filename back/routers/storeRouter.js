@@ -47,6 +47,7 @@ router.post("/list", async (req, res, next) => {
     SELECT	ROW_NUMBER() OVER(ORDER BY value ASC)           AS num,   
             A.id,
             A.value,
+            A.isHide,
             DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
             DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
             DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,

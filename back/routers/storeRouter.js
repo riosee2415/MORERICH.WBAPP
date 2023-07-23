@@ -609,10 +609,17 @@ router.post("/product/toggle", isAdminCheck, async (req, res, next) => {
                 updatedAt = NOW()
          WHERE  id = ${id}`;
 
+  const uq4 = `
+        UPDATE  product
+           SET  isStop = ${nextFlag},
+                updatedAt = NOW()
+         WHERE  id = ${id}`;
+
   try {
     if (type === "new") await models.sequelize.query(uq1);
     if (type === "best") await models.sequelize.query(uq2);
     if (type === "recomm") await models.sequelize.query(uq3);
+    if (type === "stop") await models.sequelize.query(uq4);
 
     return res.status(200).json({ result: true });
   } catch (error) {

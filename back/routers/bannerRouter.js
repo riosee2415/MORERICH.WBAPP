@@ -418,6 +418,7 @@ router.post("/list/slide", async (req, res, next) => {
           B.subName,
           B.price,
           B.discount,
+          B.isStop,
           CONCAT(FORMAT(B.price, 0), "원") AS viewPrice,
           CONCAT(FORMAT(B.discount, 0), "원") AS viewDiscount,
           CONCAT(FORMAT(B.price - B.discount, 0), "원")  AS viewCalcPrice,
@@ -434,10 +435,11 @@ router.post("/list/slide", async (req, res, next) => {
                 FROM	dual
             )	AS exWish`
           }
-  FROM	mainSlideProduct	A
-  INNER
-  JOIN	product 			B
-    ON	A.ProductId = B.id
+    FROM	mainSlideProduct	A
+   INNER
+    JOIN	product 			B
+      ON	A.ProductId = B.id
+   WHERE  B.isStop = 0
   `;
 
   try {

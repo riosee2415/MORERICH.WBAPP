@@ -345,6 +345,7 @@ router.post("/product/detail", async (req, res, next) => {
           A.isNew,
           A.isBest,
           A.isRecomm,
+          A.isStop,
           DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
           DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
           DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
@@ -415,7 +416,7 @@ router.post("/product/detail", async (req, res, next) => {
 
 /**
  * SUBJECT : 상품 가져오기
- * PARAMETERS : {sName, isNew, isBest, isRecomm, ProductTypeId}
+ * PARAMETERS : {sName, isNew, isBest, isRecomm, isStop, ProductTypeId}
  * ORDER BY : 등록일 기준
  * STATEMENT : -
  * DEVELOPMENT : CTO 윤상호
@@ -427,6 +428,7 @@ router.post("/product/list", async (req, res, next) => {
     isNew = false,
     isBest = false,
     isRecomm = false,
+    isStop = false,
     ProductTypeId,
     ProductType2Id = false,
     orderType = 1,
@@ -458,6 +460,7 @@ router.post("/product/list", async (req, res, next) => {
             A.isNew,
             A.isBest,
             A.isRecomm,
+            A.isStop,
             DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
             DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
             DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,
@@ -495,6 +498,7 @@ router.post("/product/list", async (req, res, next) => {
       ${isNew ? `AND	A.isNew = ${isNew}` : ""}
       ${isBest ? `AND	A.isBest = ${isBest}` : ""}
       ${isRecomm ? `AND	A.isRecomm = ${isRecomm}` : ""}
+      ${isStop ? `AND	A.isStop = ${isStop}` : ""}
 
       ${parseInt(orderType) === 1 ? `ORDER   BY  A.createdAt DESC` : ""}
       ${parseInt(orderType) === 2 ? `ORDER   BY  A.price ASC` : ""}
@@ -643,6 +647,7 @@ router.post("/product/toggle", isAdminCheck, async (req, res, next) => {
     isBest,
     isNew,
     isRecomm,
+    isStop,
     name,
     num,
     price,
@@ -669,6 +674,7 @@ router.post("/product/update", isAdminCheck, async (req, res, next) => {
     isBest,
     isNew,
     isRecomm,
+    isStop,
     name,
     price,
     subName,
@@ -688,6 +694,7 @@ router.post("/product/update", isAdminCheck, async (req, res, next) => {
             isBest = ${isBest},
             isNew = ${isNew},
             isRecomm = ${isRecomm},
+            isStop = ${isStop},
             name = "${name}",
             price = ${price},
             subName = "${subName}",

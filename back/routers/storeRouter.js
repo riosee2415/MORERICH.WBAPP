@@ -416,7 +416,7 @@ router.post("/product/detail", async (req, res, next) => {
 
 /**
  * SUBJECT : 상품 가져오기
- * PARAMETERS : {sName, isNew, isBest, isRecomm, ProductTypeId}
+ * PARAMETERS : {sName, isNew, isBest, isRecomm, isStop, ProductTypeId}
  * ORDER BY : 등록일 기준
  * STATEMENT : -
  * DEVELOPMENT : CTO 윤상호
@@ -647,6 +647,7 @@ router.post("/product/toggle", isAdminCheck, async (req, res, next) => {
     isBest,
     isNew,
     isRecomm,
+    isStop,
     name,
     num,
     price,
@@ -673,6 +674,7 @@ router.post("/product/update", isAdminCheck, async (req, res, next) => {
     isBest,
     isNew,
     isRecomm,
+    isStop,
     name,
     price,
     subName,
@@ -692,6 +694,7 @@ router.post("/product/update", isAdminCheck, async (req, res, next) => {
             isBest = ${isBest},
             isNew = ${isNew},
             isRecomm = ${isRecomm},
+            isStop = ${isStop},
             name = "${name}",
             price = ${price},
             subName = "${subName}",

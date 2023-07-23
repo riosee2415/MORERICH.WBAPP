@@ -124,6 +124,10 @@ import {
   NEW_TYPE_2DEPTH_REQUEST,
   NEW_TYPE_2DEPTH_SUCCESS,
   NEW_TYPE_2DEPTH_FAILURE,
+  //
+  TYPE_HIDE_TOGGLE_REQUEST,
+  TYPE_HIDE_TOGGLE_SUCCESS,
+  TYPE_HIDE_TOGGLE_FAILURE,
 } from "../reducers/store";
 
 // SAGA AREA ********************************************************************************************************
@@ -956,6 +960,33 @@ function* new2Depth(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function typeHideToggleAPI(data) {
+  return await axios.post(`/api/store/hideToggle`, data);
+}
+
+function* typeHideToggle(action) {
+  try {
+    const result = yield call(typeHideToggleAPI, action.data);
+
+    yield put({
+      type: TYPE_HIDE_TOGGLE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: TYPE_HIDE_TOGGLE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchGetProductType() {
   yield takeLatest(GET_PRODUCTTYPE_REQUEST, getProductType);
@@ -1050,6 +1081,9 @@ function* watchDel2DeptType() {
 function* watchNew2DeptType() {
   yield takeLatest(NEW_TYPE_2DEPTH_REQUEST, new2Depth);
 }
+function* watchTypeHideToggle() {
+  yield takeLatest(TYPE_HIDE_TOGGLE_REQUEST, typeHideToggle);
+}
 
 //////////////////////////////////////////////////////////////
 export default function* storeSaga() {
@@ -1085,6 +1119,7 @@ export default function* storeSaga() {
     fork(watchModify2DeptType),
     fork(watchDel2DeptType),
     fork(watchNew2DeptType),
+    fork(watchTypeHideToggle),
 
     //
   ]);

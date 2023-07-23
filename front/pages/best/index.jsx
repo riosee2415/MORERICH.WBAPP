@@ -110,36 +110,37 @@ const Index = () => {
               ) : (
                 products.map((data, idx) => {
                   return (
-                    <ProductWrapper
-                      key={idx}
-                      onClick={() => movelinkHandler(`/product/${data.id}`)}
-                    >
-                      <SquareBox>
-                        <Image alt="thumbnail" src={data.thumbnail} />
-                      </SquareBox>
-
-                      <Wrapper
-                        padding={width < 900 && `0 5px 0 0`}
-                        al={`flex-start`}
+                    data.isStop === 0 && (
+                      <ProductWrapper
+                        key={idx}
+                        onClick={() => movelinkHandler(`/product/${data.id}`)}
                       >
-                        <Text
-                          fontSize={width < 900 ? `16px` : `18px`}
-                          fontWeight={`600`}
-                          margin={`23px 0 12px`}
-                        >
-                          {data.name}
-                        </Text>
+                        <SquareBox>
+                          <Image alt="thumbnail" src={data.thumbnail} />
+                        </SquareBox>
 
-                        <Text fontSize={width < 900 ? `13px` : `17px`}>
-                          {data.subName}
-                        </Text>
                         <Wrapper
-                          dr={`row`}
-                          ju={`flex-start`}
-                          margin={`16px 0 20px`}
-                          fontSize={width < 900 ? `14px` : `20px`}
+                          padding={width < 900 && `0 5px 0 0`}
+                          al={`flex-start`}
                         >
-                          {/* {data.discount !== 0 && (
+                          <Text
+                            fontSize={width < 900 ? `16px` : `18px`}
+                            fontWeight={`600`}
+                            margin={`23px 0 12px`}
+                          >
+                            {data.name}
+                          </Text>
+
+                          <Text fontSize={width < 900 ? `13px` : `17px`}>
+                            {data.subName}
+                          </Text>
+                          <Wrapper
+                            dr={`row`}
+                            ju={`flex-start`}
+                            margin={`16px 0 20px`}
+                            fontSize={width < 900 ? `14px` : `20px`}
+                          >
+                            {/* {data.discount !== 0 && (
                             <Text
                               color={Theme.grey_C}
                               className="line"
@@ -148,23 +149,24 @@ const Index = () => {
                               {data.viewPrice}
                             </Text>
                           )} */}
-                          <Text>{data.viewCalcPrice}</Text>
+                            <Text>{data.viewCalcPrice}</Text>
+                          </Wrapper>
+                          <Wrapper dr={`row`} ju={`flex-start`}>
+                            <Image
+                              alt="heart icon"
+                              src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
+                              width={`22px`}
+                              margin={`0 18px 0 0`}
+                            />
+                            <Image
+                              alt="cart icon"
+                              src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
+                              width={`22px`}
+                            />
+                          </Wrapper>
                         </Wrapper>
-                        <Wrapper dr={`row`} ju={`flex-start`}>
-                          <Image
-                            alt="heart icon"
-                            src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_wish.png`}
-                            width={`22px`}
-                            margin={`0 18px 0 0`}
-                          />
-                          <Image
-                            alt="cart icon"
-                            src={`https://morerich.s3.ap-northeast-2.amazonaws.com/morerich/assets/images/common/icon_cart.png`}
-                            width={`22px`}
-                          />
-                        </Wrapper>
-                      </Wrapper>
-                    </ProductWrapper>
+                      </ProductWrapper>
+                    )
                   );
                 })
               )}

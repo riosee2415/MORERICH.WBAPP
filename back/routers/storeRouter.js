@@ -345,6 +345,7 @@ router.post("/product/detail", async (req, res, next) => {
           A.isNew,
           A.isBest,
           A.isRecomm,
+          A.isStop,
           DATE_FORMAT(A.createdAt, '%Y. %m. %d')			AS viewCreatedAt,
           DATE_FORMAT(A.createdAt, '%Y%m%d')			    AS sortCreatedAt,
           DATE_FORMAT(A.updatedAt, '%Y. %m. %d')			AS viewUpdatedAt,

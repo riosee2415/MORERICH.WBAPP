@@ -18,6 +18,11 @@ module.exports = class ProductType extends Model {
           type: DataTypes.DATE,
           allowNull: true, // 필수
         },
+        isHide: {
+          type: DataTypes.TINYINT,
+          allowNull: false, // 필수
+          defaultValue: false,
+        },
       },
       {
         modelName: "ProductType",

@@ -60,6 +60,7 @@ router.post("/list", async (req, res, next) => {
      FROM	productType	A
     WHERE	1 = 1
       AND	A.isDelete = 0
+      AND A.isHide = 0
     ORDER	BY value ASC
     `;
 
@@ -92,6 +93,7 @@ router.post("/list2", async (req, res, next) => {
      FROM	productType	A
     WHERE	1 = 1
      AND	A.isDelete = 0
+     AND A.isHide = 0
     `;
 
   try {
@@ -101,6 +103,35 @@ router.post("/list2", async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(400).send("데이터를 조회할 수 없습니다.");
+  }
+});
+
+/**
+ * SUBJECT : 상품유형 숨기기
+ * PARAMETERS : { targetId, nextFlag }
+ * ORDER BY : SORT 기준
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/07/23
+ */
+router.post("/hideToggle", isAdminCheck, async (req, res, next) => {
+  const { targetId, nextFlag } = req.body;
+
+  //nextFlag 는 변경 될 값을 보내주세요. 현재 값이 아닙니다.
+
+  const uq = `
+    UPDATE  productType
+       SET  isHide = ${nextFlag}
+     WHERE  id = ${targetId}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("변경할 수 없습니다.");
   }
 });
 

@@ -1017,6 +1017,34 @@ router.post("/wishchart", isAdminCheck, async (req, res, next) => {
 });
 
 /**
+ * SUBJECT : 구매내역 메모 수정
+ * PARAMETERS : { targetId, memoValue }
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/memoUp", isAdminCheck, async (req, res, next) => {
+  const { targetId, memoValue } = req.body;
+
+  const uq = `
+  
+      UPDATE  boughtHistory
+          SET memo = "${memoValue}"
+      WHERE id = ${targetId}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("수정할 수 없습니다.");
+  }
+});
+
+/**
  * SUBJECT : 구매내역 조회
  * PARAMETERS : { searchId, searchDate, stat }
  * ORDER BY : -
@@ -1057,6 +1085,7 @@ router.post("/boughtlist", isAdminCheck, async (req, res, next) => {
           A.returnBankName,
           A.returnAccountNum,
           A.payType,
+          A.memo,
           (
           	SELECT  SUM(C.price * C.qun)
           	  FROM  boughtList C

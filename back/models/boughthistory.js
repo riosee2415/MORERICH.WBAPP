@@ -62,6 +62,10 @@ module.exports = class BoughtHistory extends Model {
           type: DataTypes.STRING(100),
           allowNull: true,
         },
+        memo: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
       },
       {
         modelName: "BoughtHistory",

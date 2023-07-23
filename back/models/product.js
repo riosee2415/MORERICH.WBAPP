@@ -74,6 +74,12 @@ module.exports = class Product extends Model {
           type: DataTypes.DATE,
           allowNull: true, // 필수
         },
+
+        isStop: {
+          type: DataTypes.BOOLEAN,
+          allowNull: false,
+          defaultValue: false,
+        },
       },
       {
         modelName: "Product",
@@ -89,5 +95,3 @@ module.exports = class Product extends Model {
     db.Product.belongsTo(db.ProductType2);
   }
 };
-
-

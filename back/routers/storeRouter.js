@@ -60,7 +60,6 @@ router.post("/list", async (req, res, next) => {
      FROM	productType	A
     WHERE	1 = 1
       AND	A.isDelete = 0
-      AND A.isHide = 0
     ORDER	BY value ASC
     `;
 

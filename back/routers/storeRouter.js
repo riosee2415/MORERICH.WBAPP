@@ -1303,6 +1303,60 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
 
     const boughtHistoryId = insertResult[0].insertId;
 
+    const timestampData = moment().format("x");
+    const uri = process.env.MESSAGE_URI;
+    const secretKey = process.env.MESSAGE_SECRET_KEY;
+    const accessKey = process.env.MESSAGE_ACCESS_KEY;
+    const method = "POST";
+    const space = " ";
+    const newLine = "\n";
+    const url = `https://sens.apigw.ntruss.com/sms/v2/services/${uri}/messages`;
+    const url2 = `/sms/v2/services/${uri}/messages`;
+
+    let hmac = await CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, secretKey);
+    hmac.update(method);
+    hmac.update(space);
+    hmac.update(url2);
+    hmac.update(newLine);
+    hmac.update(timestampData);
+    hmac.update(newLine);
+    hmac.update(accessKey);
+
+    let hash = hmac.finalize();
+
+    const signature = hash.toString(CryptoJS.enc.Base64);
+
+    await axios({
+      method: method,
+      json: true,
+      url: url,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "x-ncp-apigw-timestamp": `${timestampData}`,
+        "x-ncp-iam-access-key": `${accessKey}`,
+        "x-ncp-apigw-signature-v2": `${signature}`,
+      },
+      data: {
+        type: "LMS",
+        from: "01036531805",
+        subject: "모어리치",
+        content: `[모어리치] 상품이 주문되었습니다.`,
+        messages: [
+          {
+            to: "01099149240".replace(/\-/gi, ""),
+            // subject: "string",
+            // content: "string",
+          },
+        ],
+        // files: [
+        //   {
+        //     name: "string",
+        //     body: "string",
+        //   },
+        // ],
+      },
+    });
+
     return res
       .status(201)
       .json({ result: true, boughtHistoryId: boughtHistoryId });

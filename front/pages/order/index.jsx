@@ -201,6 +201,8 @@ const Index = () => {
   const backHandler = useCallback(() => {
     window.history.back();
   }, []);
+
+  console.log(me);
   ////// DATAVIEW //////
 
   return (

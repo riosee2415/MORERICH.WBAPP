@@ -574,10 +574,6 @@ router.get("/me", isLoggedIn, async (req, res, next) => {
 router.post("/me/update", isLoggedIn, async (req, res, next) => {
   const { password, mobile, email } = req.body;
 
-  console.log(password);
-  console.log(mobile);
-  console.log(email);
-
   try {
     const exUser = await User.findOne({ where: { id: parseInt(req.user.id) } });
 
@@ -881,8 +877,6 @@ router.get("/logout", function (req, res) {
 });
 
 router.post("/getJoinSet", async (req, res, next) => {
-  console.log(req.user);
-
   const sq = `
   SELECT  id,
           point,

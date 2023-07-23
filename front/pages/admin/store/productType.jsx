@@ -69,8 +69,6 @@ const ProductType = ({}) => {
     st_typeHideToggleError,
   } = useSelector((state) => state.store);
 
-  console.log(productTypes);
-
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -173,6 +171,18 @@ const ProductType = ({}) => {
       return message.error(st_newProductTypeError);
     }
   }, [st_newProductTypeError, st_newProductTypeDone]);
+
+  useEffect(() => {
+    if (st_typeHideToggleDone) {
+      dispatch({
+        type: GET_PRODUCTTYPE_REQUEST,
+      });
+    }
+
+    if (st_typeHideToggleError) {
+      return message.error(st_typeHideToggleError);
+    }
+  }, [st_typeHideToggleError, st_typeHideToggleDone]);
 
   useEffect(() => {
     if (st_modifyProductTypeDone) {

@@ -64,6 +64,7 @@ const Bought = ({}) => {
   const [searchId, setSearchId] = useState("");
   const [_searchId, set_SearchId] = useState("");
   const [stat, setStat] = useState(0);
+  const [sDate, setSDate] = useState(1);
 
   const [deliModal, setDeliModal] = useState(false);
   const [canModal, setCanModal] = useState(false);
@@ -106,7 +107,7 @@ const Bought = ({}) => {
       dispatch({
         type: GET_BOUGHTLIST_REQUEST,
         data: {
-          searchDate: searchDate,
+          terms: sDate,
           searchId: _searchId,
           stat: stat,
         },
@@ -123,7 +124,7 @@ const Bought = ({}) => {
       dispatch({
         type: GET_BOUGHTLIST_REQUEST,
         data: {
-          searchDate: searchDate,
+          terms: sDate,
           searchId: _searchId,
           stat: stat,
         },
@@ -143,7 +144,7 @@ const Bought = ({}) => {
       dispatch({
         type: GET_BOUGHTLIST_REQUEST,
         data: {
-          searchDate: searchDate,
+          terms: sDate,
           searchId: _searchId,
           stat: stat,
         },
@@ -187,12 +188,12 @@ const Bought = ({}) => {
     dispatch({
       type: GET_BOUGHTLIST_REQUEST,
       data: {
-        searchDate: searchDate,
+        terms: sDate,
         searchId: _searchId,
         stat: stat,
       },
     });
-  }, [searchDate, _searchId, stat]);
+  }, [sDate, _searchId, stat]);
 
   ////// HANDLER //////
 
@@ -586,15 +587,39 @@ const Bought = ({}) => {
                 onChange={(e) => setSearchId(e.target.value)}
                 onKeyDown={searchEnter}
               />
-              <ManageInput
-                width="220px"
-                placeholder="날짜"
-                value={searchDate}
-                type="date"
-                onChange={dateChangeHandler}
-              />
+
               <ManageButton type="primary" onClick={saveSearchId}>
                 검색
+              </ManageButton>
+            </Wrapper>
+
+            <Wrapper dr="row" margin="0px 0px 5px 0px" ju="flex-start">
+              <ManageButton
+                type={sDate === 1 ? "primary" : "default"}
+                onClick={() => setSDate(1)}
+              >
+                1개월
+              </ManageButton>
+
+              <ManageButton
+                type={sDate === 3 ? "primary" : "default"}
+                onClick={() => setSDate(3)}
+              >
+                3개월
+              </ManageButton>
+
+              <ManageButton
+                type={sDate === 6 ? "primary" : "default"}
+                onClick={() => setSDate(6)}
+              >
+                6개월
+              </ManageButton>
+
+              <ManageButton
+                type={sDate === 12 ? "primary" : "default"}
+                onClick={() => setSDate(12)}
+              >
+                12개월
               </ManageButton>
             </Wrapper>
 
@@ -796,13 +821,6 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST,
-    });
-
-    context.store.dispatch({
-      type: GET_BOUGHTLIST_REQUEST,
-      data: {
-        searchDate: new Date().toISOString().substring(0, 10),
-      },
     });
 
     // 구현부 종료

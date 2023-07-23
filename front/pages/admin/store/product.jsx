@@ -151,6 +151,7 @@ const Product = ({}) => {
   const [newCh, setNewCh] = useState(false);
   const [bestCh, setBestCh] = useState(false);
   const [recCh, setRecCh] = useState(false);
+  const [stopCh, setStopCh] = useState(false);
 
   const [graphView, setGraphView] = useState(false);
   const [detailDr, setDetailDr] = useState(false);
@@ -215,6 +216,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
     }
@@ -234,6 +236,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
 
@@ -254,6 +257,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
 
@@ -274,6 +278,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
 
@@ -294,6 +299,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
 
@@ -314,6 +320,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
 
@@ -336,6 +343,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
     }
@@ -355,6 +363,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
     }
@@ -374,6 +383,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
 
@@ -455,6 +465,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
     }
@@ -476,6 +487,7 @@ const Product = ({}) => {
           isNew: newCh,
           isBest: bestCh,
           isRecomm: recCh,
+          isStop: stopCh,
         },
       });
     }
@@ -486,10 +498,10 @@ const Product = ({}) => {
   }, [st_updateProductDone, st_updateProductError]);
 
   useEffect(() => {
-    if (newCh || bestCh || recCh) setAllCh(false);
+    if (newCh || bestCh || recCh || stopCh) setAllCh(false);
 
-    if (!newCh && !bestCh && !recCh) setAllCh(true);
-  }, [newCh, bestCh, recCh]);
+    if (!newCh && !bestCh && !recCh && !stopCh) setAllCh(true);
+  }, [newCh, bestCh, recCh, stopCh]);
 
   useEffect(() => {
     dispatch({
@@ -500,9 +512,10 @@ const Product = ({}) => {
         isNew: newCh,
         isBest: bestCh,
         isRecomm: recCh,
+        isStop: stopCh,
       },
     });
-  }, [typeId, _sName, newCh, bestCh, recCh]);
+  }, [typeId, _sName, newCh, bestCh, recCh, stopCh]);
 
   useEffect(() => {
     if (st_loadMyInfoDone) {
@@ -628,6 +641,7 @@ const Product = ({}) => {
     setBestCh(false);
     setNewCh(false);
     setRecCh(false);
+    setStopCh(false);
   }, []);
 
   const detailFinish = useCallback(
@@ -648,6 +662,7 @@ const Product = ({}) => {
           isBest: crData.isBest,
           isNew: crData.isNew,
           isRecomm: crData.isRecomm,
+          isStop: crData.isStop,
           name: data.name,
           price: data.price,
           subName: data.subName,
@@ -697,6 +712,13 @@ const Product = ({}) => {
         setCrData({
           ...crData,
           isRecomm: e.target.checked ? 1 : 0,
+        });
+      }
+
+      if (type === "stop") {
+        setCrData({
+          ...crData,
+          isStop: e.target.checked ? 1 : 0,
         });
       }
     },
@@ -937,6 +959,20 @@ const Product = ({}) => {
     },
 
     {
+      title: "판매중단",
+      render: (row) => (
+        <Switch
+          checked={row.isStop}
+          onChange={(e) => dataToggleUpdate(e, row, "stop")}
+        />
+      ),
+      sorter: {
+        compare: (a, b) => a.isStop - b.isStop,
+        multiple: 3,
+      },
+    },
+
+    {
       title: "상세정보",
       render: (row) => (
         <ManageButton type="primary" onClick={() => dtailDrToggle(row)}>
@@ -1094,6 +1130,12 @@ const Product = ({}) => {
                 checked={recCh}
               >
                 추천상품
+              </Checkbox>
+              <Checkbox
+                onChange={(e) => setStopCh(e.target.checked)}
+                checked={stopCh}
+              >
+                판매중단
               </Checkbox>
             </Wrapper>
 
@@ -1318,6 +1360,14 @@ const Product = ({}) => {
               style={{ marginLeft: "5px" }}
               checked={crData && crData.isRecomm}
               onChange={(e) => detailToggleHandler(e, "recomm")}
+            />
+          </ManagementForm.Item>
+
+          <ManagementForm.Item label="판매중단" name="isStop">
+            <Checkbox
+              style={{ marginLeft: "5px" }}
+              checked={crData && crData.isStop}
+              onChange={(e) => detailToggleHandler(e, "stop")}
             />
           </ManagementForm.Item>
 

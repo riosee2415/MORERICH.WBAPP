@@ -185,18 +185,20 @@ const AppHeader = ({}) => {
                     </Wrapper>
                   ) : (
                     productTypes.map((data) => {
-                      return (
-                        <Text
-                          isHover
-                          lineHeight={`30px`}
-                          fontSize={`16px`}
-                          fontWeight={`500`}
-                          onClick={() => moveProduct(data.id)}
-                          key={data.id}
-                        >
-                          {data.value}
-                        </Text>
-                      );
+                      if (data.isHide === 0) {
+                        return (
+                          <Text
+                            isHover
+                            lineHeight={`30px`}
+                            fontSize={`16px`}
+                            fontWeight={`500`}
+                            onClick={() => moveProduct(data.id)}
+                            key={data.id}
+                          >
+                            {data.value}
+                          </Text>
+                        );
+                      }
                     })
                   )}
                 </SubMenu>
@@ -464,17 +466,19 @@ const AppHeader = ({}) => {
                 </Wrapper>
               ) : (
                 productTypes.map((data) => {
-                  return (
-                    <Text
-                      width={`calc(100% / 3)`}
-                      isHover
-                      onClick={() => [moveProduct(data.id), drawarToggle()]}
-                      key={data.id}
-                      lineHeight={`30px`}
-                    >
-                      {data.value}
-                    </Text>
-                  );
+                  if (data.isHide === 0) {
+                    return (
+                      <Text
+                        width={`calc(100% / 3)`}
+                        isHover
+                        onClick={() => [moveProduct(data.id), drawarToggle()]}
+                        key={data.id}
+                        lineHeight={`30px`}
+                      >
+                        {data.value}
+                      </Text>
+                    );
+                  }
                 })
               )}
             </Wrapper>

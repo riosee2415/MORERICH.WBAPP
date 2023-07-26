@@ -175,7 +175,8 @@ const Index = () => {
       return message.error("이용약관에 동의해주세요.");
     }
 
-    const disPrice = parseInt(point.value) / currentData.length;
+    const disPrice =
+      parseInt(point.value === "" ? 0 : point.value) / currentData.length;
 
     currentData.map((data) => {
       boughtLists.push({
@@ -198,7 +199,7 @@ const Index = () => {
         boughtLists,
         point:
           me.point -
-          parseInt(point.value) +
+          parseInt(point.value === "" ? 0 : point.value) +
           totalData.totalPriceInt * (me.pointPer / 100),
       },
     });
@@ -569,12 +570,7 @@ const Index = () => {
                               fontSize={width < 900 ? `14px` : `15px`}
                               color={Theme.grey_C}
                             >
-                              수량 :{" "}
-                              {String(data.qun).replace(
-                                /\B(?=(\d{3})+(?!\d))/g,
-                                ","
-                              )}
-                              개
+                              수량 : {data.qun}개
                             </Text>
                           </Wrapper>
                           <Text
@@ -648,7 +644,10 @@ const Index = () => {
                     fontSize={width < 800 ? `20px` : `28px`}
                     fontWeight={`bold`}
                   >
-                    {(totalData.totalPriceInt - parseInt(point.value))
+                    {(
+                      totalData.totalPriceInt -
+                      parseInt(point.value === "" ? 0 : point.value)
+                    )
                       .toString()
                       .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     원

@@ -1342,7 +1342,7 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
         content: `[모어리치] 상품이 주문되었습니다.`,
         messages: [
           {
-            to: "01099149240".replace(/\-/gi, ""),
+            to: "01036531805".replace(/\-/gi, ""),
             // subject: "string",
             // content: "string",
           },

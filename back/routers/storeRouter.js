@@ -1265,7 +1265,6 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
 
   try {
     const insertResult = await models.sequelize.query(insertQuery);
-    await models.sequelize.query(pointUpdateQuery);
 
     // (금액/할인)
     await Promise.all(
@@ -1356,6 +1355,8 @@ router.post("/boughtCreate", isLoggedIn, async (req, res, next) => {
         // ],
       },
     });
+
+    await models.sequelize.query(pointUpdateQuery);
 
     return res
       .status(201)

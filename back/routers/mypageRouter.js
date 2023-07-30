@@ -600,4 +600,32 @@ router.post("/address/delete", isLoggedIn, async (req, res, next) => {
   }
 });
 
+/**
+ * SUBJECT : 포인트 수정
+ * PARAMETERS : targetId,
+ *              point
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : 윤상호
+ * DEV DATE : 2023/07/30
+ */
+router.post("/set/point", isAdminCheck, async (req, res, next) => {
+  const { targetId, point } = req.body;
+
+  const uq = `
+  UPDATE users
+  SET  point = ${point}
+ WHERE	id = ${targetId}
+  `;
+
+  try {
+    await models.sequelize.updateQuery(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("포인트를 수정할 수 없습니다.");
+  }
+});
+
 module.exports = router;

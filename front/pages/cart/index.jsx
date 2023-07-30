@@ -418,14 +418,6 @@ const Index = () => {
                     >
                       {data.concatTotalPrice}
                     </Wrapper>
-                    <Wrapper
-                      width={`14%`}
-                      display={width < 900 ? `none` : `flex`}
-                      fontSize={`18px`}
-                      fontWeight={`600`}
-                    >
-                      2,500원
-                    </Wrapper>
                   </Wrapper>
                 );
               })

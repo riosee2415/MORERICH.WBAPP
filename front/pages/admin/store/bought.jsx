@@ -106,6 +106,8 @@ const Bought = ({}) => {
 
   ////// HOOKS //////
 
+  console.log(boughtlist);
+
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -401,14 +403,14 @@ const Bought = ({}) => {
       title: "구매금액",
       render: (row) => (
         <Text>
-          {numberWithCommas(
+          {/* {numberWithCommas(
             row.connectArray.reduce((sum, currValue) => {
               let a = sum + currValue.price;
 
               return a * currValue.qun;
             }, 0)
-          )}
-          원
+          )} */}
+          {String(row.boughtPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}원
         </Text>
       ),
     },

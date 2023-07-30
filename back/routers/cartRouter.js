@@ -38,6 +38,7 @@ router.post("/list", isLoggedIn, async (req, res, next) => {
             B.isBest,
             B.isRecomm,
             B.thumbnail,
+            CAST(B.price - B.discount AS signed integer)	            AS calcPrice,
             B.price - B.discount							            	          AS discountPrice,
             FORMAT(B.price - B.discount , 0)					            	AS formatDiscountPrice,
     		    CONCAT(FORMAT(B.price - B.discount, 0), "원")	            	AS concatDiscountPrice,

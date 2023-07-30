@@ -79,6 +79,9 @@ const MypageLeft = () => {
         </SpanText>
         님, 반갑습니다.
       </Text>
+      <Text fontSize={width < 800 ? `16px` : `20px`}>
+        보유포인트 : {me && me.point}P
+      </Text>
       <Wrapper
         borderTop={`1px solid ${Theme.black_C}`}
         margin={width < 800 ? `20px 0 0` : `36px 0 0`}

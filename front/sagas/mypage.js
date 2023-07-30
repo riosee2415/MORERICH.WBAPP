@@ -36,6 +36,10 @@ import {
   GET_CACEL_REQUEST,
   GET_CACEL_SUCCESS,
   GET_CACEL_FAILURE,
+  //
+  SET_POINT_REQUEST,
+  SET_POINT_SUCCESS,
+  SET_POINT_FAILURE,
 } from "../reducers/mypage";
 
 // SAGA AREA ********************************************************************************************************
@@ -247,6 +251,29 @@ function* getCancelData(action) {
   }
 }
 
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function setPointAPI(data) {
+  return await axios.post(`/api/mypage/set/point`, data);
+}
+
+function* setPoint(action) {
+  try {
+    const result = yield call(setPointAPI, action.data);
+
+    yield put({
+      type: SET_POINT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: SET_POINT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 //////////////////////////////////////////////////////////////
 function* watchBoughtList() {
   yield takeLatest(BOUGHT_LIST_REQUEST, boughtList);
@@ -284,6 +311,10 @@ function* watchGetCancelData() {
   yield takeLatest(GET_CACEL_REQUEST, getCancelData);
 }
 
+function* watchSetPoint() {
+  yield takeLatest(SET_POINT_REQUEST, setPoint);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* mypageSaga() {
   yield all([
@@ -296,6 +327,7 @@ export default function* mypageSaga() {
     fork(watchAddressDelete),
     fork(watchAddressBasic),
     fork(watchGetCancelData),
+    fork(watchSetPoint),
 
     //
   ]);

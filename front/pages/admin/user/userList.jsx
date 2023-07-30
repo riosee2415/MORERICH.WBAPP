@@ -51,6 +51,7 @@ import {
 import Theme from "../../../components/Theme";
 import { HomeOutlined, RightOutlined } from "@ant-design/icons";
 import useInput from "../../../hooks/useInput";
+import { SET_POINT_REQUEST } from "../../../reducers/mypage";
 
 const TypeButton = styled(Button)`
   margin-right: 5px;
@@ -108,23 +109,29 @@ const UserList = ({}) => {
     st_userListUpdateDone,
     st_userListUpdateError,
   } = useSelector((state) => state.user);
+  const { st_setPointDone, st_setPointError } = useSelector(
+    (state) => state.mypage
+  );
 
   const [sameDepth, setSameDepth] = useState([]);
 
   const [updateData, setUpdateData] = useState(null);
+  const [pointModal, setPointModal] = useState(null);
 
   const [sData, setSData] = useState("");
 
   const [levelForm] = Form.useForm();
-  const [sForm] = Form.useForm();
 
   const [currentTab, setCurrentTab] = useState(0);
 
   const [level1, setLevel1] = useState("회원관리");
   const [level2, setLevel2] = useState("");
 
+  const [crData, setCrData] = useState(null);
+
   // INPUT
   const nameInput = useInput(``);
+  const pointInput = useInput(``);
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -178,6 +185,22 @@ const UserList = ({}) => {
     });
   }, [currentTab, sData]);
 
+  useEffect(() => {
+    if (st_setPointDone) {
+      dispatch({
+        type: USERLIST_REQUEST,
+      });
+
+      pointInput.setValue(``);
+      pointModalToggle();
+
+      return message.success("포인트가 지급되었습니다.");
+    }
+    if (st_setPointError) {
+      return message.error(st_setPointError);
+    }
+  }, [st_setPointDone, st_setPointError]);
+
   ////// TOGGLE //////
   const updateModalOpen = useCallback(
     (data) => {
@@ -189,6 +212,16 @@ const UserList = ({}) => {
       levelForm.setFieldsValue({ level: data.level });
     },
     [updateModal]
+  );
+
+  const pointModalToggle = useCallback(
+    (data) => {
+      setPointModal((prev) => !prev);
+      setCrData(data);
+
+      pointInput.setValue(data && data.point);
+    },
+    [pointModal]
   );
 
   const updateModalClose = useCallback(() => {
@@ -240,6 +273,16 @@ const UserList = ({}) => {
     },
     [updateData]
   );
+
+  const pointHandler = useCallback(() => {
+    dispatch({
+      type: SET_POINT_REQUEST,
+      data: {
+        targetId: crData.id,
+        point: pointInput.value,
+      },
+    });
+  }, [crData, pointInput.value]);
 
   const content = (
     <PopWrapper>
@@ -314,6 +357,18 @@ const UserList = ({}) => {
     {
       title: "포인트",
       render: (data) => <div>{data.point}</div>,
+    },
+    {
+      title: "포인트수정",
+      render: (data) => (
+        <Button
+          size="small"
+          type="primary"
+          onClick={() => pointModalToggle(data)}
+        >
+          포인트수정
+        </Button>
+      ),
     },
     {
       title: "권한수정",
@@ -446,6 +501,41 @@ const UserList = ({}) => {
             </Select>
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        visible={pointModal}
+        title="포인트 부여"
+        onCancel={pointModalToggle}
+        footer={null}
+      >
+        <Wrapper
+          radius="5px"
+          padding={`5px`}
+          fontSize={`12px`}
+          bgColor={Theme.lightGrey2_C}
+          al="flex-start"
+        >
+          <GuideDiv isImpo={true}>
+            포인트는 수정 시 사이트 및 어플리케이션에 즉시 적용되기 때문에
+            신중한 처리를 필요로 합니다.
+          </GuideDiv>
+          <GuideDiv isImpo={true}>
+            상품 구매시 포인트를 사용할 수 있기 때문에 신중한 처리를 필요로
+            합니다.
+          </GuideDiv>
+        </Wrapper>
+        <Wrapper dr={`row`} margin={`20px 0 0`}>
+          <Input
+            style={{ width: 300 }}
+            {...pointInput}
+            placeholder="숫자만 입력해주세요."
+            size="small"
+          />
+          <Button size="small" type="primary" onClick={pointHandler}>
+            수정하기
+          </Button>
+        </Wrapper>
       </Modal>
     </AdminLayout>
   );

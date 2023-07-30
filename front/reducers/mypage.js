@@ -43,6 +43,10 @@ export const initailState = {
   st_getCancelDataLoading: false,
   st_getCancelDataDone: false,
   st_getCancelDataError: null,
+  // 포인트 수정
+  st_setPointLoading: false,
+  st_setPointDone: false,
+  st_setPointError: null,
 };
 
 export const BOUGHT_LIST_REQUEST = "BOUGHT_LIST_REQUEST";
@@ -77,9 +81,13 @@ export const ADDRESS_BASIC_REQUEST = "ADDRESS_BASIC_REQUEST";
 export const ADDRESS_BASIC_SUCCESS = "ADDRESS_BASIC_SUCCESS";
 export const ADDRESS_BASIC_FAILURE = "ADDRESS_BASIC_FAILURE";
 
-export const GET_CACEL_REQUEST = "SET_CACEL_REQUEST";
-export const GET_CACEL_SUCCESS = "DEL_CACEL_SUCCESS";
-export const GET_CACEL_FAILURE = "DEL_CACEL_FAILURE";
+export const GET_CACEL_REQUEST = "GET_CACEL_REQUEST";
+export const GET_CACEL_SUCCESS = "GET_CACEL_SUCCESS";
+export const GET_CACEL_FAILURE = "GET_CACEL_FAILURE";
+
+export const SET_POINT_REQUEST = "SET_POINT_REQUEST";
+export const SET_POINT_SUCCESS = "SET_POINT_SUCCESS";
+export const SET_POINT_FAILURE = "SET_POINT_FAILURE";
 
 const reducer = (state = initailState, action) =>
   produce(state, (draft) => {
@@ -266,6 +274,26 @@ const reducer = (state = initailState, action) =>
         draft.st_getCancelDataLoading = false;
         draft.st_getCancelDataDone = false;
         draft.st_getCancelDataError = action.error;
+        break;
+      }
+
+      ///////////////////////////////////////////////////////
+      case SET_POINT_REQUEST: {
+        draft.st_setPointLoading = true;
+        draft.st_setPointDone = false;
+        draft.st_setPointError = null;
+        break;
+      }
+      case SET_POINT_SUCCESS: {
+        draft.st_setPointLoading = false;
+        draft.st_setPointDone = true;
+        draft.st_setPointError = null;
+        break;
+      }
+      case SET_POINT_FAILURE: {
+        draft.st_setPointLoading = false;
+        draft.st_setPointDone = false;
+        draft.st_setPointError = action.error;
         break;
       }
 

@@ -385,16 +385,17 @@ const Complete = () => {
               </Wrapper>
             </Wrapper>
 
-            <CommonButton
-              margin={`60px 0 120px`}
-              width={`260px`}
-              height={`60px`}
-              fontSize={width < 900 ? `16px` : `20px`}
-              fontWeight={`600`}
-              onClick={() => router.push(`/`)}
-            >
-              메인으로
-            </CommonButton>
+            <ATag href="/" width={`260px`}>
+              <CommonButton
+                margin={`60px 0 120px`}
+                width={`100%`}
+                height={`60px`}
+                fontSize={width < 900 ? `16px` : `20px`}
+                fontWeight={`600`}
+              >
+                메인으로
+              </CommonButton>
+            </ATag>
           </RsWrapper>
         </WholeWrapper>
       </ClientLayout>

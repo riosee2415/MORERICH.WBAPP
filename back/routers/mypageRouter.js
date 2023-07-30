@@ -619,7 +619,7 @@ router.post("/set/point", isAdminCheck, async (req, res, next) => {
   `;
 
   try {
-    await models.sequelize.updateQuery(uq);
+    await models.sequelize.query(uq);
 
     return res.status(200).json({ result: true });
   } catch (error) {

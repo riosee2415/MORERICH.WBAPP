@@ -9,6 +9,11 @@ module.exports = class MainSlideProduct extends Model {
           type: DataTypes.STRING(100),
           allowNull: true,
         },
+        sort: {
+          type: DataTypes.INTEGER,
+          allowNull: false, // 필수
+          defaultValue: 1,
+        },
       },
       {
         modelName: "MainSlideProduct",

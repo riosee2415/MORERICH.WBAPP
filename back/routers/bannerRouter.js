@@ -395,6 +395,33 @@ const consistOfArrayToArray = (arr1, arr2, targetColumn) => {
 };
 
 /**
+ * SUBJECT : 배너 슬라이드 소트 수정하기
+ * PARAMETERS : -
+ * ORDER BY : -
+ * STATEMENT : -
+ * DEVELOPMENT : CTO 윤상호
+ * DEV DATE : 2023/06/01
+ */
+router.post("/list/sort/update", async (req, res, next) => {
+  const { targetId, nextSort } = req.body;
+
+  const uq = `
+    UPDATE  mainSlideProduct
+       SET  sort = ${nextSort}
+     WHERE  id = ${targetId}
+  `;
+
+  try {
+    await models.sequelize.query(uq);
+
+    return res.status(200).json({ result: true });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send("데이터를 수정할 수 없습니다.");
+  }
+});
+
+/**
  * SUBJECT : 배너 슬라이드 가져오기
  * PARAMETERS : -
  * ORDER BY : -
@@ -413,6 +440,7 @@ router.post("/list/slide", async (req, res, next) => {
   SELECT	A.id,
           A.MainSlideId,
           A.ProductId,
+          A.sort,
           B.thumbnail,
           B.name,
           B.subName,
@@ -440,6 +468,7 @@ router.post("/list/slide", async (req, res, next) => {
     JOIN	product 			B
       ON	A.ProductId = B.id
    WHERE  B.isStop = 0
+   ORDER  BY  A.sort  DESC
   `;
 
   try {

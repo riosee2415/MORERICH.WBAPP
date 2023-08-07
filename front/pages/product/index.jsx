@@ -17,7 +17,7 @@ import {
   Image,
 } from "../../components/commonComponents";
 import Theme from "../../components/Theme";
-import { Empty, message, Select } from "antd";
+import { Empty, message, Select, Spin } from "antd";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -49,9 +49,13 @@ const CateBtn = styled(Wrapper)`
 
 const Index = () => {
   ////// GLOBAL STATE //////
-  const { products, productTypes, productType2Depth } = useSelector(
-    (state) => state.store
-  );
+  const {
+    products,
+    productTypes,
+    productType2Depth,
+    st_getProductLoading,
+    st_getProductDone,
+  } = useSelector((state) => state.store);
   const { me } = useSelector((state) => state.user);
   const { st_likeCreateDone, st_likeCreateError } = useSelector(
     (state) => state.wish
@@ -312,6 +316,10 @@ const Index = () => {
               {products && products.length === 0 ? (
                 <Wrapper padding={`100px 0`}>
                   <Empty description="조회된 내역이 없습니다." />
+                </Wrapper>
+              ) : !st_getProductDone ? (
+                <Wrapper padding={`50px 0`}>
+                  <Spin />
                 </Wrapper>
               ) : (
                 products.map((data, idx) => {

@@ -2,7 +2,17 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { Image, Modal, Popover, message, Form, Drawer, Popconfirm } from "antd";
+import {
+  Image,
+  Modal,
+  Popover,
+  message,
+  Form,
+  Drawer,
+  Popconfirm,
+  Input,
+  Button,
+} from "antd";
 import { useRouter, withRouter } from "next/router";
 import wrapper from "../../../store/configureStore";
 import { END } from "redux-saga";
@@ -15,6 +25,8 @@ import {
   OtherMenu,
   GuideUl,
   GuideLi,
+  SearchForm,
+  SearchFormItem,
 } from "../../../components/commonComponents";
 import { LOAD_MY_INFO_REQUEST } from "../../../reducers/user";
 import Theme from "../../../components/Theme";
@@ -87,6 +99,7 @@ const Slide = ({}) => {
   const [crData, setCrData] = useState(null);
 
   const [titleForm] = Form.useForm();
+  const [searchForm] = Form.useForm();
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -212,7 +225,14 @@ const Slide = ({}) => {
   const listDrToggle = useCallback((row) => {
     setListDr((p) => !p);
 
-    setCrData(row);
+    if (row) {
+      setCrData(row);
+    } else {
+      searchForm.resetFields();
+      dispatch({
+        type: GET_PRODUCT_REQUEST,
+      });
+    }
   }, []);
 
   const titleModalToggle = useCallback((row) => {
@@ -233,6 +253,15 @@ const Slide = ({}) => {
     },
     [crData]
   );
+
+  const searchHandler = useCallback((data) => {
+    dispatch({
+      type: GET_PRODUCT_REQUEST,
+      data: {
+        sName: data.title ? data.title : "",
+      },
+    });
+  }, []);
 
   ////// DATAVIEW //////
 
@@ -425,6 +454,28 @@ const Slide = ({}) => {
         width="800px"
         title="상품리스트"
       >
+        {/* SEARCH FORM */}
+        <SearchForm
+          layout="inline"
+          style={{ width: "100%" }}
+          form={searchForm}
+          onFinish={searchHandler}
+        >
+          <SearchFormItem name="title" style={{ margin: `0px 0px 0px 5px` }}>
+            <Input
+              size="small"
+              style={{ width: "320px" }}
+              placeholder={`상품명을 입력해주세요.`}
+            />
+          </SearchFormItem>
+
+          <SearchFormItem>
+            <Button size="small" type="primary" htmlType="submit">
+              검색
+            </Button>
+          </SearchFormItem>
+        </SearchForm>
+
         <Wrapper>
           <ManagementTable
             columns={column}

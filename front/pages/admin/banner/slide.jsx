@@ -37,6 +37,7 @@ import {
   UPDATE_SLIDE_REQUEST,
   INSERT_SLIDE_REQUEST,
   DELETE_SLIDE_REQUEST,
+  SLIDE_SORT_UPDATE_REQUEST,
 } from "../../../reducers/banner";
 import {
   ManageButton,
@@ -45,6 +46,7 @@ import {
   ManagementTable,
 } from "../../../components/managementComponents";
 import { GET_PRODUCT_REQUEST } from "../../../reducers/store";
+import useInput from "../../../hooks/useInput";
 
 const DelX = styled.div`
   width: 19px;
@@ -82,6 +84,9 @@ const Slide = ({}) => {
     //
     st_deleteSlideBannerDone,
     st_deleteSlideBannerError,
+    //
+    st_slideSortUpdateDone,
+    st_slideSortUpdateError,
   } = useSelector((state) => state.banner);
   const { products } = useSelector((state) => state.store);
 
@@ -95,11 +100,15 @@ const Slide = ({}) => {
 
   const [titleModal, setTitleModal] = useState(false);
   const [listDr, setListDr] = useState(false);
+  const [sortModal, setSortModal] = useState(false);
 
   const [crData, setCrData] = useState(null);
+  const [sData, setSData] = useState(null); //소트 데이터
 
   const [titleForm] = Form.useForm();
   const [searchForm] = Form.useForm();
+
+  const sortInput = useInput(``);
 
   const moveLinkHandler = useCallback((link) => {
     router.push(link);
@@ -140,6 +149,22 @@ const Slide = ({}) => {
       return message.error(st_updateSlideBannerError);
     }
   }, [st_updateSlideBannerDone, st_updateSlideBannerError]);
+
+  useEffect(() => {
+    if (st_slideSortUpdateDone) {
+      dispatch({
+        type: GET_SLIDE_REQUEST,
+      });
+
+      sortModalToggle();
+      sortInput.setValue("");
+      message.info("상품 순서가 변경되었습니다.");
+    }
+
+    if (st_slideSortUpdateError) {
+      return message.error(st_slideSortUpdateError);
+    }
+  }, [st_slideSortUpdateDone, st_slideSortUpdateError]);
 
   useEffect(() => {
     if (st_deleteSlideBannerDone) {
@@ -221,6 +246,25 @@ const Slide = ({}) => {
       },
     });
   }, []);
+
+  const sortModalToggle = useCallback(
+    (data) => {
+      setSortModal((prev) => !prev);
+      sortInput.setValue(data && data.sort);
+      setSData(data);
+    },
+    [sortModal, sData]
+  );
+
+  const sortUpdate = useCallback(() => {
+    dispatch({
+      type: SLIDE_SORT_UPDATE_REQUEST,
+      data: {
+        targetId: sData.id,
+        nextSort: sortInput.value,
+      },
+    });
+  }, [sortInput.value, sData]);
 
   const listDrToggle = useCallback((row) => {
     setListDr((p) => !p);
@@ -382,7 +426,6 @@ const Slide = ({}) => {
                       <Wrapper
                         key={inItem.name}
                         width="140px"
-                        height="160px"
                         margin="3px"
                         position="relative"
                       >
@@ -397,6 +440,19 @@ const Slide = ({}) => {
                           {inItem.name.length > 8
                             ? inItem.name.substring(0, 7) + "..."
                             : inItem.name}
+                        </Wrapper>
+
+                        <Wrapper margin={`5px 0 0`} dr={`row`}>
+                          <Text margin={`0 10px 0 0`}>
+                            상품 순서 {inItem.sort}
+                          </Text>
+                          <Button
+                            size="small"
+                            type="primary"
+                            onClick={() => sortModalToggle(inItem)}
+                          >
+                            변경
+                          </Button>
                         </Wrapper>
 
                         <Popconfirm
@@ -484,6 +540,28 @@ const Slide = ({}) => {
           />
         </Wrapper>
       </Drawer>
+
+      <Modal
+        title="순서 변경하기"
+        visible={sortModal}
+        footer={null}
+        onCancel={sortModalToggle}
+      >
+        <Wrapper padding={`30px 0`}>
+          <Text margin={`0 0 10px`}>숫자만 입력해주세요.</Text>
+          <Wrapper dr={`row`}>
+            <Input
+              placeholder="숫자만 입력해주세요."
+              size="small"
+              style={{ width: 80 }}
+              {...sortInput}
+            />
+            <Button size="small" type="primary" onClick={() => sortUpdate()}>
+              변경
+            </Button>
+          </Wrapper>
+        </Wrapper>
+      </Modal>
     </AdminLayout>
   );
 };

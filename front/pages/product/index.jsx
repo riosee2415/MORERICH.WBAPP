@@ -315,11 +315,10 @@ const Index = () => {
             <Wrapper dr={`row`} ju={`flex-start`} al={`flex-start`}>
               {products && products.length === 0 ? (
                 <Wrapper padding={`100px 0`}>
-                  <Empty description="조회된 내역이 없습니다." />
-                </Wrapper>
-              ) : !st_getProductDone ? (
-                <Wrapper padding={`50px 0`}>
                   <Spin />
+                  <Text fontSize={`20px`} margin={`15px 0 0`}>
+                    데이터를 불러오는 중입니다.
+                  </Text>
                 </Wrapper>
               ) : (
                 products.map((data, idx) => {

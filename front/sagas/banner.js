@@ -60,6 +60,10 @@ import {
   DELETE_SLIDE_REQUEST,
   DELETE_SLIDE_SUCCESS,
   DELETE_SLIDE_FAILURE,
+  //
+  SLIDE_SORT_UPDATE_REQUEST,
+  SLIDE_SORT_UPDATE_SUCCESS,
+  SLIDE_SORT_UPDATE_FAILURE,
 } from "../reducers/banner";
 
 // ******************************************************************************************************************
@@ -479,6 +483,34 @@ function* bannerMobileUpload(action) {
 // ******************************************************************************************************************
 // ******************************************************************************************************************
 
+// ******************************************************************************************************************
+// SAGA AREA ********************************************************************************************************
+// ******************************************************************************************************************
+async function slideSortUpdateAPI(data) {
+  return await axios.post(`/api/banner/list/sort/update`, data);
+}
+
+function* slideSortUpdate(action) {
+  try {
+    const result = yield call(slideSortUpdateAPI, action.data);
+
+    yield put({
+      type: SLIDE_SORT_UPDATE_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: SLIDE_SORT_UPDATE_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+// ******************************************************************************************************************
+
 //////////////////////////////////////////////////////////////
 function* watchMainBanner() {
   yield takeLatest(MAIN_BANNER_REQUEST, mainBanner);
@@ -541,6 +573,10 @@ function* watchBannerMobileUpload() {
   yield takeLatest(BANNER_MOBILE_UPLOAD_REQUEST, bannerMobileUpload);
 }
 
+function* watchSlideSortUpdate() {
+  yield takeLatest(SLIDE_SORT_UPDATE_REQUEST, slideSortUpdate);
+}
+
 //////////////////////////////////////////////////////////////
 export default function* bannerSaga() {
   yield all([
@@ -559,6 +595,7 @@ export default function* bannerSaga() {
     fork(watchInsertSlide),
     fork(watchDeleteSlide),
     fork(watchBannerMobileUpload),
+    fork(watchSlideSortUpdate),
     //
   ]);
 }

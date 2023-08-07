@@ -70,6 +70,10 @@ export const initailState = {
   st_deleteSlideBannerLoading: false, // 슬라이드 상품 빼기
   st_deleteSlideBannerDone: false,
   st_deleteSlideBannerError: null,
+  //
+  st_slideSortUpdateLoading: false, // 슬라이드 상품 소트 수정
+  st_slideSortUpdateDone: false,
+  st_slideSortUpdateError: null,
 };
 
 export const MAIN_BANNER_REQUEST = "MAIN_BANNER_REQUEST";
@@ -131,6 +135,10 @@ export const INSERT_SLIDE_FAILURE = "INSERT_SLIDE_FAILURE";
 export const DELETE_SLIDE_REQUEST = "DELETE_SLIDE_REQUEST";
 export const DELETE_SLIDE_SUCCESS = "DELETE_SLIDE_SUCCESS";
 export const DELETE_SLIDE_FAILURE = "DELETE_SLIDE_FAILURE";
+
+export const SLIDE_SORT_UPDATE_REQUEST = "SLIDE_SORT_UPDATE_REQUEST";
+export const SLIDE_SORT_UPDATE_SUCCESS = "SLIDE_SORT_UPDATE_SUCCESS";
+export const SLIDE_SORT_UPDATE_FAILURE = "SLIDE_SORT_UPDATE_FAILURE";
 
 export const UPLOAD_BANNER_INIT_REQUEST = "UPLOAD_BANNER_INIT_REQUEST";
 
@@ -434,6 +442,26 @@ const reducer = (state = initailState, action) =>
         draft.st_bannerMobileUploadLoading = false;
         draft.st_bannerMobileUploadDone = false;
         draft.st_bannerMobileUploadError = action.error;
+        break;
+      }
+      //////////////////////////////////////////////
+
+      case SLIDE_SORT_UPDATE_REQUEST: {
+        draft.st_slideSortUpdateLoading = true;
+        draft.st_slideSortUpdateDone = false;
+        draft.st_slideSortUpdateError = null;
+        break;
+      }
+      case SLIDE_SORT_UPDATE_SUCCESS: {
+        draft.st_slideSortUpdateLoading = false;
+        draft.st_slideSortUpdateDone = true;
+        draft.st_slideSortUpdateError = null;
+        break;
+      }
+      case SLIDE_SORT_UPDATE_FAILURE: {
+        draft.st_slideSortUpdateLoading = false;
+        draft.st_slideSortUpdateDone = false;
+        draft.st_slideSortUpdateError = action.error;
         break;
       }
       //////////////////////////////////////////////

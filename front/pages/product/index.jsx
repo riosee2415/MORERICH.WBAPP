@@ -38,7 +38,6 @@ const CateBtn = styled(Wrapper)`
   font-size: 16px;
   border: ${(props) =>
     props.isActive ? `1px solid ${Theme.black_C}` : `none`};
-  color: ${(props) => (props.isActive ? Theme.black_C : Theme.grey2_C)};
   margin: 0 6px 5px;
 
   &:hover {
@@ -253,7 +252,7 @@ const Index = () => {
                 padding={`0 15px`}
                 radius={`30px`}
                 margin={`0 20px 10px 0`}
-                color={false === type2 ? Theme.white_C : Theme.grey2_C}
+                color={false === type2 ? Theme.white_C : Theme.black_C}
                 bgColor={false === type2 ? Theme.black_C : Theme.white_C}
                 cursor={`pointer`}
                 fontWeight={false === type2 ? `bold` : ``}
@@ -283,7 +282,7 @@ const Index = () => {
                       margin={`0 20px 10px 0`}
                       key={data.id}
                       fontWeight={data.id === type2 ? `bold` : ``}
-                      color={data.id === type2 ? Theme.white_C : Theme.grey2_C}
+                      color={data.id === type2 ? Theme.white_C : Theme.black_C}
                       bgColor={
                         data.id === type2 ? Theme.black_C : Theme.white_C
                       }

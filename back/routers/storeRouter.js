@@ -61,7 +61,7 @@ router.post("/list", async (req, res, next) => {
      FROM	productType	A
     WHERE	1 = 1
       AND	A.isDelete = 0
-    ORDER	BY value ASC
+    ORDER	BY A.createdAt DESC
     `;
 
   try {

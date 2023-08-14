@@ -167,7 +167,7 @@ const SteadySlider = ({ datum, likeId, setLikeId }) => {
                     margin={`16px 0 20px`}
                     fontSize={width < 900 ? `15px` : `20px`}
                   >
-                    {/* {data.discount !== 0 && (
+                    {data.discount !== 0 && (
                       <Text
                         color={Theme.grey_C}
                         className="line"
@@ -175,7 +175,7 @@ const SteadySlider = ({ datum, likeId, setLikeId }) => {
                       >
                         {data.viewPrice}
                       </Text>
-                    )} */}
+                    )}
                     <Text>{data.viewCalcPrice}</Text>
                   </Wrapper>
                   <Wrapper dr={`row`} ju={`flex-start`}>

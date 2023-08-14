@@ -106,8 +106,6 @@ const Bought = ({}) => {
 
   ////// HOOKS //////
 
-  console.log(boughtlist);
-
   ////// USEEFFECT //////
 
   useEffect(() => {
@@ -386,7 +384,7 @@ const Bought = ({}) => {
 
     {
       title: "구매자정보",
-      dataIndex: "userId",
+      dataIndex: "username",
     },
 
     {

@@ -88,7 +88,7 @@ const DesignWrapper = styled(Wrapper)`
 
   @media (max-width: 800px) {
     width: 65px;
-    margin: 0 6px;
+    margin: 0 6px 10px 0;
     font-size: 12px;
 
     & img {
@@ -166,14 +166,7 @@ const Home = ({}) => {
             <Mainslider />
 
             {mainList && (
-              <Wrapper
-                dr={`row`}
-                margin={`50px 0 0`}
-                al={`flex-start`}
-                ju={width < 800 && `flex-start`}
-                wrap={width < 800 && `nowrap`}
-                overflow={width < 800 && `auto`}
-              >
+              <Wrapper dr={`row`} margin={`50px 0 0`} al={`flex-start`}>
                 {mainList.map((data) => {
                   return (
                     <DesignWrapper
@@ -181,7 +174,11 @@ const Home = ({}) => {
                       onClick={() => moveLinkHandler(data.link)}
                     >
                       <Image alt="thumbnail" src={data.imagePath} />
-                      <Text margin={`14px 0 0`} color={Theme.darkGrey_C}>
+                      <Text
+                        margin={`14px 0 0`}
+                        color={Theme.darkGrey_C}
+                        textAlign={`center`}
+                      >
                         {data.title}
                       </Text>
                     </DesignWrapper>

@@ -279,7 +279,7 @@ const Complete = () => {
                   입금은행
                 </Text>
                 <Text width={width < 900 ? `70%` : `85%`} fontSize={`16px`}>
-                  하나은행 516-910248-15807 (김하나)
+                  케이뱅크 100-141-066351 (김재혁)
                 </Text>
               </Wrapper>
               <Wrapper dr={`row`} margin={`0 0 20px`}>

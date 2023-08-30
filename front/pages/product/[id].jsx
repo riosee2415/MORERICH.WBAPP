@@ -351,7 +351,7 @@ const Index = () => {
                 padding={`0 0 25px`}
               >
                 <Wrapper width={`auto`} dr={`row`}>
-                  {/* {productDetail && productDetail.discount !== 0 && (
+                  {productDetail && productDetail.discount !== 0 && (
                     <Text
                       color={Theme.grey_C}
                       className="line"
@@ -360,7 +360,7 @@ const Index = () => {
                     >
                       {productDetail && productDetail.viewPrice}
                     </Text>
-                  )} */}
+                  )}
                   <Text
                     fontSize={width < 800 ? `16px` : `28px`}
                     fontWeight={`bold`}

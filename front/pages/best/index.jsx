@@ -140,15 +140,17 @@ const Index = () => {
                             margin={`16px 0 20px`}
                             fontSize={width < 900 ? `14px` : `20px`}
                           >
-                            {/* {data.discount !== 0 && (
-                            <Text
-                              color={Theme.grey_C}
-                              className="line"
-                              margin={width < 900 ? `0 6px 0 0` : `0 12px 0 0`}
-                            >
-                              {data.viewPrice}
-                            </Text>
-                          )} */}
+                            {data.discount !== 0 && (
+                              <Text
+                                color={Theme.grey_C}
+                                className="line"
+                                margin={
+                                  width < 900 ? `0 6px 0 0` : `0 12px 0 0`
+                                }
+                              >
+                                {data.viewPrice}
+                              </Text>
+                            )}
                             <Text>{data.viewCalcPrice}</Text>
                           </Wrapper>
                           <Wrapper dr={`row`} ju={`flex-start`}>
